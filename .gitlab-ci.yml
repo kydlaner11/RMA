@@ -1,0 +1,41 @@
+stages:
+  - sonarqube-check
+  - semantic-release-check
+
+image: node:latest
+semantic-release-check:
+  stage: semantic-release-check
+  only:
+    - dev
+  variables:
+    NPM_TOKEN: "${CI_JOB_TOKEN}"
+  script:
+    - npm i
+    - |
+      {
+        echo "@${CI_PROJECT_ROOT_NAMESPACE}:registry=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/npm/"
+        echo "${CI_API_V4_URL#https?}/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=\${CI_JOB_TOKEN}"
+        echo "${CI_API_V4_URL#https?}/packages/npm/:_authToken=\${CI_JOB_TOKEN}"
+      } | tee -a .npmrc
+    - npm run semantic-release
+    - 'echo "Successfully published package"'
+
+sonarqube-check:
+  stage: sonarqube-check
+  image:
+    name: sonarsource/sonar-scanner-cli:5.0
+    entrypoint: [""]
+  variables:
+    SONAR_HOST_URL: "http://10.21.1.213:9000"
+    SONAR_PROJECT_KEY: "itapps_react-boilerplate_AYppUSaX8o_5E0g3Tv3B"
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
+    GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
+  cache:
+    key: "${CI_JOB_NAME}"
+    paths:
+      - .sonar/cache
+  script:
+    - sonar-scanner -Dsonar.token=$SONAR_TOKEN -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.host.url=$SONAR_HOST_URL
+  allow_failure: true
+  only:
+    - dev
