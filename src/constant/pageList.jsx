@@ -16,7 +16,11 @@ const DetailDashboard = lazy(() =>
   import("../pages/dashboard/DetailDashboard")
 );
 const Login = lazy(() => import("../pages/login/Login"));
+const Signup = lazy(() => import("../pages/login/Signup"));
+const ForgetPass = lazy(() => import("../pages/login/ForgetPass"));
+const PassForm = lazy(() => import("../pages/login/components/PassForm"));
 const Users = lazy(() => import("../pages/users/Users"));
+
 
 export const unauthenticatedPageList = [
   {
@@ -25,13 +29,18 @@ export const unauthenticatedPageList = [
     key: "Login",
   },
   {
-    path: "signup",
-    element: <>Sign Up</>,
+    path: "register",
+    element: <Signup />,
     key: "Signup",
+  },   
+  {
+    path: "register/password",
+    element: <PassForm />,
+    key: "password",
   },
   {
     path: "forgot_password",
-    element: <>Forgot Password</>,
+    element: <ForgetPass />,
     key: "forgot_password",
   },
 ];
