@@ -58,8 +58,8 @@ export const charactersColumn = ({ searchProps }) =>
       width: "14px",
     },
     {
-      title: "Name",
-      key: "name",
+      title: "Device",
+      key: "device",
       ...getColumnSearchProps("name", searchProps),
       sorter: (a, b) => a.name.localeCompare(b.name),
       render: (_, record) => (
@@ -74,15 +74,15 @@ export const charactersColumn = ({ searchProps }) =>
       ),
     },
     {
-      title: "Species",
-      dataIndex: "species",
-      key: "species",
+      title: "MAC Address",
+      dataIndex: "mac_address",
+      key: "mac_address",
       filters: speciesOptions,
       onFilter: (value, record) => record.species.indexOf(value) === 0,
     },
     {
-      title: "Gender",
-      key: "gender",
+      title: "Warranty",
+      key: "warranty",
       filters: genderOptions,
       onFilter: (value, record) => record.gender.indexOf(value) === 0,
       render: (_, record) => (

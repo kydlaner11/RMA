@@ -9,7 +9,6 @@ import {
 } from "@ant-design/icons";
 import { lazy } from "react";
 import { generateAuthPage, generateAuthParentPage } from "../utils/pages";
-
 const Activity = lazy(() => import("../pages/activity/Activity"));
 const Dashboard = lazy(() => import("../pages/dashboard/Dashboard"));
 const DetailDashboard = lazy(() =>
@@ -20,7 +19,6 @@ const Signup = lazy(() => import("../pages/login/Signup"));
 const ForgetPass = lazy(() => import("../pages/login/ForgetPass"));
 const PassForm = lazy(() => import("../pages/login/components/PassForm"));
 const Users = lazy(() => import("../pages/users/Users"));
-
 
 export const unauthenticatedPageList = [
   {
@@ -43,6 +41,11 @@ export const unauthenticatedPageList = [
     element: <ForgetPass />,
     key: "forgot_password",
   },
+  {
+    path: "hanya",
+    element: <Dashboard />,
+    key: "hanya",
+  },
 ];
 
 // ? Documentation in src/utils/pages.js
@@ -53,6 +56,14 @@ export const authenticatedPageList = () =>
       icon: <HomeOutlined />,
       key: "dashboard",
       label: "Dashboard",
+      description:
+        "Provides administrators direct access to important Encompass tools.",
+    }),
+    generateAuthPage({
+      element: <DetailDashboard />,
+      icon: <HomeOutlined />,
+      key: "dashboard/ticket",
+      label: "Ticket",
       description:
         "Provides administrators direct access to important Encompass tools.",
     }),
@@ -131,5 +142,5 @@ export const authenticatedDetailPageList = () => [
   generateAuthPage({
     element: <DetailDashboard />,
     key: "dashboard/:id",
-  }),
+  }), 
 ];

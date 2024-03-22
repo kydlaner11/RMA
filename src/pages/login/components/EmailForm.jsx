@@ -1,16 +1,17 @@
 import { Button, Divider, Form, Input, message, notification } from "antd";
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logoDNet from "../../../assets/images/logo d~net.png";
 import Api from "../../../api";
 
-
 const EmailForm = () => {
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false); 
   const navigate = useNavigate();
 
   const onFinish = async (values) => {
     const { email } = values;
+    setLoading(true);
     try {
       const response = await checkEmail(email);
 
@@ -27,7 +28,25 @@ const EmailForm = () => {
       }
     } catch (error) {
       console.error('Error validating email:', error);
-      message.error('Email not registered');
+      if (error.response) {
+        // Tangani respon kesalahan dari server
+        const { status, data } = error.response;
+        if (status === 400) {
+          // Tangani kesalahan jika terjadi kesalahan data (bad request)
+          message.error(data.message || 'Please try again');
+        } else if (status === 401) {
+          // Tangani kesalahan jika pengguna tidak terautentikasi
+          message.error(data.message || 'Incorrect Email or Password  ');
+        } else {
+          // Tangani kesalahan lainnya
+          message.error('Something went wrong');
+        }
+      } else {
+        // Tangani kesalahan jika tidak ada respon dari server
+        message.error('Network Error');
+      }
+    } finally {
+      setLoading(false); // Hentikan loading setelah permintaan selesai
     }
   };
 
@@ -87,7 +106,7 @@ const EmailForm = () => {
         </div> */}
 
         <Form.Item>
-          <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
+          <Button type="primary" htmlType="submit" style={{ width: "100%" }} loading={loading}>
             Check Email
           </Button>
         </Form.Item>
