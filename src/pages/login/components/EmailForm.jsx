@@ -1,13 +1,14 @@
-import { Button, Divider, Form, Input, message, notification } from "antd";
+import { Alert, Button, Form, Input, message, notification } from "antd";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import logoDNet from "../../../assets/images/logo d~net.png";
 import Api from "../../../api";
 
 const EmailForm = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false); 
   const navigate = useNavigate();
+  const [errorAlert, setErrorAlert] = useState(null);
+
 
   const onFinish = async (values) => {
     const { email } = values;
@@ -21,7 +22,7 @@ const EmailForm = () => {
         // Email tidak ditemukan dalam basis data
         notification.warning({
           message: 'Check your email',
-          description: 'This email registered in our database. Please check your email.',
+          description: 'This email is registered. Please check your email.',
           duration: 5 // durasi pesan notifikasi, opsional
         });
         navigate('/login');
@@ -33,10 +34,10 @@ const EmailForm = () => {
         const { status, data } = error.response;
         if (status === 400) {
           // Tangani kesalahan jika terjadi kesalahan data (bad request)
-          message.error(data.message || 'Please try again');
-        } else if (status === 401) {
+          setErrorAlert('Email already registered. ');
+        } else if (status === 404) {
           // Tangani kesalahan jika pengguna tidak terautentikasi
-          message.error(data.message || 'Incorrect Email or Password  ');
+          message.error(data.message || 'Incorrect Email ');
         } else {
           // Tangani kesalahan lainnya
           message.error('Something went wrong');
@@ -87,8 +88,16 @@ const EmailForm = () => {
         className="login-form"
         initialValues={{ email: '' }}
       >
+        {errorAlert && (
+          <Alert
+            message={errorAlert}
+            type="error"
+            showIcon
+            closable
+            style={{ marginBottom: "10px" }}
+          />
+        )}
         <Form.Item
-          label="Email"
           name="email"
           className="login-email"
           rules={[
@@ -96,7 +105,7 @@ const EmailForm = () => {
             { type: 'email', message: 'Please enter a valid email' }
         ]}
         >
-          <Input />
+          <Input placeholder="Enter your Email"/>
         </Form.Item>
 
         {/* <div style={{ marginBottom: 24, textAlign: "right", marginTop: 5 }}>
@@ -112,35 +121,17 @@ const EmailForm = () => {
         </Form.Item>
       </Form>
 
-      <Divider style={{ opacity: 0.7 }}>or</Divider>
-
-      <Button
-        type="default"
-        className="login-oauth"
+      <div
+        className="login-signup"
         style={{
-          width: "100%",
-          alignItems: "center",
-          display: "flex",
-          justifyContent: "center",
+          fontSize: "12px",
+          textAlign: "center",
+          marginTop: 30,
+          opacity: 0.7,
         }}
       >
-        <img
-          src={logoDNet}
-          alt="Logo d~net"
-          height="100%"
-          style={{ marginRight: "3px" }}
-        />
-        <span
-          style={{
-            fontSize: "11px",
-            fontWeight: 600,
-            opacity: 0.6,
-            marginTop: "3px",
-          }}
-        >
-          Continue with OAuth
-        </span>
-      </Button>
+        Already have account? <a href="/login">Login</a>
+      </div>
     </div>
   );
 };

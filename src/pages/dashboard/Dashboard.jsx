@@ -1,6 +1,6 @@
 import {PlusOutlined,} from "@ant-design/icons";
 import { effect, signal } from "@preact/signals-react";
-import { Alert, Button, Col, Divider, Form, Input,  Modal, Row, Spin, Table, Typography, Upload, message } from "antd";
+import { Alert, Button, Col,  Form, Input,  Modal, Row, Spin, Table, Typography, Upload, message } from "antd";
 import Cookies from "js-cookie";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -64,11 +64,7 @@ const Dashboard = () => {
       console.log(error);
       setDetailData(null);
       form.resetFields();
-      if (error.response.status === 500) {
-        setErrorAlert('MAC address not found. Please contact your admin');
-      } else {
-        setErrorAlert(null);
-      }
+      setErrorAlert('MAC address not found. Please contact your admin');
     }
   }
   const handleCloseModal = () => {
@@ -101,7 +97,7 @@ const Dashboard = () => {
   return (
     <div>
       <Spin spinning={loading.value} size="large">
-        <StickyHeader title={"RMA Ticket"}>
+        <StickyHeader>
         <Button
             icon={<PlusOutlined />}
             type="primary"
@@ -121,33 +117,6 @@ const Dashboard = () => {
           <Title level={5}>What you returning?</Title>
             <Paragraph>Enter your devices MAC Address. Your device MAC Address is necessary for data retrieval purposes.</Paragraph>  
             <Form layout='vertical' form={form} >
-                <Item
-                  label="Input your device MAC Address"
-                  name="name"
-                  rules={[{ required: true, 
-                    // message: 'Please input your name!' 
-                  }]}
-                  >
-                  <Search
-                    placeholder="Search MAC Address"
-                    allowClear
-                    size="middle"
-                    onSearch={handleSearch}
-                    style={{
-                      display:'flex',
-                      alignItems: 'flex-end', 
-                      }}
-                  />
-                  {errorAlert && (
-                  <Alert
-                    message={errorAlert}
-                    type="error"
-                    showIcon
-                    style={{ marginTop: '10px' }}
-                  />
-                )}
-                </Item>
-                <Divider style={{ opacity: 0.7 }}>or</Divider>
                 <Item
                   label="Input your device MAC Address"
                   name="name"

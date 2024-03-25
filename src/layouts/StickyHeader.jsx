@@ -39,6 +39,7 @@ const StickyHeader = ({ title, children }) => {
         letterSpacing: "0.228px",
         backdropFilter: "blur(20px) saturate(180%)",
         WebkitBackdropFilter: "blur(20px) saturate(180%)",
+        padding: "0 17px"
       }}
       expandIcon={({ isActive }) => (
         <DownOutlined rotate={isActive ? -180 : 0} />
