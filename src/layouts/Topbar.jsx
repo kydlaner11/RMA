@@ -6,10 +6,13 @@ import LogoButton from "./components/LogoButton";
 import PopoverNotification from "./components/PopoverNotification";
 // import SearchField from "./components/SearchField";  
 import UserProfileAvatar from "./components/UserProfileAvatar";
-// import MenuBar from "./components/MenuBar";  
+import MenuBar from "./components/MenuBar";  
+import { useSelector } from "react-redux";
+
 const { useToken } = theme;
 
 const Topbar = () => {
+  const { auth } = useSelector((state) => state);
   const { token } = useToken();
 
   return (
@@ -42,7 +45,7 @@ const Topbar = () => {
           gap: "16px",
         }}
       >
-        {/* <MenuBar /> */}
+        {auth.accessToken && <MenuBar />}
 
       </div>
 

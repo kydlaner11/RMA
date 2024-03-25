@@ -53,7 +53,7 @@ const StickyHeader = ({ title, children }) => {
         {
           key: title,
           id: "sticky-header-title",
-          label: title,
+          // label: title,
           children: screens?.md ? (
             <></>
           ) : children !== undefined ? (

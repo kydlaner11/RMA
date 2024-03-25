@@ -97,7 +97,7 @@ const Dashboard = () => {
   return (
     <div>
       <Spin spinning={loading.value} size="large">
-        <StickyHeader>
+        <StickyHeader title={'RMA Ticket'}>
         <Button
             icon={<PlusOutlined />}
             type="primary"

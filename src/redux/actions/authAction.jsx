@@ -2,19 +2,25 @@ import Cookies from "js-cookie";
 import { removeAllCookies } from "../../utils/cookies";
 import { generatePages } from "./appAction";
 import { GLOBALTYPES } from "./globalTypes";
+import Api from "../../api";
 
-export const login = () => async (dispatch) => {
+
+export const login = (values) => async (dispatch) => {
   try {
-    // call login api here
-    const res = {
-      data: {
-        user: "Naruto Uzumaki",
-        email: "naruto.uzumaki@dwp.co.id",
-        role: "admin",
-        accessToken: "accesstoken",
-        refreshToken: "refreshtoken",
-      },
-    };
+    const res = await Api.post('/api/logincust', values 
+      );
+      const resp = res.data;
+      console.log(resp);
+    
+    // const res = {
+    //   data: {
+    //     user: "Naruto Uzumaki",
+    //     email: "naruto.uzumaki@dwp.co.id",
+    //     role: "admin",
+    //     accessToken: "accesstoken",
+    //     refreshToken: "refreshtoken",
+    //   },
+    // };
 
     Cookies.set("refresh_token", res.data.refreshToken, {
       secure: true,

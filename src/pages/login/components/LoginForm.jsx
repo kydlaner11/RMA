@@ -4,7 +4,7 @@ import { Button, Form, Input, message } from "antd";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { login } from "../../../redux/actions/authAction";
+import { login } from "../../../redux/actions/authAction"; // import login action
 import Api from "../../../api";
 
 const steps = [
@@ -33,30 +33,14 @@ const LoginForm = () => {
 
   const onFinish = async (values) => {
     try {
-      // Mengambil token JWT dari cookies
-      // const token = localStorage.getItem("access_token");
-      // // Memastikan token tersedia sebelum melakukan request API
-      // if (!token) {
-      //   message.error('Token not found. Please log in again.');
-      //   return;
-      // }
-
-      const response = await Api.post('/api/logincust', values 
-      // {
-      //   headers: {
-      //     Authorization: `Bearer ${token}`, // Menggunakan token JWT dari cookies
-      //   },
-      // }
-      );
+      const response = await Api.post('/api/logincust', values);
       const resp = response.data;
-      console.log(resp);
 
       if (Object.keys(resp).length === 0) {
         message.error('Please enter a valid Email');
       } else {
-        // const token = resp.token; // Anggap token disimpan dalam resp dari API
-        // localStorage.setItem("access_token", token);
-        dispatch(login(resp));
+        // Pass values to login action
+        dispatch(login(values)); // Pass values to login action
         navigate('/');
         message.success('Login successful');
       }
@@ -69,15 +53,6 @@ const LoginForm = () => {
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
-
-  // useEffect(() => {
-  //   // Check jika user sudah memiliki token JWT, langsung redirect ke halaman utama
-  //   const token = localStorage.getItem("access_token");
-  //   console.log(token)
-  //   if (token) {
-  //     navigate('dashboard');
-  //   }
-  // }, [navigate]);
 
   const handleTour = () => {
     setIsOpen(true);
