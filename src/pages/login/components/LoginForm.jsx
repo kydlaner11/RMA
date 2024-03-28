@@ -1,11 +1,11 @@
 import { PlayCircleFilled } from "@ant-design/icons";
 import { useTour } from "@reactour/tour";
-import { Button, Divider, Form, Input } from "antd";
+import { Button, Form, Input, message } from "antd";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import logoDNet from "../../../assets/images/logo d~net.png";
-import { login } from "../../../redux/actions/authAction";
+import { login } from "../../../redux/actions/authAction"; // import login action
+import Api from "../../../api";
 
 const steps = [
   {
@@ -31,12 +31,21 @@ const LoginForm = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const onFinish = (data) => {
+  const onFinish = async (values) => {
     try {
-      dispatch(login(data));
-      navigate("/");
-    } catch (err) {
-      console.error(err);
+      const response = await Api.post('/api/logincust', values);
+      const resp = response.data;
+
+      if (Object.keys(resp).length === 0) {
+        message.error('Please enter a valid Email');
+      } else {
+        dispatch(login(values));
+        navigate('/');
+        message.success('Login successful');
+      }
+    } catch (error) {
+      console.error('Error logging in:', error);
+      message.error('Failed to log in');
     }
   };
 
@@ -83,13 +92,14 @@ const LoginForm = () => {
         className="login-form"
       >
         <Form.Item
-          label="Username"
-          name="username"
-          className="login-username"
+          label="Email"
+          name="email"
+          type="email"
+          className="login-email"
           rules={[
             {
               required: true,
-              message: "Please input your username!",
+              message: "Please input your Email!",
             },
           ]}
         >
@@ -123,37 +133,6 @@ const LoginForm = () => {
           </Button>
         </Form.Item>
       </Form>
-
-      <Divider style={{ opacity: 0.7 }}>or</Divider>
-
-      <Button
-        type="default"
-        className="login-oauth"
-        style={{
-          width: "100%",
-          alignItems: "center",
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
-        <img
-          src={logoDNet}
-          alt="Logo d~net"
-          height="100%"
-          style={{ marginRight: "3px" }}
-        />
-        <span
-          style={{
-            fontSize: "11px",
-            fontWeight: 600,
-            opacity: 0.6,
-            marginTop: "3px",
-          }}
-        >
-          Continue with OAuth
-        </span>
-      </Button>
-
       <div
         className="login-signup"
         style={{
@@ -163,7 +142,7 @@ const LoginForm = () => {
           opacity: 0.7,
         }}
       >
-        Don&lsquo;t have any account? <a href="/signup">Sign Up</a>
+        Don&lsquo;t have any account? <a href="/register">Register</a>
       </div>
     </div>
   );

@@ -4,7 +4,7 @@ import React from "react";
 
 import { useSelector } from "react-redux";
 import Bottombar from "./Bottombar";
-import Sidebar from "./Sidebar";
+// import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 
 const {useToken} = theme
@@ -37,7 +37,7 @@ const AppLayout = ({
       {notificationHolder}
 
       <Layout>
-        {auth.accessToken && <Sidebar />}
+        {/* {auth.accessToken && <Sidebar />} */}
 
         <Layout>
           <Content
