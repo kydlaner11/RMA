@@ -1,4 +1,6 @@
+import { Spin } from "antd";
 import React from "react";
+
 
 const Loading = () => {
   return (
@@ -11,7 +13,7 @@ const Loading = () => {
         justifyContent: "center",
       }}
     >
-      Loading...
+      <Spin />  
     </div>
   );
 };

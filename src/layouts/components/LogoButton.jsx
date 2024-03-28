@@ -1,22 +1,23 @@
-import { Button, theme } from "antd";
+import { Button } from "antd";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import logo from "../../assets/images/logo512.png";
+import logo from "../../assets/images/logo d~net.png";
 
-const { useToken } = theme;
+// const { useToken } = theme;
 
 const LogoButton = () => {
   const navigate = useNavigate();
-  const token = useToken();
+  // const token = useToken();
 
   return (
-    <Button
+    <Button 
       icon={
-        <img src={logo} alt="logo" height="25px" style={{ margin: "0 7px" }} />
+        <img src={logo} alt="logo" height="25px" style={{ }} />
       }
-      type="primary"
+      style={{ width:100 }}
+      type="text"
       size="large"
-      style={{ backgroundColor: token.colorPrimaryBg }}
+      // style={{ backgroundColor: token.colorPrimaryBg }}
       onClick={() => navigate("/")}
     />
   );
