@@ -7,20 +7,9 @@ import Api from "../../api";
 
 export const login = (values) => async (dispatch) => {
   try {
-    const res = await Api.post('/api/logincust', values 
-      );
-      const resp = res.data;
-      console.log(resp);
-    
-    // const res = {
-    //   data: {
-    //     user: "Naruto Uzumaki",
-    //     email: "naruto.uzumaki@dwp.co.id",
-    //     role: "admin",
-    //     accessToken: "accesstoken",
-    //     refreshToken: "refreshtoken",
-    //   },
-    // };
+    const response = await Api.post('/api/logincust', values);
+    const res = response.data;
+    console.log("res", res  );
 
     Cookies.set("refresh_token", res.data.refreshToken, {
       secure: true,
@@ -45,7 +34,7 @@ export const login = (values) => async (dispatch) => {
       },
     });
 
-    dispatch(generatePages(res.data.role));
+    dispatch(generatePages());
   } catch (error) {
     dispatch({
       type: GLOBALTYPES.MESSAGE,
@@ -58,19 +47,28 @@ export const login = (values) => async (dispatch) => {
 
 export const refreshToken = () => async (dispatch) => {
   const refresh_token = Cookies.get("refresh_token");
+  const access_token = Cookies.get("access_token"); // Jika server memerlukan access token dalam header
+
+  console.log('Refresh Token:', refresh_token);
+  console.log('Access Token:', access_token);
 
   if (refresh_token) {
     try {
-      // Call refresh_token api here
-      const res = {
-        data: {
-          user: "Naruto Uzumaki",
-          email: "naruto.uzumaki@dwp.co.id",
-          role: "admin",
-          accessToken: "accesstoken",
-          refreshToken: "refreshtoken",
-        },
-      };
+      let config = {};
+      if (access_token) {
+        config = {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+            "Content-Type": "application/json",
+          },
+        };
+      }
+
+      const response = await Api.post("/api/customer/refresh", { refresh_token }, config);
+      const res = response.data;
+      console.log('Refresh Token Response:', res);
+
+
 
       Cookies.set("access_token", res.data.accessToken, {
         secure: true,
@@ -83,7 +81,7 @@ export const refreshToken = () => async (dispatch) => {
         payload: res.data,
       });
 
-      dispatch(generatePages(res.data.role));
+      dispatch(generatePages());
     } catch (error) {
       dispatch({
         type: GLOBALTYPES.MESSAGE,
@@ -91,6 +89,7 @@ export const refreshToken = () => async (dispatch) => {
           error: "Something went wrong",
         },
       });
+      console.log(error)
     }
   }
 };

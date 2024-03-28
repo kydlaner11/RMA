@@ -39,8 +39,7 @@ const LoginForm = () => {
       if (Object.keys(resp).length === 0) {
         message.error('Please enter a valid Email');
       } else {
-        // Pass values to login action
-        dispatch(login(values)); // Pass values to login action
+        dispatch(login(values));
         navigate('/');
         message.success('Login successful');
       }

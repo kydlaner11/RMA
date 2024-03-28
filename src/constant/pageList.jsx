@@ -55,7 +55,7 @@ export const authenticatedPageList = () =>
       element: <Dashboard />,
       icon: <HomeOutlined />,
       key: "dashboard",
-      label: "Dashboard",
+      label: "Open Ticket",
       description:
         "Provides administrators direct access to important Encompass tools.",
     }),
