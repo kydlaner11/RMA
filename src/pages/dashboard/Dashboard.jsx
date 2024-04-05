@@ -50,6 +50,34 @@ const Dashboard = () => {
     }
   });
   
+  const calculateRemainingDays = (warrantyDate) => {
+    const now = new Date();
+    const expirationDate = new Date(warrantyDate);
+    const differenceInTime = expirationDate.getTime() - now.getTime();
+    const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24)); // Menghitung selisih hari
+    return differenceInDays;
+  };
+  const beforeUpload = (file) => {
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    if (!isJpgOrPng) {
+      message.error('You can only upload JPG/PNG file!');
+    }
+    return isJpgOrPng;
+  };
+  const customRequest = ({ onSuccess }) => {
+    setTimeout(() => {
+      onSuccess("ok");
+    }, 0);
+  };
+  const fetchCargoOptions = async () => {
+    try {
+      const response = await api.get('/api/endpoint/kurir');
+      setCargoOptions(response.data);
+    } catch (error) {
+      console.error('Error fetching cargo options:', error);
+    }
+  };
+
 
   const handleSearch = async (value) => {
     try {
@@ -91,44 +119,11 @@ const Dashboard = () => {
       setLoadings(false);
     }
   }
+
   const handleCloseModal = () => {
     setOpen(false);
     form.resetFields(); 
     setErrorAlert(null);
-  };
-
-  const calculateRemainingDays = (warrantyDate) => {
-    const now = new Date();
-    const expirationDate = new Date(warrantyDate);
-    const differenceInTime = expirationDate.getTime() - now.getTime();
-    const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24)); // Menghitung selisih hari
-    return differenceInDays;
-  };
-
-  const apiTable = async (cancelled) => {
-    try {
-      const bearerToken = Cookies.get("access_token");
-      if (!bearerToken) {
-        throw new Error('Bearer token not found.');
-      }
-      
-      const response = await api.get('/api/customer/view-ticket-customerid', {
-        headers: {
-          Authorization: `Bearer ${bearerToken}`,
-        },
-        params: {
-          filterCancelled: cancelled ? undefined:'true',
-        },
-      });
-      setDataTable(response.data);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
-
-  const handleChange = async (checked) => {
-    setFilterCancelled(checked);
-    apiTable(checked);
   };
 
   const handleAddData = async () => {
@@ -204,44 +199,6 @@ const Dashboard = () => {
     }
   };
 
-  const beforeUpload = (file) => {
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-    if (!isJpgOrPng) {
-      message.error('You can only upload JPG/PNG file!');
-    }
-    return isJpgOrPng;
-  };
-
-  const customRequest = ({ onSuccess }) => {
-    setTimeout(() => {
-      onSuccess("ok");
-    }, 0);
-  };
-  
-  const fetchCargoOptions = async () => {
-    try {
-      const response = await api.get('/api/endpoint/kurir');
-      setCargoOptions(response.data);
-    } catch (error) {
-      console.error('Error fetching cargo options:', error);
-    }
-  };
-
-  const handleInfoClick = () => {
-    setOpenDrawer(true);
-  };
-  const handleEditClick = (id) => {
-    setEditTicketId(id);
-    console.log("ini",id) // Set the ID of the ticket being edited
-    setOpenFormEdit(true); // Open the modal for editing
-  };
-  const handleCancelClick = (id) => {
-    setEditTicketId(id);
-    console.log("ini",id) // Set the ID of the ticket being edited
-    setIsModalVisible(true); // Open the modal for editing
-  };
-  
-
   const handleCancel = async () => {
     setIsModalVisible(false); 
     const bearerToken = Cookies.get("access_token"); 
@@ -262,9 +219,46 @@ const Dashboard = () => {
       }
     
   };
+
+  const handleInfoClick = () => {
+    setOpenDrawer(true);
+  };
+  const handleEditClick = (id) => {
+    setEditTicketId(id);
+    console.log("ini",id) // Set the ID of the ticket being edited
+    setOpenFormEdit(true); // Open the modal for editing
+  };
+  const handleCancelClick = (id) => {
+    setEditTicketId(id);
+    console.log("ini",id) // Set the ID of the ticket being edited
+    setIsModalVisible(true); // Open the modal for editing
+  };
   
+  const apiTable = async (cancelled) => {
+    try {
+      const bearerToken = Cookies.get("access_token");
+      if (!bearerToken) {
+        throw new Error('Bearer token not found.');
+      }
+      
+      const response = await api.get('/api/customer/view-ticket-customerid', {
+        headers: {
+          Authorization: `Bearer ${bearerToken}`,
+        },
+        params: {
+          filterCancelled: cancelled ? undefined:'true',
+        },
+      });
+      setDataTable(response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+  const handleChange = async (checked) => {
+    setFilterCancelled(checked);
+    apiTable(checked);
+  };
   useEffect(() => {
-    // Ambil opsi dari API saat komponen dimuat
     apiTable();
     fetchCargoOptions();
   }, []);
