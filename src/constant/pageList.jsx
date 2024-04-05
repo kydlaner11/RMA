@@ -1,18 +1,20 @@
 import {
+  DiffOutlined,
+  // HistoryOutlined,
   // BarChartOutlined,
   // CheckSquareOutlined,
   // CustomerServiceOutlined,
   // FileTextOutlined,
-  HomeOutlined,
+  // HomeOutlined,
   // SettingOutlined,
   TeamOutlined,
 } from "@ant-design/icons";
 import { lazy } from "react";
 import { generateAuthPage } from "../utils/pages";
-// const Activity = lazy(() => import("../pages/activity/Activity"));
+// const History = lazy(() => import("../pages/activity/History"));
 const Dashboard = lazy(() => import("../pages/dashboard/Dashboard"));
-const DetailDashboard = lazy(() =>
-  import("../pages/dashboard/DetailDashboard")
+const ModalEdit = lazy(() =>
+  import("../pages/dashboard/components/modalEdit")
 );
 const Login = lazy(() => import("../pages/login/Login"));
 const Signup = lazy(() => import("../pages/login/Signup"));
@@ -53,7 +55,7 @@ export const authenticatedPageList = () =>
   [
     generateAuthPage({
       element: <Dashboard />,
-      icon: <HomeOutlined />,
+      icon: <DiffOutlined />,
       key: "dashboard",
       label: "Open Ticket",
       description:
@@ -75,10 +77,10 @@ export const authenticatedPageList = () =>
       description: "Provides user information and activity log.",
     }),
     // generateAuthPage({
-    //   element: <Activity />,
-    //   icon: <BarChartOutlined />,
-    //   key: "activity",
-    //   label: "Activity",
+    //   element: <History />,
+    //   icon: <HistoryOutlined />,
+    //   key: "history",
+    //   label: "History",
     //   description: "Provides activity information.",
     // }),
     // generateAuthPage({
@@ -140,7 +142,7 @@ export const authenticatedPageList = () =>
 
 export const authenticatedDetailPageList = () => [
   generateAuthPage({
-    element: <DetailDashboard />,
+    element: <ModalEdit />,
     key: "dashboard/:id",
   }), 
 ];
