@@ -90,7 +90,7 @@ const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions }
           width={'90vw'}  
         >
         <div style={{ padding: '0 32px'}}>
-          {/* <Spin spinning={loadings} size="large"> */}
+          <Spin spinning={loading} size="large">
             <Form form={form} initialValues={ticketData} labelCol={{span: 4,}} wrapperCol={{span: 18,}} layout="horizontal" style={{ marginTop:36 }}>
                 <Row gutter={[16, 16]}>
                   <Col xs={24} sm={24} md={12} lg={12} xl={12} xxl={12}>
@@ -106,6 +106,14 @@ const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions }
                     <Form.Item label="MAC Address" name="mac_address">
                       <Input disabled style={{ color:'black' }}/>
                     </Form.Item>
+                    <div style={{ display:'none' }} >
+                      <Form.Item name="company_id">
+                        <Input  />
+                      </Form.Item>
+                      <Form.Item name="unit">
+                        <Input  />
+                      </Form.Item>
+                    </div>
                    
                   </Col>
                   {/* <Col span={2}></Col> */}
@@ -144,7 +152,7 @@ const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions }
                   </Col>
                 </Row>
             </Form>
-          {/* </Spin> */}
+          </Spin>
         </div>
         </Modal>
   );

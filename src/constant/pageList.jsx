@@ -7,7 +7,7 @@ import {
   // FileTextOutlined,
   // HomeOutlined,
   // SettingOutlined,
-  TeamOutlined,
+  // TeamOutlined,
 } from "@ant-design/icons";
 import { lazy } from "react";
 import { generateAuthPage } from "../utils/pages";
@@ -20,7 +20,7 @@ const Login = lazy(() => import("../pages/login/Login"));
 const Signup = lazy(() => import("../pages/login/Signup"));
 const ForgetPass = lazy(() => import("../pages/login/ForgetPass"));
 const PassForm = lazy(() => import("../pages/login/components/PassForm"));
-const Users = lazy(() => import("../pages/users/Users"));
+// const Users = lazy(() => import("../pages/users/Users"));  
 
 export const unauthenticatedPageList = [
   {
@@ -69,13 +69,13 @@ export const authenticatedPageList = () =>
     //   description:
     //     "Provides administrators direct access to important Encompass tools.",
     // }),
-    generateAuthPage({
-      element: <Users />,
-      icon: <TeamOutlined />,
-      key: "users",
-      label: "Users",
-      description: "Provides user information and activity log.",
-    }),
+    // generateAuthPage({
+    //   element: <Users />,
+    //   icon: <TeamOutlined />,
+    //   key: "users",
+    //   label: "Users",
+    //   description: "Provides user information and activity log.",
+    // }),
     // generateAuthPage({
     //   element: <History />,
     //   icon: <HistoryOutlined />,

@@ -7,7 +7,7 @@ import React, { lazy, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { CookiesIcon } from "./assets/svg/cookiesSvg";
-// import LaravelEchoClient from "./components/LaravelEchoClient";
+import LaravelEchoClient from "./components/LaravelEchoClient";
 import SuspensePage from "./components/SuspensePage";
 import { cookiesButton, cookiesMessage } from "./constant/cookiesNotification";
 import { unauthenticatedPageList } from "./constant/pageList";
@@ -128,8 +128,8 @@ function App() {
                 },
               }}
             >
-              {auth.accessToken 
-              // <LaravelEchoClient />
+              {auth.accessToken &&
+              <LaravelEchoClient />
               }
 
               <AppLayout

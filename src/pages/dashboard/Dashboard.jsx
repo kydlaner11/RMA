@@ -407,14 +407,14 @@ const Dashboard = () => {
                       <TextArea placeholder="" rows={4} value={note} onChange={(e) => setNote(e.target.value) } />
                     </Form.Item>  
                     </div>
-                    <Form.Item label="Cargo" name="cargo">
+                    <Form.Item label="Cargo" name="cargo" extra="We must make sure that your are a human.">
                       <Select placeholder="Pilih Jasa Pengiriman">
                         {cargoOptions.map(option => (
                           <Option key={option.id} value={option.id}>{option.cargo_name}</Option>
                         ))}
                       </Select>
                     </Form.Item>
-                    <Form.Item label="Resi" name="tracking_number">
+                    <Form.Item label="Resi" name="tracking_number" extra="We must make sure that your are a human.">
                       <Input  placeholder="Masukan Nomer Resi"/>
                     </Form.Item>
                     <Form.Item label="Upload" name="photos">
@@ -447,8 +447,8 @@ const Dashboard = () => {
             // TODO: Fix bug undefined
             scroll={{ x: 1000 }}
           />
-        </div>
         <CancelTicket openModal={isModalVisible} handleCancel={handleCancel}/>
+        </div>
         <ModalEdit openFormEdit={openFormEdit} setOpenFormEdit={setOpenFormEdit}  editTicketId={editTicketId} cargoOptions={cargoOptions}/>
         <UserDrawer openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} />
       </Spin>
