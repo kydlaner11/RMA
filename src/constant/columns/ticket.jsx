@@ -1,35 +1,60 @@
 import {
   ExclamationCircleOutlined,
-  InfoCircleOutlined,
-  CheckCircleOutlined
+  SearchOutlined,
+  CheckCircleOutlined,
+  EditOutlined,
+  // CloseOutlined
 } from "@ant-design/icons";
-import { Avatar, Button, Tag } from "antd";
+import {  Button, Tag, Space } from "antd";
 import { accountAbility } from "../../utils/ability";
 import { getColumnSearchProps } from "../../utils/column";
-import moment from "moment";
 
 
-// Fungsi untuk menentukan apakah suatu tanggal sudah melewati periode garansi
-const isOutOfWarranty = (warrantyEndDate) => {
-  // Misalnya, kita asumsikan tanggal sekarang adalah hari ini
-  const currentDate = moment();
-  const warrantyEnd = moment(warrantyEndDate);
-  
-  return currentDate.isAfter(warrantyEnd); // Mengembalikan true jika sudah melewati periode garansi
+
+const isOutOfWarranty = (warranty, created_at) => {
+  const endDate = new Date(warranty);
+  const creationDate = new Date(created_at);
+
+  // Jika tanggal pembuatan lebih besar dari tanggal berakhirnya garansi, maka sudah berakhir
+  if (creationDate > endDate) {
+    return true;
+  } else {
+    return false;
+  }
 };
 
 const statusOptions = [
   {
-    text: "Alive",
-    value: "Alive",
+    text: "Waiting Approval",
+    value: "waiting",
   },
   {
-    text: "Dead",
-    value: "Dead",
+    text: "Approved",
+    value: "approved",
   },
   {
-    text: "unknown",
-    value: "unknown",
+    text: "Received",
+    value: "received",
+  },
+  {
+    text: "Testing and Processing",
+    value: "testing",
+  },
+  {
+    text: "Fullfilment",
+    value: "fullfilment",
+  },
+  {
+    text: "Finished",
+    value: "finished",
+  },
+  {
+    text: "Cancelled",
+    value: "cancelled",
+  },
+  {
+    text: "Rejected",
+    value: "rejected",
   },
 ];
 
@@ -55,14 +80,13 @@ const warrantyOptions = [
   },
 ];
 
-export const charactersColumn = ({ searchProps }) =>
+export const charactersColumn = ({ searchProps, handleInfoClick, handleEditClick, handleCancelClick}) =>
   [
     {
       title: "Ticket RMA",
       dataIndex: "no_tickets",
       key: "no_tickets",
       ...getColumnSearchProps("no_tickets", searchProps),
-      sorter: (a, b) => a.name.localeCompare(b.name),
       render: (_, record) => (
         <div>
           {record.no_tickets}
@@ -70,18 +94,23 @@ export const charactersColumn = ({ searchProps }) =>
       ),
     },
     {
+      title: "Unit",
+      dataIndex: "unit",
+      key: "unit",
+      ...getColumnSearchProps("unit", searchProps),
+      render: (_, record) => (
+        <div>
+          {record.unit}
+        </div>
+      ),
+    },
+    {
       title: "Device",
       dataIndex: "product_name",
       key: "product_name",
-      ...getColumnSearchProps("product_name", searchProps),
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      ...getColumnSearchProps("product_name", searchProps), 
       render: (_, record) => (
         <div>
-          <Avatar
-            src={record.image}
-            alt={record.name}
-            style={{ marginRight: "8px" }}
-          />{" "}
           {record.product_name}
         </div>
       ),
@@ -92,7 +121,6 @@ export const charactersColumn = ({ searchProps }) =>
       key: "mac_address",
       filters: speciesOptions,
       ...getColumnSearchProps("mac_address", searchProps),
-      sorter: (a, b) => a.name.localeCompare(b.name),
       render: (_, record) => (
         <div>
           {record.mac_address}
@@ -104,9 +132,16 @@ export const charactersColumn = ({ searchProps }) =>
       dataIndex: "warranty",
       key: "warranty",
       filters: warrantyOptions,
-      onFilter: (value, record) => record.warranty === value,
+      onFilter: (value, record) => {
+        if (value === "Wp") {
+          return !isOutOfWarranty(record.warranty, record.created_at);
+        } else if (value === "Oow") {
+          return isOutOfWarranty(record.warranty, record.created_at);
+        }
+        return false;
+      },
       render: (_, record) => {
-        const isExpired = isOutOfWarranty(record.warrantyEndDate);
+        const isExpired = isOutOfWarranty(record.warranty, record.created_at);
         return (
           <Tag
             icon={isExpired ? <ExclamationCircleOutlined /> : <CheckCircleOutlined />}
@@ -117,62 +152,55 @@ export const charactersColumn = ({ searchProps }) =>
         );
       },
     },
-    // {
-    //   title: "Warranty",
-    //   dataIndex: "warranty",
-    //   key: "warranty",
-    //   filters: warrantyOptions,
-    //   onFilter: (value, record) => record.gender.indexOf(value) === 0,
-    //   render: (_, record) => (
-    //     <Tag
-    //       icon={
-    //         record.warranty === "Male" ? (
-    //           <ArrowUpOutlined rotate={45} />
-    //         ) : record.warranty === "Female" ? (
-    //           <PlusOutlined />
-    //         ) : (
-    //           <QuestionOutlined />
-    //         )
-    //       }
-    //       color={
-    //         record.warranty === "Male"
-    //           ? "blue"
-    //           : record.warranty === "Female"
-    //           ? "pink"
-    //           : "orange"
-    //       }
-    //     >
-    //       {record.warranty}
-    //     </Tag>
-    //   ),
-    // },
     {
       title: "Status",
       dataIndex: "status_ticket",
       key: "status_ticket",
       filters: statusOptions,
-      onFilter: (value, record) => record.status.indexOf(value) === 0,
+      onFilter: (value, record) => {
+        const statusOption = statusOptions.find(option => option.text === record.status_ticket);
+        return statusOption && statusOption.value === value;
+      },
       render: (_, record) => (
         <Tag
           color={
-            record.status === "Alive"
+            record.status_ticket === "Waiting Approval"
+              ? "processing"
+              : record.status_ticket === "Approved"
               ? "green"
-              : record.status === "Dead"
-              ? "red"
-              : "orange"
+              : record.status_ticket === "Received"
+              ? "orange"
+              : record.status_ticket === "Testing and Processing"
+              ? "purple"
+              : record.status_ticket === "Fullfilment"
+              ? "success"
+              : record.status_ticket === "Finished"
+              ? "geekblue"
+              : record.status_ticket === "Rejected"
+              ? "error"
+              : "default"
           }
         >
-          {record.status}
+          {record.status_ticket}
         </Tag>
       ),
     },
     {
       title: "Action",
       key: "action",
-      render: () => (
-        <>
-          <Button type="text" size="large" icon={<InfoCircleOutlined />} />
-        </>
+      render: (_, record) => (
+        <Space size="middle">
+          {record.status_ticket === "Waiting Approval" && (
+            <>
+              <Button icon={<SearchOutlined />} onClick={handleInfoClick} >Info</Button>
+              <Button type="primary" icon={<EditOutlined />} onClick={() => handleEditClick(record.id)} >Edit</Button>
+              <Button danger onClick={() => handleCancelClick(record.id)}>Cancel</Button>
+            </>
+          )}
+          {record.status_ticket !== "Waiting Approval" && (
+            <Button icon={<SearchOutlined />} onClick={handleInfoClick} >Info</Button>
+          )}
+        </Space>
       ),
       hidden: accountAbility().can("update", "dashboard") ? false : true,
     },

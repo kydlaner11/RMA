@@ -8,8 +8,8 @@ export const getColumnSearchProps = (
     handleSearch,
     handleReset,
     searchInput,
-    setSearchText,
-    setSearchedColumn,
+    // setSearchText,
+    // setSearchedColumn,
     searchedColumn,
     searchText,
   }
@@ -19,7 +19,7 @@ export const getColumnSearchProps = (
     selectedKeys,
     confirm,
     clearFilters,
-    close,
+    // close,
   }) => (
     <div
       style={{
@@ -38,6 +38,7 @@ export const getColumnSearchProps = (
         style={{
           marginBottom: 8,
           display: "block",
+          width: '300px'
         }}
       />
       <Space>
@@ -61,7 +62,8 @@ export const getColumnSearchProps = (
         >
           Reset
         </Button>
-        <Button
+
+        {/* <Button
           type="link"
           size="small"
           onClick={() => {
@@ -82,7 +84,7 @@ export const getColumnSearchProps = (
           }}
         >
           close
-        </Button>
+        </Button> */}
       </Space>
     </div>
   ),

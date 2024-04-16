@@ -128,7 +128,9 @@ function App() {
                 },
               }}
             >
-              {auth.accessToken && <LaravelEchoClient />}
+              {auth.accessToken &&
+              <LaravelEchoClient />
+              }
 
               <AppLayout
                 alertApi={alertApi}

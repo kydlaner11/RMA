@@ -8,9 +8,8 @@ import StickyHeader from "../../layouts/StickyHeader";
 import useSearchColumn from "../../hooks/useSearchColumn";
 import { charactersColumn } from "../../constant/columns/ticket";
 import api from "../../api";
-import UserDrawer from "./components/userDrawer";
-import ModalEdit from "./components/modalEdit";
-import CancelTicket from "./components/cancelTicket";
+import UserDrawer from "../dashboard/components/userDrawer";
+import ModalEdit from "../dashboard/components/modalEdit";
 
 const {Item} = Form;
 const {Option} = Select;
@@ -26,6 +25,7 @@ const Dashboard = () => {
   const [note, setNote] = useState('');
   const searchProps = useSearchColumn();
   const [open, setOpen] = useState(false);
+  const [editId, setEditId] = useState(null);
   const [problem, setProblem] = useState('');
   const [loadings, setLoadings] = useState(false);
   const [openForm, setOpenForm] = useState(false);
@@ -34,11 +34,8 @@ const Dashboard = () => {
   const [errorAlert, setErrorAlert] = useState(null);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [cargoOptions, setCargoOptions] = useState([]);
-  const [editTicketId, setEditTicketId] = useState(null);
   const [openFormEdit, setOpenFormEdit] = useState(false); 
   const [remainingDays, setRemainingDays] = useState(null);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  // const [editTicketData, setEditTicketData] = useState(null);
   const [filterCancelled, setFilterCancelled] = useState(false);
 
 
@@ -50,38 +47,9 @@ const Dashboard = () => {
     }
   });
   
-  const calculateRemainingDays = (warrantyDate) => {
-    const now = new Date();
-    const expirationDate = new Date(warrantyDate);
-    const differenceInTime = expirationDate.getTime() - now.getTime();
-    const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24)); // Menghitung selisih hari
-    return differenceInDays;
-  };
-  const beforeUpload = (file) => {
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-    if (!isJpgOrPng) {
-      message.error('You can only upload JPG/PNG file!');
-    }
-    return isJpgOrPng;
-  };
-  const customRequest = ({ onSuccess }) => {
-    setTimeout(() => {
-      onSuccess("ok");
-    }, 0);
-  };
-  const fetchCargoOptions = async () => {
-    try {
-      const response = await api.get('/api/endpoint/kurir');
-      setCargoOptions(response.data);
-    } catch (error) {
-      console.error('Error fetching cargo options:', error);
-    }
-  };
-
-
+  
   const handleSearch = async (value) => {
     try {
-      setLoadings(true); 
       const bearerToken = Cookies.get("access_token"); 
       if (!bearerToken) {
         throw new Error('Bearer token not found.');
@@ -93,7 +61,7 @@ const Dashboard = () => {
         },
       });
       setDetailData(response.data);
-      console.log(response.data)
+      console.log(detailData)
       form.setFieldsValue(response.data);
       setOpenForm(true);
       setOpen(false)
@@ -103,27 +71,58 @@ const Dashboard = () => {
       const warrantyDate = response.data?.warranty;
       const daysLeft = calculateRemainingDays(warrantyDate);
       setRemainingDays(daysLeft);
-      // if (daysLeft <= 0) {
-      //   setErrorAlert('Your device is out of warranty, you will be charged an additional fee if you proceed.');
-      // } else if (daysLeft <= 30) {
-      //   setErrorAlert(`Your device warranty will expire in ${daysLeft} day(s).`);
-      // } else {
-      //   setErrorAlert(null);
-      // }
+      if (daysLeft <= 0) {
+        setErrorAlert('Your device is out of warranty, you will be charged an additional fee if you proceed.');
+      } else if (daysLeft <= 30) {
+        setErrorAlert(`Your device warranty will expire in ${daysLeft} day(s).`);
+      } else {
+        setErrorAlert(null);
+      }
     } catch (error) {
       console.log(error);
       setDetailData(null);
       form.resetFields();
       setErrorAlert('MAC Address or Serial Number not found. Please contact your admin');
-    }finally {
-      setLoadings(false);
     }
   }
-
   const handleCloseModal = () => {
     setOpen(false);
     form.resetFields(); 
     setErrorAlert(null);
+  };
+
+  const calculateRemainingDays = (warrantyDate) => {
+    const now = new Date();
+    const expirationDate = new Date(warrantyDate);
+    const differenceInTime = expirationDate.getTime() - now.getTime();
+    const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24)); // Menghitung selisih hari
+    return differenceInDays;
+  };
+
+  const apiTable = async (cancelled) => {
+    try {
+      const bearerToken = Cookies.get("access_token");
+      if (!bearerToken) {
+        throw new Error('Bearer token not found.');
+      }
+      
+      const response = await api.get('/api/customer/view-ticket-customerid', {
+        headers: {
+          Authorization: `Bearer ${bearerToken}`,
+        },
+        params: {
+          filterCancelled: cancelled ? 'true' : undefined,
+        },
+      });
+      setDataTable(response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  const handleChange = async (checked) => {
+    setFilterCancelled(checked);
+    apiTable(checked);
   };
 
   const handleAddData = async () => {
@@ -163,7 +162,7 @@ const Dashboard = () => {
           // photos: form.getFieldValue('photos') || [], 
         };
   
-        // console.log("detailData",detailData)
+        console.log(newTicket);
   
         // Kirim permintaan POST untuk menambahkan tiket
         const response = await api.post('/api/customer/ticket', newTicket, {
@@ -179,98 +178,65 @@ const Dashboard = () => {
           setOpenForm(false) 
           message.success('Ticket added successfully');
         } else {
-          message.error('Failed to add ticket');
+          message.error(response.data.message || 'Failed to add ticket');
         }
       } else {
         throw new Error('Failed to fetch user data or user ID not found.');
       }
     } catch (error) {
       console.error('Error adding ticket:', error);
-      if (error.response && error.response.status === 400) {
-        message.error('Mac Address already created RMA Ticket');
-      } else if (error.response && error.response.status === 404) {
-        message.error('Server down, Please try again later');
-      } else {
-        // Tangani status respons lainnya di sini
-        message.error('Failed to add ticket');
-      }
+      message.error('Failed to create ticket');
     } finally {
       setLoadings(false);
     }
   };
 
-  const handleCancel = async () => {
-    setIsModalVisible(false); 
-    const bearerToken = Cookies.get("access_token"); 
-      if (!bearerToken) {
-        throw new Error('Bearer token not found.');
-      }// Tutup modal konfirmasi
-      // Lakukan embatalan tiket jika dikonfirmasi
-      try {
-        await api.put(`api/customer/cancel-ticket?ticket_id=${editTicketId}`, null, {
-          headers: {
-            Authorization: `Bearer ${bearerToken}`,
-          },
-        });
-        message.success('Ticket cancelled successfully');
-      } catch (error) {
-        console.log(error);
-        message.error('Failed to cancel ticket');
-      }
-    
+  const beforeUpload = (file) => {
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    if (!isJpgOrPng) {
+      message.error('You can only upload JPG/PNG file!');
+    }
+    return isJpgOrPng;
+  };
+
+  const customRequest = ({ onSuccess }) => {
+    setTimeout(() => {
+      onSuccess("ok");
+    }, 0);
+  };
+  
+
+  const fetchCargoOptions = async () => {
+    try {
+      const response = await api.get('/api/endpoint/kurir');
+      setCargoOptions(response.data);
+    } catch (error) {
+      console.error('Error fetching cargo options:', error);
+    }
   };
 
   const handleInfoClick = () => {
     setOpenDrawer(true);
   };
-  const handleEditClick = (id) => {
-    setEditTicketId(id);
-    console.log("ini",id) // Set the ID of the ticket being edited
-    setOpenFormEdit(true); // Open the modal for editing
+
+  const handleEditClick = (record) => {
+    setEditId(record.id);
+    console.log('ini',record.id) // Set detail data yang akan diedit
+    setOpenFormEdit(true); // Buka modal edit
   };
-  const handleCancelClick = (id) => {
-    setEditTicketId(id);
-    console.log("ini",id) // Set the ID of the ticket being edited
-    setIsModalVisible(true); // Open the modal for editing
-  };
+
   
-  const apiTable = async (cancelled) => {
-    try {
-      const bearerToken = Cookies.get("access_token");
-      if (!bearerToken) {
-        throw new Error('Bearer token not found.');
-      }
-      
-      const response = await api.get('/api/customer/view-ticket-customerid', {
-        headers: {
-          Authorization: `Bearer ${bearerToken}`,
-        },
-        params: {
-          filterCancelled: cancelled ? undefined:'true',
-        },
-      });
-      setDataTable(response.data);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
-  const handleChange = async (checked) => {
-    setFilterCancelled(checked);
-    apiTable(checked);
-  };
   useEffect(() => {
+    // Ambil opsi dari API saat komponen dimuat
     apiTable();
     fetchCargoOptions();
   }, []);
-
-
-
   return (
     <div>
       <Spin spinning={loading.value} size="large">
         <StickyHeader title={'RMA Ticket'}>
-          <div style={{ marginRight: "10px" }}>
-            <Switch checked={filterCancelled} onChange={handleChange} checkedChildren="Active Ticket" unCheckedChildren="View All"/>
+          <div>
+            <Switch checked={filterCancelled} onChange={handleChange} />
           </div>
           <Button
             icon={<PlusOutlined />}
@@ -288,41 +254,38 @@ const Dashboard = () => {
         footer={null}
       >
         <div style={{ padding: '0 32px'}}>
-        <Spin spinning={loadings}>
           <Title level={5}>What you returning?</Title>
             <Paragraph>Enter your MAC Address or Serial Number of your device. This information is essential for completing the return process </Paragraph>
             <div style={{ padding: '6px 0'}}></div>
             {/* <Title level={5}>Input your MAC or Serial Number Here!</Title> */}
             <Form layout='vertical' form={form} >
-                
-                  <Item
-                    // label="Input your device MAC Address"
-                    name="name"
-                    rules={[{ required: true, 
-                      // message: 'Please input your name!' 
-                    }]}
-                    >
-                    <Search
-                      placeholder="Search MAC Address"
-                      allowClear
-                      size="middle"
-                      onSearch={handleSearch}
-                      style={{
-                        display:'flex',
-                        alignItems: 'flex-end', 
-                        }}
-                    />
-                    {errorAlert && (
-                    <Alert
-                      message={errorAlert}
-                      type="error"
-                      showIcon
-                      style={{ marginTop: '10px' }}
-                    />
-                  )}
-                  </Item>
+                <Item
+                  // label="Input your device MAC Address"
+                  name="name"
+                  rules={[{ required: true, 
+                    // message: 'Please input your name!' 
+                  }]}
+                  >
+                  <Search
+                    placeholder="Search MAC Address"
+                    allowClear
+                    size="middle"
+                    onSearch={handleSearch}
+                    style={{
+                      display:'flex',
+                      alignItems: 'flex-end', 
+                      }}
+                  />
+                  {errorAlert && (
+                  <Alert
+                    message={errorAlert}
+                    type="error"
+                    showIcon
+                    style={{ marginTop: '10px' }}
+                  />
+                )}
+                </Item>
             </Form>
-          </Spin>
         </div>
         </Modal>
       
@@ -371,9 +334,6 @@ const Dashboard = () => {
                       <Form.Item name="lot_id">
                         <Input  />
                       </Form.Item>
-                      <Form.Item name="unit">
-                        <Input  />
-                      </Form.Item>
                     </div>
                     <div className="">
                     <Item label="Warranty" name="warranty">
@@ -384,9 +344,7 @@ const Dashboard = () => {
                       <Alert
                         message={
                           remainingDays <= 0
-                            ? (<span>
-                              Your device is out of warranty, you will be charged an <b>additional fee</b> if you proceed.
-                            </span>)
+                            ? 'Your device is out of warranty, you will be charged an additional fee if you proceed.'
                             : `Your device warranty will expire in ${remainingDays} day(s).`
                         }
                         type={remainingDays <= 0 ? 'error' : 'warning'}
@@ -400,21 +358,21 @@ const Dashboard = () => {
                   {/* <Col span={2}></Col> */}
                   <Col xs={24} sm={24} md={12} lg={12} xl={12} xxl={12}>
                     <Form.Item label="Problem" name="problem">
-                      <TextArea placeholder="Deskripsikan masalah perangkat anda"  rows={4} value={problem} onChange={(e) => setProblem(e.target.value)} required />
+                      <TextArea placeholder="Masukan Permasalahan Barang Anda!" rows={4} value={problem} onChange={(e) => setProblem(e.target.value)} required />
                     </Form.Item>
                     <div style={{ display:'none' }}>
                     <Form.Item label="Notes" name="note">
                       <TextArea placeholder="" rows={4} value={note} onChange={(e) => setNote(e.target.value) } />
                     </Form.Item>  
                     </div>
-                    <Form.Item label="Cargo" name="cargo" extra="We must make sure that your are a human.">
+                    <Form.Item label="Cargo" name="cargo">
                       <Select placeholder="Pilih Jasa Pengiriman">
                         {cargoOptions.map(option => (
                           <Option key={option.id} value={option.id}>{option.cargo_name}</Option>
                         ))}
                       </Select>
                     </Form.Item>
-                    <Form.Item label="Resi" name="tracking_number" extra="We must make sure that your are a human.">
+                    <Form.Item label="Resi" name="tracking_number">
                       <Input  placeholder="Masukan Nomer Resi"/>
                     </Form.Item>
                     <Form.Item label="Upload" name="photos">
@@ -442,15 +400,14 @@ const Dashboard = () => {
         <div style={{ padding: 32 }}>
           <Table
             // loading={loading}
-            columns={charactersColumn({ searchProps, handleInfoClick, handleEditClick, handleCancelClick })}
+            columns={charactersColumn({ searchProps, handleInfoClick, handleEditClick })}
             dataSource={dataTable}
             // TODO: Fix bug undefined
             scroll={{ x: 1000 }}
           />
-        <CancelTicket openModal={isModalVisible} handleCancel={handleCancel}/>
         </div>
-        <ModalEdit openFormEdit={openFormEdit} setOpenFormEdit={setOpenFormEdit}  editTicketId={editTicketId} cargoOptions={cargoOptions}/>
-        <UserDrawer openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} />
+        <ModalEdit openFormEdit={openFormEdit} setOpenFormEdit={setOpenFormEdit}/>
+        <UserDrawer openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} editId={editId}/>
       </Spin>
     </div>
   );
