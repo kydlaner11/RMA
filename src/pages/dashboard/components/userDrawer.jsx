@@ -1,41 +1,93 @@
-import {Space, Button, Drawer, Tabs, Steps, Rate,  Card, Typography, Input } from 'antd';
-import { UserOutlined, CheckCircleOutlined} from '@ant-design/icons';
-import React from "react";
+import { Button, Drawer, Tabs, Steps, Rate,  Card, Typography, Input, message, Spin } from 'antd';
+import { AlertOutlined, CheckCircleOutlined, FileSearchOutlined, StarOutlined,FileOutlined} from '@ant-design/icons';
+import React, { useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import Api from '../../../api';
+
 
 const { TabPane } = Tabs;
 const {Title, Paragraph} = Typography;
 
-const UserDrawer = ({ openDrawer, setOpenDrawer }) => {
-  const onClose = () => {
+const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId }) => {
+    const [loading, setLoading] = useState(false);
+    const [ticketData, setTicketData] = useState(null);
+
+    
+
+// how to get data from infoTicketId
+    const fetchTicketData = async () => {
+        try {
+            setLoading(true);
+            const bearerToken = Cookies.get("access_token"); 
+            if (!bearerToken) {
+                throw new Error('Bearer token not found.');
+            }
+            const response = await Api.get(`api/customer/ticket/${infoTicketId}`, {
+                headers: {
+                    Authorization: `Bearer ${bearerToken}`,
+                },
+            });
+            console.log(response.data.ticket)
+            if (response.status === 200) {
+                setTicketData(response.data.ticket);
+                console.log(ticketData)
+            } else {
+                message.error(response.data.message || 'Failed to fetch ticket data');
+            }
+        } catch (error) {
+            console.error('Error fetching ticket data:', error);
+            message.error('Failed to fetch ticket data');
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        if (infoTicketId) {
+            fetchTicketData();
+        }
+    }, [infoTicketId]);
+
+ 
+    const onClose = () => {
     setOpenDrawer(false);
   };
+  if (loading) {
+    return <Spin />;
+  }
+
 
   return (
     <Drawer
-      title="Drawer with extra actions"
+      title={ticketData ? `Ticket Details: ${ticketData.no_tickets}` : 'RMA Ticket Details'}
       className="user-drawer"
       placement={"right"}
-      width={800}
+      width={625}
       open={openDrawer}
       onClose={onClose}
-      extra={
-        <Space>
-          <Button onClick={onClose}>Cancel</Button>
-          <Button type="primary" onClick={onClose}>
-            OK
-          </Button>
-        </Space>
-      }
     >
       <Tabs defaultActiveKey="1" type="card" centered>
-        <TabPane tab={<span><UserOutlined /> Details</span>} key="1">
+        <TabPane tab={<span><FileSearchOutlined />Details</span>} key="1">
             <div className="" style={{width: 330, marginTop: 16,}}>
                 <Card>
-
+                    <div>
+                        <Title level={4}>Ticket Details</Title>
+                        <Paragraph>
+                            <strong>Ticket Number:</strong> {ticketData?.no_tickets}
+                        </Paragraph>
+                        <Paragraph>
+                            <strong>Address:</strong> {ticketData?.address}
+                        </Paragraph>
+                        <Paragraph>
+                            <strong>Description:</strong> {ticketData?.description}
+                        </Paragraph>
+                        {/* Add more ticket details here */}
+                    </div>
                 </Card>
             </div>     
         </TabPane>
-        <TabPane tab={<span><CheckCircleOutlined /> Log</span>} key="2" style={{width: 330, marginTop: 16,}}>
+        <TabPane tab={<span><AlertOutlined />Status</span>} key="2">
+            <div className="" style={{width: 330, padding: 15}}>
             <Steps
                 current={3}
                 direction="vertical"
@@ -77,8 +129,12 @@ const UserDrawer = ({ openDrawer, setOpenDrawer }) => {
                 },
                 ]}
             />
+            </div>     
         </TabPane>
-        <TabPane tab='Rate'  key="3">
+        <TabPane tab={<span><CheckCircleOutlined />Log</span>} key="3" style={{width: 330, marginTop: 16,}}>
+            
+        </TabPane>
+        <TabPane tab={<span><StarOutlined />Rate</span>}  key="4">
             <div style={{ maxWidth: 400, margin: 'auto' }}>
                 <Title level={3}>Rate Our Service</Title>
                 <Paragraph>
@@ -99,6 +155,13 @@ const UserDrawer = ({ openDrawer, setOpenDrawer }) => {
                     </Button>
                 </div>
             </div>
+        </TabPane>
+        <TabPane tab={<span><FileOutlined />Document</span>} key="5">
+            <div className="" style={{width: 330, marginTop: 16,}}>
+                <Card>
+
+                </Card>
+            </div>     
         </TabPane>
     </Tabs>
     </Drawer>

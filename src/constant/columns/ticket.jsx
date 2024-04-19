@@ -80,7 +80,7 @@ const warrantyOptions = [
   },
 ];
 
-export const charactersColumn = ({ searchProps, handleInfoClick, handleEditClick, handleCancelClick}) =>
+export const ticketsColumn = ({ searchProps, handleInfoClick, handleEditClick, handleCancelClick}) =>
   [
     {
       title: "Ticket RMA",
@@ -192,13 +192,13 @@ export const charactersColumn = ({ searchProps, handleInfoClick, handleEditClick
         <Space size="middle">
           {record.status_ticket === "Waiting Approval" && (
             <>
-              <Button icon={<SearchOutlined />} onClick={handleInfoClick} >Info</Button>
+              <Button icon={<SearchOutlined />} onClick={() => handleInfoClick(record.id)} >Info</Button>
               <Button type="primary" icon={<EditOutlined />} onClick={() => handleEditClick(record.id)} >Edit</Button>
               <Button danger onClick={() => handleCancelClick(record.id)}>Cancel</Button>
             </>
           )}
           {record.status_ticket !== "Waiting Approval" && (
-            <Button icon={<SearchOutlined />} onClick={handleInfoClick} >Info</Button>
+            <Button icon={<SearchOutlined />} onClick={() => handleInfoClick(record.id)} >Info</Button>
           )}
         </Space>
       ),

@@ -43,11 +43,11 @@ export const unauthenticatedPageList = [
     element: <ForgetPass />,
     key: "forgot_password",
   },
-  {
-    path: "hanya",
-    element: <Dashboard />,
-    key: "hanya",
-  },
+  // {
+  //   path: "hanya",
+  //   element: <Dashboard />,
+  //   key: "hanya",
+  // },
 ];
 
 // ? Documentation in src/utils/pages.js
