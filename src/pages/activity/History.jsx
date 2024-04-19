@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import StickyHeader from "../../layouts/StickyHeader";
 import useSearchColumn from "../../hooks/useSearchColumn";
-import { charactersColumn } from "../../constant/columns/ticket";
+import { ticketsColumn } from "../../constant/columns/ticket";
 import api from "../../api";
 import UserDrawer from "../dashboard/components/userDrawer";
 import ModalEdit from "../dashboard/components/modalEdit";
@@ -400,7 +400,7 @@ const Dashboard = () => {
         <div style={{ padding: 32 }}>
           <Table
             // loading={loading}
-            columns={charactersColumn({ searchProps, handleInfoClick, handleEditClick })}
+            columns={ticketsColumn({ searchProps, handleInfoClick, handleEditClick })}
             dataSource={dataTable}
             // TODO: Fix bug undefined
             scroll={{ x: 1000 }}

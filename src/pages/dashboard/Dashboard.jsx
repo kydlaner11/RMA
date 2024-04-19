@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import StickyHeader from "../../layouts/StickyHeader";
 import useSearchColumn from "../../hooks/useSearchColumn";
-import { charactersColumn } from "../../constant/columns/ticket";
+import { ticketsColumn } from "../../constant/columns/ticket";
 import api from "../../api";
 import UserDrawer from "./components/userDrawer";
 import ModalEdit from "./components/modalEdit";
@@ -35,6 +35,7 @@ const Dashboard = () => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [cargoOptions, setCargoOptions] = useState([]);
   const [editTicketId, setEditTicketId] = useState(null);
+  const [infoTicketId, setInfoTicketId] = useState(null);
   const [openFormEdit, setOpenFormEdit] = useState(false); 
   const [remainingDays, setRemainingDays] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -57,6 +58,26 @@ const Dashboard = () => {
     const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24)); // Menghitung selisih hari
     return differenceInDays;
   };
+
+  // how to create request respone 'photos' in multiple images
+  const uploadImages = async (images) => {
+    try {
+      const formData = new FormData();
+      images.forEach((image, index) => {
+        formData.append(`photos[${index}]`, image);
+      });
+      const response = await api.post('/api/customer/upload-image', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error uploading images:', error);
+      return [];
+    }
+  }
+
   const beforeUpload = (file) => {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
     if (!isJpgOrPng) {
@@ -64,11 +85,19 @@ const Dashboard = () => {
     }
     return isJpgOrPng;
   };
-  const customRequest = ({ onSuccess }) => {
-    setTimeout(() => {
-      onSuccess("ok");
-    }, 0);
+  const customRequest = async ({ file, onSuccess }) => {
+    try {
+      // Call the uploadImages function with the file
+      const response = await uploadImages([file]);
+      // If upload is successful, call onSuccess with the response
+      onSuccess(response.data);
+      message.success('Image uploaded successfully');
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      message.error('Failed to upload image');
+    }
   };
+  
   const fetchCargoOptions = async () => {
     try {
       const response = await api.get('/api/endpoint/kurir');
@@ -211,7 +240,7 @@ const Dashboard = () => {
           headers: {
             Authorization: `Bearer ${bearerToken}`,
           },
-        });
+        }); 
         message.success('Ticket cancelled successfully');
       } catch (error) {
         console.log(error);
@@ -219,8 +248,13 @@ const Dashboard = () => {
       }
     
   };
+  const handleCancelClose = async () => {
+    setIsModalVisible(false)
+  }
 
-  const handleInfoClick = () => {
+  const handleInfoClick = (id) => {
+    setInfoTicketId(id)
+    console.log("info",id)
     setOpenDrawer(true);
   };
   const handleEditClick = (id) => {
@@ -266,7 +300,7 @@ const Dashboard = () => {
 
 
   return (
-    <div>
+    <>
       <Spin spinning={loading.value} size="large">
         <StickyHeader title={'RMA Ticket'}>
           <div style={{ marginRight: "10px" }}>
@@ -280,6 +314,8 @@ const Dashboard = () => {
             Create Ticket
           </Button>
         </StickyHeader>
+
+
         <Modal
         title="RMA REQUEST"
         centered
@@ -299,7 +335,7 @@ const Dashboard = () => {
                     // label="Input your device MAC Address"
                     name="name"
                     rules={[{ required: true, 
-                      // message: 'Please input your name!' 
+                      message: 'Please enter your Mac Address!' 
                     }]}
                     >
                     <Search
@@ -407,31 +443,31 @@ const Dashboard = () => {
                       <TextArea placeholder="" rows={4} value={note} onChange={(e) => setNote(e.target.value) } />
                     </Form.Item>  
                     </div>
-                    <Form.Item label="Cargo" name="cargo" extra="We must make sure that your are a human.">
+                    <Form.Item label="Cargo" name="cargo" extra="Select your shipping cargo">
                       <Select placeholder="Pilih Jasa Pengiriman">
                         {cargoOptions.map(option => (
                           <Option key={option.id} value={option.id}>{option.cargo_name}</Option>
                         ))}
                       </Select>
                     </Form.Item>
-                    <Form.Item label="Resi" name="tracking_number" extra="We must make sure that your are a human.">
+                    <Form.Item label="Resi" name="tracking_number" extra="Enter your shipping receipt">
                       <Input  placeholder="Masukan Nomer Resi"/>
                     </Form.Item>
-                    <Form.Item label="Upload" name="photos">
+  
+                    <Form.Item label="Upload Image" name="photos" extra="Upload your device image">
                       <Upload
-                        name="avatar"
-                        listType="picture-card"
-                        className="avatar-uploader"
-                        showUploadList={true}
-                        beforeUpload={beforeUpload}
                         customRequest={customRequest}
+                        beforeUpload={beforeUpload}
+                        listType="picture-card"
+                        maxCount={3}
                       >
-                        <button style={{ border: 0, background: 'none' }} type="button">
+                        <div>
                           <PlusOutlined />
                           <div style={{ marginTop: 8 }}>Upload</div>
-                        </button>
+                        </div>
                       </Upload>
                     </Form.Item>
+                    
                   </Col>
                 </Row>
             </Form>
@@ -442,18 +478,19 @@ const Dashboard = () => {
         <div style={{ padding: 32 }}>
           <Table
             // loading={loading}
-            columns={charactersColumn({ searchProps, handleInfoClick, handleEditClick, handleCancelClick })}
+            columns={ticketsColumn({ searchProps, handleInfoClick, handleEditClick, handleCancelClick })}
             dataSource={dataTable}
             // TODO: Fix bug undefined
             scroll={{ x: 1000 }}
           />
-        <CancelTicket openModal={isModalVisible} handleCancel={handleCancel}/>
+        <CancelTicket openModal={isModalVisible}  handleCancel={handleCancel} handleClose={handleCancelClose} />
         </div>
         <ModalEdit openFormEdit={openFormEdit} setOpenFormEdit={setOpenFormEdit}  editTicketId={editTicketId} cargoOptions={cargoOptions}/>
-        <UserDrawer openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} />
+        <UserDrawer openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} infoTicketId={infoTicketId} />
       </Spin>
-    </div>
+    </>
   );
 };
+
 
 export default Dashboard;
