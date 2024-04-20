@@ -27,6 +27,7 @@ const Dashboard = () => {
   const searchProps = useSearchColumn();
   const [open, setOpen] = useState(false);
   const [problem, setProblem] = useState('');
+  const [images, setImages] = useState([]);
   const [loadings, setLoadings] = useState(false);
   const [openForm, setOpenForm] = useState(false);
   const [dataTable, setDataTable] = useState(false);
@@ -50,7 +51,7 @@ const Dashboard = () => {
       navigate(uri);
     }
   });
-  
+
   const calculateRemainingDays = (warrantyDate) => {
     const now = new Date();
     const expirationDate = new Date(warrantyDate);
@@ -60,18 +61,23 @@ const Dashboard = () => {
   };
 
   // how to create request respone 'photos' in multiple images
-  const uploadImages = async (images) => {
+  const uploadImages = async (Images) => {
     try {
       const formData = new FormData();
-      images.forEach((image, index) => {
-        formData.append(`photos[${index}]`, image);
+      //image pertama akan diupload ke API dengan nama 'photos' dan image kedua akan diupload dengan nama 'photos' juga 
+      //state menerima data photos yang diupload
+      Images.forEach((image) => {
+        formData.append(`photos`, image);
       });
-      const response = await api.post('/api/customer/upload-image', formData, {
+      const response = await api.post('/api/upload-image', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
+      console.log(response.data)
+      console.log(images)
       return response.data;
+      
     } catch (error) {
       console.error('Error uploading images:', error);
       return [];
@@ -87,16 +93,19 @@ const Dashboard = () => {
   };
   const customRequest = async ({ file, onSuccess }) => {
     try {
-      // Call the uploadImages function with the file
       const response = await uploadImages([file]);
-      // If upload is successful, call onSuccess with the response
-      onSuccess(response.data);
+      // Kenapa setImages tidak bisa menyimpan pada upload pertama
+
+      setImages(prevImages => prevImages ? [...prevImages, response] : [response]);
+      onSuccess();
       message.success('Image uploaded successfully');
+
     } catch (error) {
       console.error('Error uploading image:', error);
       message.error('Failed to upload image');
     }
   };
+
   
   const fetchCargoOptions = async () => {
     try {
@@ -181,7 +190,15 @@ const Dashboard = () => {
           : `Customer Name: ${origin} (${name})\nOdoo ID: ${odooId}\nAddress: ${address}`;      
         const combinedNote = `${userNote}`;  
         const newTicket = {
-          ...detailData,
+          company_id: form.getFieldValue('company_id'),
+          partner_id: form.getFieldValue('partner_id'),
+          product_name:  form.getFieldValue('product_name'),
+          lot_id:  form.getFieldValue('lot_id'),
+          mac_address: form.getFieldValue('mac_address'),
+          warranty:  form.getFieldValue('warranty'),
+          name: form.getFieldValue('name'),
+          product_id: form.getFieldValue('product_id'),
+          // ...detailData,
           address: form.getFieldValue('address'),
           phone: form.getFieldValue('phone'),
           problem: problem,
@@ -189,10 +206,11 @@ const Dashboard = () => {
           cargo_id: form.getFieldValue('cargo'), 
           tracking_number: form.getFieldValue('tracking_number'),
           customer_id: customerId,
-          // photos: form.getFieldValue('photos') || [], 
+          //mengirim data photos ke API dengan menghilangkan variable angka 
+          photos: images
         };
-  
-        // console.log("detailData",detailData)
+        
+        // console.log(newTicket)
   
         // Kirim permintaan POST untuk menambahkan tiket
         const response = await api.post('/api/customer/ticket', newTicket, {
@@ -242,6 +260,7 @@ const Dashboard = () => {
           },
         }); 
         message.success('Ticket cancelled successfully');
+        apiTable();
       } catch (error) {
         console.log(error);
         message.error('Failed to cancel ticket');
@@ -396,19 +415,19 @@ const Dashboard = () => {
                     </Form.Item>
                     <div style={{ display:'none' }} >
                       <Form.Item name="company_id">
-                        <Input  />
+                        <Input placeholder="company_id" />
                       </Form.Item>
                       <Form.Item name="partner_id">
-                        <Input  />
+                        <Input  placeholder="partner_id"/>
                       </Form.Item>
                       <Form.Item name="product_id">
-                        <Input  />
+                        <Input placeholder="product_id" />
                       </Form.Item>
                       <Form.Item name="lot_id">
-                        <Input  />
+                        <Input placeholder="lot_id" />
                       </Form.Item>
                       <Form.Item name="unit">
-                        <Input  />
+                        <Input placeholder="unit" />
                       </Form.Item>
                     </div>
                     <div className="">
@@ -435,12 +454,12 @@ const Dashboard = () => {
                   </Col>
                   {/* <Col span={2}></Col> */}
                   <Col xs={24} sm={24} md={12} lg={12} xl={12} xxl={12}>
-                    <Form.Item label="Problem" name="problem">
-                      <TextArea placeholder="Deskripsikan masalah perangkat anda"  rows={4} value={problem} onChange={(e) => setProblem(e.target.value)} required />
+                    <Form.Item label="Problem" name="problem" style={{ marginBottom:30 }} >
+                      <TextArea placeholder="Deskripsikan masalah perangkat anda"  rows={4} value={problem} onChange={(e) => setProblem(e.target.value)} required  />
                     </Form.Item>
                     <div style={{ display:'none' }}>
                     <Form.Item label="Notes" name="note">
-                      <TextArea placeholder="" rows={4} value={note} onChange={(e) => setNote(e.target.value) } />
+                        <TextArea placeholder="" rows={4} value={note} onChange={(e) => setNote(e.target.value) } />
                     </Form.Item>  
                     </div>
                     <Form.Item label="Cargo" name="cargo" extra="Select your shipping cargo">

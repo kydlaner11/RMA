@@ -24,6 +24,8 @@ const NotFound = () => {
       }}
     >
       <Col
+        xs={{ span: 24 }}
+        sm={{ span: 12 }}
         style={{
           padding: "1rem",
         }}
@@ -40,7 +42,17 @@ const NotFound = () => {
           <Lottie animationData={networkAnimation} loop={true} />
         </div>
       </Col>
- 
+      <Col
+        xs={{ span: 24 }}
+        sm={{ span: 12 }}
+        style={{
+          padding: "1rem",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+      </Col>
     </Row>
     
     </>
