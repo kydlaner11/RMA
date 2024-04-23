@@ -55,8 +55,8 @@ export default defineConfig({
     reporters: "dot",
   },
   server: {
-    open: true,
+    open: false,
     port: 3010,
-    https: true,
+    https: false,
   },
 });
