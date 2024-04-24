@@ -12,6 +12,11 @@ services:
     build:
       context: ./
       dockerfile: ./Dockerfile
+      args:
+        UID: 1000
+        GID: 1000
+        UNAME: ariani
+    user: 1000:1000
     working_dir: /app
     restart: unless-stopped
     volumes:
