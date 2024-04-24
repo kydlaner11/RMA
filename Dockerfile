@@ -1,7 +1,11 @@
 FROM node:18
 
-ENV UID=${UID}
-ENV GID=${GID}
+#setting user
+ARG UID
+ARG GID
+ARG UNAME
+RUN groupadd -g ${GID} -o ${UNAME}
+RUN useradd -m -u ${UID} -g ${GID} -o -s /bin/sh ${UNAME}
 
 ENV NVM_DIR=/usr/local/nvm
 
