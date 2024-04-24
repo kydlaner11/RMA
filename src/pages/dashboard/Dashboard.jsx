@@ -197,6 +197,7 @@ const Dashboard = () => {
           mac_address: form.getFieldValue('mac_address'),
           warranty:  form.getFieldValue('warranty'),
           name: form.getFieldValue('name'),
+          unit: form.getFieldValue('unit'),
           product_id: form.getFieldValue('product_id'),
           // ...detailData,
           address: form.getFieldValue('address'),

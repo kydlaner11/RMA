@@ -65,6 +65,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId }) => {
           const response = await Api.get(`api/images?ticket_id=${infoTicketId}`, {
             headers: {
               Authorization: `Bearer ${bearerToken}`,
+              "ngrok-skip-browser-warning": "69420"
             },
           });
           setImageView(response.data);
