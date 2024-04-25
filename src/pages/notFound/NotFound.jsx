@@ -1,7 +1,9 @@
 import React from "react";
 import Lottie from "lottie-react";
 import networkAnimation from "../../assets/lottie/network.json";
-import { Col, Grid, Row, theme } from "antd";
+import { Button, Col, Grid, Row, theme } from "antd";
+import { removeAllCookies } from "../../utils/cookies";
+
 
 
 const { useBreakpoint } = Grid;
@@ -11,6 +13,10 @@ const NotFound = () => {
   const screens = useBreakpoint();
   const { token } = useToken();
 
+  const removeCookies = () => {
+    removeAllCookies();
+    window.location.href = "/";
+  }
   return (
     <>
     <Row
@@ -24,6 +30,8 @@ const NotFound = () => {
       }}
     >
       <Col
+        xs={{ span: 24 }}
+        sm={{ span: 12 }}
         style={{
           padding: "1rem",
         }}
@@ -40,7 +48,20 @@ const NotFound = () => {
           <Lottie animationData={networkAnimation} loop={true} />
         </div>
       </Col>
- 
+      <Col
+        xs={{ span: 24 }}
+        sm={{ span: 12 }}
+        style={{
+          padding: "1rem",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Button type="primary" onClick={removeCookies}>
+          Remove Cookies and go to home
+        </Button>
+      </Col>
     </Row>
     
     </>

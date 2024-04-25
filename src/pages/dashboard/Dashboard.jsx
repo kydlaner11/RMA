@@ -1,4 +1,4 @@
-import {PlusOutlined,} from "@ant-design/icons";
+import {PlusOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import { effect, signal } from "@preact/signals-react";
 import { Alert, Button, Col,  Form, Input,  Modal, Row, Select, Spin, Switch, Table, Typography, Upload, message } from "antd";
 import Cookies from "js-cookie";
@@ -27,6 +27,7 @@ const Dashboard = () => {
   const searchProps = useSearchColumn();
   const [open, setOpen] = useState(false);
   const [problem, setProblem] = useState('');
+  const [images, setImages] = useState([]);
   const [loadings, setLoadings] = useState(false);
   const [openForm, setOpenForm] = useState(false);
   const [dataTable, setDataTable] = useState(false);
@@ -50,7 +51,7 @@ const Dashboard = () => {
       navigate(uri);
     }
   });
-  
+
   const calculateRemainingDays = (warrantyDate) => {
     const now = new Date();
     const expirationDate = new Date(warrantyDate);
@@ -60,18 +61,23 @@ const Dashboard = () => {
   };
 
   // how to create request respone 'photos' in multiple images
-  const uploadImages = async (images) => {
+  const uploadImages = async (Images) => {
     try {
       const formData = new FormData();
-      images.forEach((image, index) => {
-        formData.append(`photos[${index}]`, image);
+      //image pertama akan diupload ke API dengan nama 'photos' dan image kedua akan diupload dengan nama 'photos' juga 
+      //state menerima data photos yang diupload
+      Images.forEach((image) => {
+        formData.append(`photos`, image);
       });
-      const response = await api.post('/api/customer/upload-image', formData, {
+      const response = await api.post('/api/upload-image', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
+      console.log(response.data)
+      console.log(images)
       return response.data;
+      
     } catch (error) {
       console.error('Error uploading images:', error);
       return [];
@@ -87,16 +93,18 @@ const Dashboard = () => {
   };
   const customRequest = async ({ file, onSuccess }) => {
     try {
-      // Call the uploadImages function with the file
       const response = await uploadImages([file]);
-      // If upload is successful, call onSuccess with the response
-      onSuccess(response.data);
+
+      setImages(prevImages => prevImages ? [...prevImages, response] : [response]);
+      onSuccess();
       message.success('Image uploaded successfully');
+
     } catch (error) {
       console.error('Error uploading image:', error);
       message.error('Failed to upload image');
     }
   };
+
   
   const fetchCargoOptions = async () => {
     try {
@@ -110,7 +118,8 @@ const Dashboard = () => {
 
   const handleSearch = async (value) => {
     try {
-      setLoadings(true); 
+      setLoadings(true);
+      // form.resetFields(); 
       const bearerToken = Cookies.get("access_token"); 
       if (!bearerToken) {
         throw new Error('Bearer token not found.');
@@ -132,13 +141,7 @@ const Dashboard = () => {
       const warrantyDate = response.data?.warranty;
       const daysLeft = calculateRemainingDays(warrantyDate);
       setRemainingDays(daysLeft);
-      // if (daysLeft <= 0) {
-      //   setErrorAlert('Your device is out of warranty, you will be charged an additional fee if you proceed.');
-      // } else if (daysLeft <= 30) {
-      //   setErrorAlert(`Your device warranty will expire in ${daysLeft} day(s).`);
-      // } else {
-      //   setErrorAlert(null);
-      // }
+
     } catch (error) {
       console.log(error);
       setDetailData(null);
@@ -181,7 +184,16 @@ const Dashboard = () => {
           : `Customer Name: ${origin} (${name})\nOdoo ID: ${odooId}\nAddress: ${address}`;      
         const combinedNote = `${userNote}`;  
         const newTicket = {
-          ...detailData,
+          company_id: form.getFieldValue('company_id'),
+          partner_id: form.getFieldValue('partner_id'),
+          product_name:  form.getFieldValue('product_name'),
+          lot_id:  form.getFieldValue('lot_id'),
+          mac_address: form.getFieldValue('mac_address'),
+          warranty:  form.getFieldValue('warranty'),
+          name: form.getFieldValue('name'),
+          unit: form.getFieldValue('unit'),
+          product_id: form.getFieldValue('product_id'),
+          // ...detailData,
           address: form.getFieldValue('address'),
           phone: form.getFieldValue('phone'),
           problem: problem,
@@ -189,10 +201,11 @@ const Dashboard = () => {
           cargo_id: form.getFieldValue('cargo'), 
           tracking_number: form.getFieldValue('tracking_number'),
           customer_id: customerId,
-          // photos: form.getFieldValue('photos') || [], 
+          //mengirim data photos ke API dengan menghilangkan variable angka 
+          photos: images
         };
-  
-        // console.log("detailData",detailData)
+        
+        console.log(newTicket)
   
         // Kirim permintaan POST untuk menambahkan tiket
         const response = await api.post('/api/customer/ticket', newTicket, {
@@ -207,6 +220,16 @@ const Dashboard = () => {
           setProblem('');
           setOpenForm(false) 
           message.success('Ticket added successfully');
+
+          Modal.success({
+            title: 'Ticket Added',
+            content: 'The ticket has been successfully created, please send the product to the address listed on the ticket info and fill in the tracking number',
+            onOk: () => {
+              apiTable();   
+            },
+            
+            
+          });
         } else {
           message.error('Failed to add ticket');
         }
@@ -230,6 +253,7 @@ const Dashboard = () => {
 
   const handleCancel = async () => {
     setIsModalVisible(false); 
+    setLoadings(true); 
     const bearerToken = Cookies.get("access_token"); 
       if (!bearerToken) {
         throw new Error('Bearer token not found.');
@@ -242,9 +266,13 @@ const Dashboard = () => {
           },
         }); 
         message.success('Ticket cancelled successfully');
+        apiTable();
       } catch (error) {
         console.log(error);
         message.error('Failed to cancel ticket');
+      }finally {
+        setLoadings(false);
+      
       }
     
   };
@@ -296,6 +324,13 @@ const Dashboard = () => {
     apiTable();
     fetchCargoOptions();
   }, []);
+
+  // buatkan useEffect untuk mengkosongkan state Images ketika openForm diubah menjadi false
+  useEffect(() => {
+    if (!openForm) {
+      setImages([]);
+    }
+  }, [openForm]);
 
 
 
@@ -382,10 +417,10 @@ const Dashboard = () => {
                     <Form.Item label="Email" name="email">
                       <Input disabled style={{ color:'black' }} />
                     </Form.Item>
-                    <Form.Item label="Phone" name="phone">
+                    <Form.Item label="Phone" name="phone" rules={[{ required: true, message: 'Please enter your Phone' }]}>
                       <Input variant="filled" />
                     </Form.Item>
-                    <Form.Item label="Address" name="address">
+                    <Form.Item label="Address" name="address" extra={[<ExclamationCircleOutlined key="exclamation" />," This address is the product return address"]} rules={[{ required: true, message: 'Please enter your Address' }]}>
                       <TextArea variant="filled" />
                     </Form.Item>
                     <Form.Item label="Product" name="product_name">
@@ -396,19 +431,19 @@ const Dashboard = () => {
                     </Form.Item>
                     <div style={{ display:'none' }} >
                       <Form.Item name="company_id">
-                        <Input  />
+                        <Input placeholder="company_id" />
                       </Form.Item>
                       <Form.Item name="partner_id">
-                        <Input  />
+                        <Input  placeholder="partner_id"/>
                       </Form.Item>
                       <Form.Item name="product_id">
-                        <Input  />
+                        <Input placeholder="product_id" />
                       </Form.Item>
                       <Form.Item name="lot_id">
-                        <Input  />
+                        <Input placeholder="lot_id" />
                       </Form.Item>
                       <Form.Item name="unit">
-                        <Input  />
+                        <Input placeholder="unit" />
                       </Form.Item>
                     </div>
                     <div className="">
@@ -423,7 +458,7 @@ const Dashboard = () => {
                             ? (<span>
                               Your device is out of warranty, you will be charged an <b>additional fee</b> if you proceed.
                             </span>)
-                            : `Your device warranty will expire in ${remainingDays} day(s).`
+                            : (`Your device warranty will expire in ${remainingDays} day(s).`)
                         }
                         type={remainingDays <= 0 ? 'error' : 'warning'}
                         showIcon
@@ -435,12 +470,12 @@ const Dashboard = () => {
                   </Col>
                   {/* <Col span={2}></Col> */}
                   <Col xs={24} sm={24} md={12} lg={12} xl={12} xxl={12}>
-                    <Form.Item label="Problem" name="problem">
-                      <TextArea placeholder="Deskripsikan masalah perangkat anda"  rows={4} value={problem} onChange={(e) => setProblem(e.target.value)} required />
+                    <Form.Item label="Problem" name="problem" style={{ marginBottom:30 }} rules={[{ required: true, message: 'Please enter your problem' }]}>
+                      <TextArea placeholder="Deskripsikan masalah perangkat anda"  rows={4} value={problem} onChange={(e) => setProblem(e.target.value)}  />
                     </Form.Item>
                     <div style={{ display:'none' }}>
                     <Form.Item label="Notes" name="note">
-                      <TextArea placeholder="" rows={4} value={note} onChange={(e) => setNote(e.target.value) } />
+                        <TextArea placeholder="" rows={4} value={note} onChange={(e) => setNote(e.target.value) } />
                     </Form.Item>  
                     </div>
                     <Form.Item label="Cargo" name="cargo" extra="Select your shipping cargo">
@@ -460,6 +495,7 @@ const Dashboard = () => {
                         beforeUpload={beforeUpload}
                         listType="picture-card"
                         maxCount={3}
+                        disabled={form.getFieldValue('photos')?.length >= 3}
                       >
                         <div>
                           <PlusOutlined />
@@ -483,7 +519,9 @@ const Dashboard = () => {
             // TODO: Fix bug undefined
             scroll={{ x: 1000 }}
           />
-        <CancelTicket openModal={isModalVisible}  handleCancel={handleCancel} handleClose={handleCancelClose} />
+          <Spin spinning={loadings}>
+          <CancelTicket openModal={isModalVisible}  handleCancel={handleCancel} handleClose={handleCancelClose} />
+          </Spin>
         </div>
         <ModalEdit openFormEdit={openFormEdit} setOpenFormEdit={setOpenFormEdit}  editTicketId={editTicketId} cargoOptions={cargoOptions}/>
         <UserDrawer openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} infoTicketId={infoTicketId} />

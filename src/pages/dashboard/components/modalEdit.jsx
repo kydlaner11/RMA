@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-import {PlusOutlined,} from "@ant-design/icons";
 import Cookies from "js-cookie";
-import { Modal, Form, Input, Spin, message, Row, Col, Select, Upload } from 'antd';
+import { Modal, Form, Input, Spin, message, Row, Col, Select } from 'antd';
 import Api from '../../../api';
 
 const {Option} = Select;
@@ -81,43 +80,6 @@ const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions }
     return <Spin />;
   }
 
-  const uploadImages = async (images) => {
-    try {
-      const formData = new FormData();
-      images.forEach((image, index) => {
-        formData.append(`photos[${index}]`, image);
-      });
-      const response = await Api.post('/api/customer/upload-image', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Error uploading images:', error);
-      return [];
-    }
-  }
-
-  const beforeUpload = (file) => {
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-    if (!isJpgOrPng) {
-      message.error('You can only upload JPG/PNG file!');
-    }
-    return isJpgOrPng;
-  };
-  const customRequest = async ({ file, onSuccess }) => {
-    try {
-      // Call the uploadImages function with the file
-      const response = await uploadImages([file]);
-      // If upload is successful, call onSuccess with the response
-      onSuccess(response.data);
-      message.success('Image uploaded successfully');
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      message.error('Failed to upload image');
-    }
-  };
 
   return (
     <Modal
@@ -175,19 +137,6 @@ const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions }
                     </Form.Item>
                     <Form.Item label="Resi" name="tracking_number">
                       <Input  placeholder="Masukan Nomer Resi"/>
-                    </Form.Item>
-                    <Form.Item label="Upload Image" name="photos" extra="Upload your device image">
-                      <Upload
-                        customRequest={customRequest}
-                        beforeUpload={beforeUpload}
-                        listType="picture-card"
-                        maxCount={3}
-                      >
-                        <div>
-                          <PlusOutlined />
-                          <div style={{ marginTop: 8 }}>Upload</div>
-                        </div>
-                      </Upload>
                     </Form.Item>
                   </Col>
                 </Row>
