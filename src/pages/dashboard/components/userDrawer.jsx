@@ -1,4 +1,4 @@
-import { Button, Drawer, Tabs, Steps, Rate,  Card, Typography, Input, message, Spin, Divider, Tag, Image } from 'antd';
+import { Button, Drawer, Tabs, Steps, Rate,  Card, Typography, Input, message, Spin, Divider, Tag, Image, theme } from 'antd';
 import { AlertOutlined, CheckCircleOutlined, FileSearchOutlined, StarOutlined,FileOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
@@ -6,12 +6,14 @@ import Api from '../../../api';
 
 
 const { TabPane } = Tabs;
+const { useToken } = theme;
 const {Title, Paragraph} = Typography;
 
 const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId }) => {
     const [loading, setLoading] = useState(false);
     const [ticketData, setTicketData] = useState(null);
     const [imageView, setImageView] = useState([]);
+    const { token } = useToken();
 
     
     const isOutOfWarranty = (warranty, created_at) => {
@@ -32,19 +34,10 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId }) => {
     const fetchTicketData = async () => {
         try {
             setLoading(true);
-            const bearerToken = Cookies.get("access_token"); 
-            if (!bearerToken) {
-                throw new Error('Bearer token not found.');
-            }
-            const response = await Api.get(`api/customer/ticket/${infoTicketId}`, {
-                headers: {
-                    Authorization: `Bearer ${bearerToken}`,
-                },
-            });
-            console.log(response.data.ticket)
+            const response = await Api.get(`api/admin/get-ticket-details/${infoTicketId}`);
             if (response.status === 200) {
-                setTicketData(response.data.ticket);
-                console.log('Ticket Data:', response.data.ticket)
+                setTicketData(response.data[0]);
+                console.log('Ticket Data:', response.data[0])
             } else {
                 message.error(response.data.message || 'Failed to fetch ticket data');
             }
@@ -65,7 +58,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId }) => {
           const response = await Api.get(`api/images?ticket_id=${infoTicketId}`, {
             headers: {
               Authorization: `Bearer ${bearerToken}`,
-              "ngrok-skip-browser-warning": "69420"
+                "ngrok-skip-browser-warning": "69420"
             },
           });
           setImageView(response.data);
@@ -170,6 +163,22 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId }) => {
                             </div>
                         </div>
                     </Card>
+                    <Divider />
+                    <div style={{ backgroundColor: token.colorBgBase }}>
+                        <Paragraph>
+                            <strong>Shipping Address</strong>
+                        </Paragraph>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <Paragraph className='text-start'>Surabaya ( Pusat ) :</Paragraph> 
+                            <div className='text-end'style={{ width: 300, textAlign: 'end', marginBottom: 10 }}>Ciputra World Office Tower 30th Floor Unit 3009
+Jl. Mayjen Sungkono, Surabaya - INDONESIA 60224</div>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <Paragraph className='text-start'>Jakarta :</Paragraph> 
+                            <div className='text-end'style={{ width: 300, textAlign: 'end' }}>Kompleks Harco Elektonik - Mangga Dua Blok H-6
+Jalan Mangga Dua Raya - Jakarta Pusat 10730</div>
+                        </div>
+                    </div>
                 </Card>
             </div>     
         </TabPane>

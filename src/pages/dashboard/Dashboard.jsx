@@ -1,4 +1,4 @@
-import {PlusOutlined,} from "@ant-design/icons";
+import {PlusOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import { effect, signal } from "@preact/signals-react";
 import { Alert, Button, Col,  Form, Input,  Modal, Row, Select, Spin, Switch, Table, Typography, Upload, message } from "antd";
 import Cookies from "js-cookie";
@@ -94,7 +94,6 @@ const Dashboard = () => {
   const customRequest = async ({ file, onSuccess }) => {
     try {
       const response = await uploadImages([file]);
-      // Kenapa setImages tidak bisa menyimpan pada upload pertama
 
       setImages(prevImages => prevImages ? [...prevImages, response] : [response]);
       onSuccess();
@@ -119,7 +118,8 @@ const Dashboard = () => {
 
   const handleSearch = async (value) => {
     try {
-      setLoadings(true); 
+      setLoadings(true);
+      // form.resetFields(); 
       const bearerToken = Cookies.get("access_token"); 
       if (!bearerToken) {
         throw new Error('Bearer token not found.');
@@ -141,13 +141,7 @@ const Dashboard = () => {
       const warrantyDate = response.data?.warranty;
       const daysLeft = calculateRemainingDays(warrantyDate);
       setRemainingDays(daysLeft);
-      // if (daysLeft <= 0) {
-      //   setErrorAlert('Your device is out of warranty, you will be charged an additional fee if you proceed.');
-      // } else if (daysLeft <= 30) {
-      //   setErrorAlert(`Your device warranty will expire in ${daysLeft} day(s).`);
-      // } else {
-      //   setErrorAlert(null);
-      // }
+
     } catch (error) {
       console.log(error);
       setDetailData(null);
@@ -211,7 +205,7 @@ const Dashboard = () => {
           photos: images
         };
         
-        // console.log(newTicket)
+        console.log(newTicket)
   
         // Kirim permintaan POST untuk menambahkan tiket
         const response = await api.post('/api/customer/ticket', newTicket, {
@@ -226,6 +220,16 @@ const Dashboard = () => {
           setProblem('');
           setOpenForm(false) 
           message.success('Ticket added successfully');
+
+          Modal.success({
+            title: 'Ticket Added',
+            content: 'The ticket has been successfully created, please send the product to the address listed on the ticket info and fill in the tracking number',
+            onOk: () => {
+              apiTable();   
+            },
+            
+            
+          });
         } else {
           message.error('Failed to add ticket');
         }
@@ -249,6 +253,7 @@ const Dashboard = () => {
 
   const handleCancel = async () => {
     setIsModalVisible(false); 
+    setLoadings(true); 
     const bearerToken = Cookies.get("access_token"); 
       if (!bearerToken) {
         throw new Error('Bearer token not found.');
@@ -265,6 +270,9 @@ const Dashboard = () => {
       } catch (error) {
         console.log(error);
         message.error('Failed to cancel ticket');
+      }finally {
+        setLoadings(false);
+      
       }
     
   };
@@ -316,6 +324,13 @@ const Dashboard = () => {
     apiTable();
     fetchCargoOptions();
   }, []);
+
+  // buatkan useEffect untuk mengkosongkan state Images ketika openForm diubah menjadi false
+  useEffect(() => {
+    if (!openForm) {
+      setImages([]);
+    }
+  }, [openForm]);
 
 
 
@@ -402,10 +417,10 @@ const Dashboard = () => {
                     <Form.Item label="Email" name="email">
                       <Input disabled style={{ color:'black' }} />
                     </Form.Item>
-                    <Form.Item label="Phone" name="phone">
+                    <Form.Item label="Phone" name="phone" rules={[{ required: true, message: 'Please enter your Phone' }]}>
                       <Input variant="filled" />
                     </Form.Item>
-                    <Form.Item label="Address" name="address">
+                    <Form.Item label="Address" name="address" extra={[<ExclamationCircleOutlined key="exclamation" />," This address is the product return address"]} rules={[{ required: true, message: 'Please enter your Address' }]}>
                       <TextArea variant="filled" />
                     </Form.Item>
                     <Form.Item label="Product" name="product_name">
@@ -443,7 +458,7 @@ const Dashboard = () => {
                             ? (<span>
                               Your device is out of warranty, you will be charged an <b>additional fee</b> if you proceed.
                             </span>)
-                            : `Your device warranty will expire in ${remainingDays} day(s).`
+                            : (`Your device warranty will expire in ${remainingDays} day(s).`)
                         }
                         type={remainingDays <= 0 ? 'error' : 'warning'}
                         showIcon
@@ -455,8 +470,8 @@ const Dashboard = () => {
                   </Col>
                   {/* <Col span={2}></Col> */}
                   <Col xs={24} sm={24} md={12} lg={12} xl={12} xxl={12}>
-                    <Form.Item label="Problem" name="problem" style={{ marginBottom:30 }} >
-                      <TextArea placeholder="Deskripsikan masalah perangkat anda"  rows={4} value={problem} onChange={(e) => setProblem(e.target.value)} required  />
+                    <Form.Item label="Problem" name="problem" style={{ marginBottom:30 }} rules={[{ required: true, message: 'Please enter your problem' }]}>
+                      <TextArea placeholder="Deskripsikan masalah perangkat anda"  rows={4} value={problem} onChange={(e) => setProblem(e.target.value)}  />
                     </Form.Item>
                     <div style={{ display:'none' }}>
                     <Form.Item label="Notes" name="note">
@@ -480,6 +495,7 @@ const Dashboard = () => {
                         beforeUpload={beforeUpload}
                         listType="picture-card"
                         maxCount={3}
+                        disabled={form.getFieldValue('photos')?.length >= 3}
                       >
                         <div>
                           <PlusOutlined />
@@ -503,7 +519,9 @@ const Dashboard = () => {
             // TODO: Fix bug undefined
             scroll={{ x: 1000 }}
           />
-        <CancelTicket openModal={isModalVisible}  handleCancel={handleCancel} handleClose={handleCancelClose} />
+          <Spin spinning={loadings}>
+          <CancelTicket openModal={isModalVisible}  handleCancel={handleCancel} handleClose={handleCancelClose} />
+          </Spin>
         </div>
         <ModalEdit openFormEdit={openFormEdit} setOpenFormEdit={setOpenFormEdit}  editTicketId={editTicketId} cargoOptions={cargoOptions}/>
         <UserDrawer openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} infoTicketId={infoTicketId} />
