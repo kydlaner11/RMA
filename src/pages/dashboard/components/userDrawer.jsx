@@ -34,10 +34,19 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId }) => {
     const fetchTicketData = async () => {
         try {
             setLoading(true);
-            const response = await Api.get(`api/admin/get-ticket-details/${infoTicketId}`);
+            const bearerToken = Cookies.get("access_token"); 
+            if (!bearerToken) {
+                throw new Error('Bearer token not found.');
+            }
+            const response = await Api.get(`api/customer/get-ticket-details/${infoTicketId}`, {
+                headers: {
+                    Authorization: `Bearer ${bearerToken}`,
+                    "ngrok-skip-browser-warning": "69420"
+                }
+            });
             if (response.status === 200) {
-                setTicketData(response.data[0]);
-                console.log('Ticket Data:', response.data[0])
+                setTicketData(response.data);
+                console.log('Ticket Data:', response.data)
             } else {
                 message.error(response.data.message || 'Failed to fetch ticket data');
             }
@@ -128,7 +137,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId }) => {
                         
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <Paragraph className='text-start'><strong>Contact :</strong></Paragraph> 
-                            <div className='text-end'style={{ width: 275, textAlign: 'end' }}>{ticketData?.nama}</div>
+                            <div className='text-end'style={{ width: 275, textAlign: 'end' }}>{ticketData?.name}</div>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <Paragraph className='text-start'><strong>Phone :</strong></Paragraph> 
@@ -136,7 +145,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId }) => {
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <Paragraph className='text-start'><strong>Cargo :</strong></Paragraph> 
-                            <div className='text-end'style={{ width: 275, textAlign: 'end' }}>{ticketData?.cargo}</div>
+                            <div className='text-end'style={{ width: 275, textAlign: 'end' }}>{ticketData?.cargo?.cargo_name}</div>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <Paragraph className='text-start'><strong>Resi :</strong></Paragraph> 

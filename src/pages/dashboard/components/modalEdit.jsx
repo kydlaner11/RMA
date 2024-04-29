@@ -97,10 +97,10 @@ const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions }
                 <Row gutter={[16, 16]}>
                   <Col xs={24} sm={24} md={12} lg={12} xl={12} xxl={12}>
                     <Form.Item label="Phone" name="phone">
-                      <Input variant="filled" />
+                      <Input disabled variant="filled" />
                     </Form.Item>
                     <Form.Item label="Address" name="address">
-                      <TextArea variant="filled" />
+                      <TextArea disabled variant="filled" />
                     </Form.Item>
                     <Form.Item label="Product" name="product_name">
                       <Input disabled style={{ color:'black' }}/>
@@ -121,7 +121,7 @@ const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions }
                   {/* <Col span={2}></Col> */}
                   <Col xs={24} sm={24} md={12} lg={12} xl={12} xxl={12}>
                   <Form.Item label="Problem" name="problem">
-                      <TextArea placeholder="Deskripsikan masalah perangkat anda" rows={4}  required />
+                      <TextArea placeholder="Deskripsikan masalah perangkat anda" rows={4}  disabled />
                     </Form.Item>
                     <div style={{ display:'none' }}>
                     <Form.Item label="Notes" name="note">

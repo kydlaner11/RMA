@@ -45,7 +45,12 @@ const LoginForm = () => {
       }
     } catch (error) {
       console.error('Error logging in:', error);
-      message.error('Failed to log in');
+      if (error.response.status === 401) {
+        message.error(error.response.data.error);
+      } else {
+        message.error('Failed to login');
+      }
+      
     }
   };
 

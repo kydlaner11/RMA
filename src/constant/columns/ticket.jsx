@@ -5,7 +5,7 @@ import {
   EditOutlined,
   // CloseOutlined
 } from "@ant-design/icons";
-import {  Button, Tag, Space } from "antd";
+import {  Button, Tag, Space, Rate } from "antd";
 import { accountAbility } from "../../utils/ability";
 import { getColumnSearchProps } from "../../utils/column";
 
@@ -94,10 +94,10 @@ export const ticketsColumn = ({ searchProps, handleInfoClick, handleEditClick, h
       ),
     },
     {
-      title: "Unit",
-      dataIndex: "unit",
-      key: "unit",
-      ...getColumnSearchProps("unit", searchProps),
+      title: "Customer",
+      dataIndex: "customer",
+      key: "customer",
+      ...getColumnSearchProps("customer", searchProps),
       render: (_, record) => (
         <div>
           {record.unit}
@@ -185,6 +185,15 @@ export const ticketsColumn = ({ searchProps, handleInfoClick, handleEditClick, h
         </Tag>
       ),
     },
+    //buat rate di ticket column 
+    {
+      title: "Rate",
+      dataIndex: "rate",
+      key: "rate",
+      render: (_, record) => (
+        <Rate disabled defaultValue={record.rate} />
+      ),
+    },
     {
       title: "Action",
       key: "action",
@@ -199,6 +208,11 @@ export const ticketsColumn = ({ searchProps, handleInfoClick, handleEditClick, h
           )}
           {record.status_ticket !== "Waiting Approval" && (
             <Button icon={<SearchOutlined />} onClick={() => handleInfoClick(record.id)} >Info</Button>
+          )}
+          {record.rate === "Finished" && (
+            <>
+              <Button type="link" onClick={() => handleInfoClick(record.id)}  >Rate Now!</Button>
+            </>
           )}
         </Space>
       ),

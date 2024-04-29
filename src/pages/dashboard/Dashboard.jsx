@@ -219,16 +219,16 @@ const Dashboard = () => {
           setNote(''); 
           setProblem('');
           setOpenForm(false) 
-          message.success('Ticket added successfully');
+          // message.success('Ticket added successfully');
 
           Modal.success({
             title: 'Ticket Added',
-            content: 'The ticket has been successfully created, please send the product to the address listed on the ticket info and fill in the tracking number',
+            content: <div>
+              The ticket has been successfully created, <br /> <strong> please send the product to the address listed on the ticket info and fill in the tracking number</strong>
+            </div>,
             onOk: () => {
               apiTable();   
-            },
-            
-            
+            }
           });
         } else {
           message.error('Failed to add ticket');
