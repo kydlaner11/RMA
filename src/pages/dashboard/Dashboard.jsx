@@ -83,14 +83,18 @@ const Dashboard = () => {
       return [];
     }
   }
-
   const beforeUpload = (file) => {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    const isLt2M = file.size / 1024 / 1024 < 5; // Maksimum 2 MB
+
     if (!isJpgOrPng) {
-      message.error('You can only upload JPG/PNG file!');
+        message.error('You can only upload JPG/PNG file!');
+    } else if (!isLt2M) {
+        message.error('Image must be smaller than 2MB!');
     }
-    return isJpgOrPng;
-  };
+
+    return isJpgOrPng && isLt2M;
+};
   const customRequest = async ({ file, onSuccess }) => {
     try {
       const response = await uploadImages([file]);
@@ -146,7 +150,22 @@ const Dashboard = () => {
       console.log(error);
       setDetailData(null);
       form.resetFields();
-      setErrorAlert('MAC Address or Serial Number not found. Please contact your admin');
+      let errorMessage;
+      if (error.response && error.response.status === 401) {
+          errorMessage = 'Your session has ended. Please login again.';
+      } else if (error.response && error.response.status === 400) {
+          errorMessage = (
+            <span>
+                Your product warranty is false. Please contact an administrator or 
+                <a href="#" style={{ textDecoration: 'underline', marginLeft: '5px' }}>Click Here</a>
+            </span>
+        );
+      } else if (error.response && error.response.status === 404){
+        errorMessage = 'MAC Address or Serial Number not found. Please contact an administrator.'
+      } else {
+        errorMessage = 'An error occurred. Please try again later.'
+      }
+      setErrorAlert(errorMessage);
     }finally {
       setLoadings(false);
     }
@@ -191,7 +210,7 @@ const Dashboard = () => {
           mac_address: form.getFieldValue('mac_address'),
           warranty:  form.getFieldValue('warranty'),
           name: form.getFieldValue('name'),
-          unit: form.getFieldValue('unit'),
+          customer_2: form.getFieldValue('customer_2'),
           product_id: form.getFieldValue('product_id'),
           // ...detailData,
           address: form.getFieldValue('address'),
@@ -219,16 +238,16 @@ const Dashboard = () => {
           setNote(''); 
           setProblem('');
           setOpenForm(false) 
-          message.success('Ticket added successfully');
+          // message.success('Ticket added successfully');
 
           Modal.success({
             title: 'Ticket Added',
-            content: 'The ticket has been successfully created, please send the product to the address listed on the ticket info and fill in the tracking number',
+            content: <div>
+              The ticket has been successfully created, <br /> <strong> please send the product to the address listed on the ticket info and fill in the tracking number</strong>
+            </div>,
             onOk: () => {
               apiTable();   
-            },
-            
-            
+            }
           });
         } else {
           message.error('Failed to add ticket');
@@ -312,6 +331,7 @@ const Dashboard = () => {
         },
       });
       setDataTable(response.data);
+      console.log(response.data)
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -442,8 +462,8 @@ const Dashboard = () => {
                       <Form.Item name="lot_id">
                         <Input placeholder="lot_id" />
                       </Form.Item>
-                      <Form.Item name="unit">
-                        <Input placeholder="unit" />
+                      <Form.Item name="customer_2">
+                        <Input placeholder="customer_2" />
                       </Form.Item>
                     </div>
                     <div className="">

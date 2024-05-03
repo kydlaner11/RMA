@@ -12,6 +12,7 @@ const {Title, Paragraph} = Typography;
 const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId }) => {
     const [loading, setLoading] = useState(false);
     const [ticketData, setTicketData] = useState(null);
+    const [expiredTime, setExpiredTime] = useState(null);
     const [imageView, setImageView] = useState([]);
     const { token } = useToken();
 
@@ -30,14 +31,45 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId }) => {
 
       const isExpired = isOutOfWarranty(ticketData?.warranty, ticketData?.created_at);
 
+      useEffect(() => {
+        if (ticketData?.status_ticket === "Waiting Approval") {
+            const expiredDateTime = new Date(ticketData.expired_ticket).getTime();
+            const interval = setInterval(() => {
+                const now = new Date().getTime();
+                const distance = expiredDateTime - now;
+                if (distance <= 0) {
+                    clearInterval(interval);
+                    setExpiredTime("Expired");
+                } else {
+                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                    setExpiredTime(`${days}d ${hours}h ${minutes}m ${seconds}s`);
+                }
+            }, 1000);
+            return () => clearInterval(interval);
+        }
+    }, [ticketData]);
+ 
+
 // how to get data from infoTicketId
     const fetchTicketData = async () => {
         try {
             setLoading(true);
-            const response = await Api.get(`api/admin/get-ticket-details/${infoTicketId}`);
+            const bearerToken = Cookies.get("access_token"); 
+            if (!bearerToken) {
+                throw new Error('Bearer token not found.');
+            }
+            const response = await Api.get(`api/customer/get-ticket-details/${infoTicketId}`, {
+                headers: {
+                    Authorization: `Bearer ${bearerToken}`,
+                    "ngrok-skip-browser-warning": "69420"
+                }
+            });
             if (response.status === 200) {
-                setTicketData(response.data[0]);
-                console.log('Ticket Data:', response.data[0])
+                setTicketData(response.data);
+                console.log('Ticket Data:', response.data)
             } else {
                 message.error(response.data.message || 'Failed to fetch ticket data');
             }
@@ -99,7 +131,30 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId }) => {
                         <Paragraph style={{ marginBottom: 0 }}>
                             Mac Address:    
                         </Paragraph>
-                        <Paragraph style={{ fontSize: 30, marginBottom: 15 }}><strong>{ticketData?.mac_address}</strong></Paragraph>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <Paragraph style={{ fontSize: 30, marginBottom: 15 }}><strong>{ticketData?.mac_address}</strong></Paragraph>
+                            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                                <div className='text-end' style={{ width: 150, textAlign: 'end'}}>
+                                    <Tag style={{ marginRight: 0 }}
+                                    color={
+                                        ticketData?.status_ticket === "Waiting Approval" ? "processing"
+                                        : ticketData?.status_ticket === "Approved" ? "green"
+                                        : ticketData?.status_ticket === "Received" ? "orange"
+                                        : ticketData?.status_ticket === "Testing and Processing" ? "purple"
+                                        : ticketData?.status_ticket === "Fullfilment" ? "success"
+                                        : ticketData?.status_ticket === "Finished" ? "geekblue"
+                                        : ticketData?.status_ticket === "Rejected" ? "error"
+                                        : "default"
+                                    }
+                                    >
+                                        {ticketData?.status_ticket}
+                                    </Tag>
+                                    {ticketData?.status_ticket === "Waiting Approval" && expiredTime && (
+                                        <span style={{  display: 'block', marginTop: 3 }}>{expiredTime}</span>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
                         <Divider />
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <Paragraph className='text-start'><strong>No Ticket :</strong></Paragraph> 
@@ -117,8 +172,12 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId }) => {
                             </div>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <Paragraph className='text-start'><strong>Bussines Unit :</strong></Paragraph> 
-                            <div className='text-end'style={{ width: 275, textAlign: 'end' }}>{ticketData?.unit}</div>
+                            <Paragraph className='text-start'><strong>Seller :</strong></Paragraph> 
+                            <div className='text-end'style={{ width: 275, textAlign: 'end' }}>{ticketData?.customer_2}</div>
+                        </div> 
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <Paragraph className='text-start'><strong>Distributor :</strong></Paragraph> 
+                            <div className='text-end'style={{ width: 275, textAlign: 'end' }}>{ticketData?.distributor}</div>
                         </div> 
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <Paragraph className='text-start'><strong>Device :</strong></Paragraph> 
@@ -128,7 +187,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId }) => {
                         
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <Paragraph className='text-start'><strong>Contact :</strong></Paragraph> 
-                            <div className='text-end'style={{ width: 275, textAlign: 'end' }}>{ticketData?.nama}</div>
+                            <div className='text-end'style={{ width: 275, textAlign: 'end' }}>{ticketData?.name}</div>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <Paragraph className='text-start'><strong>Phone :</strong></Paragraph> 
@@ -136,7 +195,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId }) => {
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <Paragraph className='text-start'><strong>Cargo :</strong></Paragraph> 
-                            <div className='text-end'style={{ width: 275, textAlign: 'end' }}>{ticketData?.cargo}</div>
+                            <div className='text-end'style={{ width: 275, textAlign: 'end' }}>{ticketData?.cargo?.cargo_name}</div>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <Paragraph className='text-start'><strong>Resi :</strong></Paragraph> 
