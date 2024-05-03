@@ -1,7 +1,7 @@
 import { Button } from "antd";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import logo from "../../assets/images/logo d~net.png";
+import logo from "../../assets/images/rma.png";
 
 // const { useToken } = theme;
 
@@ -12,9 +12,9 @@ const LogoButton = () => {
   return (
     <Button 
       icon={
-        <img src={logo} alt="logo" height="25px" style={{ }} />
+        <img src={logo} alt="logo" height="15px" style={{marginTop: 8 }} />
       }
-      style={{ width:100 }}
+      style={{ width:80 }}
       type="text"
       size="large"
       // style={{ backgroundColor: token.colorPrimaryBg }}

@@ -94,13 +94,13 @@ export const ticketsColumn = ({ searchProps, handleInfoClick, handleEditClick, h
       ),
     },
     {
-      title: "Customer",
-      dataIndex: "customer",
-      key: "customer",
-      ...getColumnSearchProps("customer", searchProps),
+      title: "Seller",
+      dataIndex: "customer_2",
+      key: "customer_2",
+      ...getColumnSearchProps("customer_2", searchProps),
       render: (_, record) => (
         <div>
-          {record.unit}
+          {record.customer_2}
         </div>
       ),
     },
