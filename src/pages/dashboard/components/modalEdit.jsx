@@ -6,7 +6,7 @@ import Api from '../../../api';
 const {Option} = Select;
 const { TextArea } = Input;
 
-const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions }) => {
+const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions, apiTable }) => {
   const [loading, setLoading] = useState(false);
   const [ticketData, setTicketData] = useState(null);
   const [form] = Form.useForm();
@@ -61,6 +61,7 @@ const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions }
       if (response.status === 200) {
         message.success('Ticket updated successfully');
         setOpenFormEdit(false);
+        await apiTable();
       } else {
         message.error(response.data.message || 'Failed to update ticket');
       }
@@ -88,7 +89,7 @@ const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions }
           open={openFormEdit}
           onCancel={handleCancel}
           onOk={handleOk}
-          okText="Submit"
+          okText="Save"
           width={'90vw'}  
         >
         <div style={{ padding: '0 32px'}}>

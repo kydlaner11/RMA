@@ -1,9 +1,7 @@
 import {PlusOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
-import { effect, signal } from "@preact/signals-react";
 import { Alert, Button, Col,  Form, Input,  Modal, Row, Select, Spin, Switch, Table, Typography, Upload, message } from "antd";
 import Cookies from "js-cookie";
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import StickyHeader from "../../layouts/StickyHeader";
 import useSearchColumn from "../../hooks/useSearchColumn";
 import { ticketsColumn } from "../../constant/columns/ticket";
@@ -14,14 +12,12 @@ import CancelTicket from "./components/cancelTicket";
 
 const {Item} = Form;
 const {Option} = Select;
-const loading = signal(false);
 const {Search, TextArea} = Input;
 const {Title, Paragraph} = Typography;
 
 
 const Dashboard = () => {
   const [form] = Form.useForm();
-  const navigate = useNavigate();
   const [data, setData] = useState('');
   const [note, setNote] = useState('');
   const searchProps = useSearchColumn();
@@ -44,13 +40,6 @@ const Dashboard = () => {
   const [filterCancelled, setFilterCancelled] = useState(false);
 
 
-  effect(() => {
-    if (Cookies.get("redirect_uri")) {
-      const uri = Cookies.get("redirect_uri");
-      Cookies.remove("redirect_uri");
-      navigate(uri);
-    }
-  });
 
   const calculateRemainingDays = (warrantyDate) => {
     const now = new Date();
@@ -60,7 +49,6 @@ const Dashboard = () => {
     return differenceInDays;
   };
 
-  // how to create request respone 'photos' in multiple images
   const uploadImages = async (Images) => {
     try {
       const formData = new FormData();
@@ -97,18 +85,34 @@ const Dashboard = () => {
 };
   const customRequest = async ({ file, onSuccess }) => {
     try {
+      if (images.length > 3) {
+        message.error('You can only upload up to 3 images');
+        return;
+      }
       const response = await uploadImages([file]);
-
-      setImages(prevImages => prevImages ? [...prevImages, response] : [response]);
+      setImages(prevImages => prevImages.length < 3 ? [...prevImages, response] : prevImages);
       onSuccess();
       message.success('Image uploaded successfully');
+      
 
     } catch (error) {
       console.error('Error uploading image:', error);
       message.error('Failed to upload image');
     }
   };
-
+  // const handleImageChange = ({ fileList: newFileList }) => setImages(newFileList);
+  const uploadButton = (
+    <button style={{ border: 0, background: 'none' }} type="button">
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </button>
+  );
+// * buatkan useEffect untuk mengkosongkan state Images ketika openForm diubah menjadi false
+  useEffect(() => {
+    if (!openForm) {
+      setImages([]);
+    }
+  }, [openForm]);
   
   const fetchCargoOptions = async () => {
     try {
@@ -172,9 +176,16 @@ const Dashboard = () => {
   }
 
   const handleCloseModal = () => {
-    setOpen(false);
-    form.resetFields(); 
+    setOpen(false); 
     setErrorAlert(null);
+  };
+  const handleCloseFormModal = () => {
+    setOpenForm(false); 
+    setErrorAlert(null);
+    // setData([...data, newTicket]); 
+    setNote(''); 
+    setProblem('');
+    form.resetFields();
   };
 
   const handleAddData = async () => {
@@ -237,7 +248,8 @@ const Dashboard = () => {
           setData([...data, newTicket]); 
           setNote(''); 
           setProblem('');
-          setOpenForm(false) 
+          form.resetFields();
+          setOpenForm(false);
           // message.success('Ticket added successfully');
 
           Modal.success({
@@ -284,8 +296,8 @@ const Dashboard = () => {
             Authorization: `Bearer ${bearerToken}`,
           },
         }); 
+        await apiTable();
         message.success('Ticket cancelled successfully');
-        apiTable();
       } catch (error) {
         console.log(error);
         message.error('Failed to cancel ticket');
@@ -341,22 +353,17 @@ const Dashboard = () => {
     apiTable(checked);
   };
   useEffect(() => {
+    //refresh data table in every change 
     apiTable();
     fetchCargoOptions();
   }, []);
 
-  // buatkan useEffect untuk mengkosongkan state Images ketika openForm diubah menjadi false
-  useEffect(() => {
-    if (!openForm) {
-      setImages([]);
-    }
-  }, [openForm]);
 
 
 
   return (
     <>
-      <Spin spinning={loading.value} size="large">
+      <Spin spinning={loadings} size="large">
         <StickyHeader title={'RMA Ticket'}>
           <div style={{ marginRight: "10px" }}>
             <Switch checked={filterCancelled} onChange={handleChange} checkedChildren="Active Ticket" unCheckedChildren="View All"/>
@@ -388,7 +395,7 @@ const Dashboard = () => {
                 
                   <Item
                     // label="Input your device MAC Address"
-                    name="name"
+                    // name="name"
                     rules={[{ required: true, 
                       message: 'Please enter your Mac Address!' 
                     }]}
@@ -421,7 +428,7 @@ const Dashboard = () => {
           title="Create Ticket"
           centered
           open={openForm}
-          onCancel={() => setOpenForm(false)}
+          onCancel={handleCloseFormModal}
           onOk={handleAddData}
           okText="Submit"
           width={'90vw'}
@@ -498,8 +505,8 @@ const Dashboard = () => {
                         <TextArea placeholder="" rows={4} value={note} onChange={(e) => setNote(e.target.value) } />
                     </Form.Item>  
                     </div>
-                    <Form.Item label="Cargo" name="cargo" extra="Select your shipping cargo">
-                      <Select placeholder="Pilih Jasa Pengiriman">
+                    <Form.Item label="Cargo" name="cargo" extra="Select your shipping cargo" >
+                      <Select placeholder="Pilih Jasa Pengiriman" allowClear  >
                         {cargoOptions.map(option => (
                           <Option key={option.id} value={option.id}>{option.cargo_name}</Option>
                         ))}
@@ -509,19 +516,16 @@ const Dashboard = () => {
                       <Input  placeholder="Masukan Nomer Resi"/>
                     </Form.Item>
   
-                    <Form.Item label="Upload Image" name="photos" extra="Upload your device image">
-                      <Upload
-                        customRequest={customRequest}
-                        beforeUpload={beforeUpload}
-                        listType="picture-card"
-                        maxCount={3}
-                        disabled={form.getFieldValue('photos')?.length >= 3}
-                      >
-                        <div>
-                          <PlusOutlined />
-                          <div style={{ marginTop: 8 }}>Upload</div>
-                        </div>
-                      </Upload>
+                    <Form.Item label="Upload Image" name="photos" extra="Upload your device image. Images must be JPG or PNG format and smaller than 5MB.">
+                    <Upload
+                      customRequest={customRequest}
+                      beforeUpload={beforeUpload}
+                      // onChange={handleImageChange}
+                      listType="picture-card"
+                      maxCount={3}
+                    >
+                      {images.length >= 3 ? null : uploadButton}
+                    </Upload>
                     </Form.Item>
                     
                   </Col>
@@ -543,8 +547,8 @@ const Dashboard = () => {
           <CancelTicket openModal={isModalVisible}  handleCancel={handleCancel} handleClose={handleCancelClose} />
           </Spin>
         </div>
-        <ModalEdit openFormEdit={openFormEdit} setOpenFormEdit={setOpenFormEdit}  editTicketId={editTicketId} cargoOptions={cargoOptions}/>
-        <UserDrawer openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} infoTicketId={infoTicketId} />
+        <ModalEdit openFormEdit={openFormEdit} setOpenFormEdit={setOpenFormEdit}  editTicketId={editTicketId} cargoOptions={cargoOptions} apiTable={apiTable}/>
+        <UserDrawer openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} infoTicketId={infoTicketId} apiTable={apiTable} />
       </Spin>
     </>
   );
