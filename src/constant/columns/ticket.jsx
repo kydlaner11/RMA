@@ -190,6 +190,7 @@ export const ticketsColumn = ({ searchProps, handleInfoClick, handleEditClick, h
       title: "Rate",
       dataIndex: "rate",
       key: "rate",
+      width: 164,
       render: (_, record) => (
         <Rate disabled defaultValue={record.rate} />
       ),

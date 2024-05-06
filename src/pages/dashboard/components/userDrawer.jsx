@@ -9,7 +9,7 @@ const { TabPane } = Tabs;
 const { useToken } = theme;
 const {Title, Paragraph} = Typography;
 
-const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId }) => {
+const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable }) => {
     const [loading, setLoading] = useState(false);
     const [ticketData, setTicketData] = useState(null);
     const [expiredTime, setExpiredTime] = useState(null);
@@ -61,6 +61,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId }) => {
             if (!bearerToken) {
                 throw new Error('Bearer token not found.');
             }
+            await apiTable();
             const response = await Api.get(`api/customer/get-ticket-details/${infoTicketId}`, {
                 headers: {
                     Authorization: `Bearer ${bearerToken}`,
@@ -93,6 +94,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId }) => {
                 "ngrok-skip-browser-warning": "69420"
             },
           });
+          console.log(response.data)
           setImageView(response.data);
         } catch (error) {
           console.error('Error fetching image data:', error);

@@ -144,7 +144,7 @@ const PassForm = () => {
 
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={loading} style={{ width: "100%" }}>
-              Reset Password
+              Set Password
             </Button>
           </Form.Item>
         </Form>
