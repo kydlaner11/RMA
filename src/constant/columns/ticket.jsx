@@ -204,7 +204,7 @@ export const ticketsColumn = ({ searchProps, handleInfoClick, handleEditClick, h
             <>
               <Button icon={<SearchOutlined />} onClick={() => handleInfoClick(record.id)} >Info</Button>
               <Button type="primary" icon={<EditOutlined />} onClick={() => handleEditClick(record.id)} >Edit</Button>
-              <Button danger onClick={() => handleCancelClick(record.id)}>Cancel</Button>
+              <Button danger onClick={() => handleCancelClick(record.odoo_rma_ticket_id)}>Cancel</Button>
             </>
           )}
           {record.status_ticket !== "Waiting Approval" && (
