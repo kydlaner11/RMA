@@ -3,13 +3,14 @@ import { AlertOutlined, CheckCircleOutlined, FileSearchOutlined, StarOutlined,Fi
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import Api from '../../../api';
+import { BASE_URL_BE } from '../../../constant/url';
 
 
 const { TabPane } = Tabs;
 const { useToken } = theme;
 const {Title, Paragraph} = Typography;
 
-const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable }) => {
+const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSession }) => {
     const [loading, setLoading] = useState(false);
     const [ticketData, setTicketData] = useState(null);
     const [expiredTime, setExpiredTime] = useState(null);
@@ -28,6 +29,27 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable }) => {
           return false;
         }
       };
+
+    const fetchLog = async () => {
+        try {
+            setLoading(true);
+            const response = await Api.get(`api/endpoint/log-status/?ticket_id=${infoTicketId}`);
+            console.log(response.data)
+
+        } catch (error) {
+            console.error('Error fetching ticket data:', error);
+            if (error.response && error.response.status === 400) {
+                message.error('Failed to get info ticket');
+              } else if (error.response && error.response.status === 401) {
+                modalSession();
+              } else {
+                message.error('Failed to get info ticket');
+              }
+        } finally {
+            setLoading(false);
+        }
+    };
+    
 
       const isExpired = isOutOfWarranty(ticketData?.warranty, ticketData?.created_at);
 
@@ -76,7 +98,13 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable }) => {
             }
         } catch (error) {
             console.error('Error fetching ticket data:', error);
-            message.error('Failed to fetch ticket data');
+            if (error.response && error.response.status === 400) {
+                message.error('Failed to get info ticket');
+              } else if (error.response && error.response.status === 401) {
+                modalSession();
+              } else {
+                message.error('Failed to get info ticket');
+              }
         } finally {
             setLoading(false);
         }
@@ -106,6 +134,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable }) => {
         if (infoTicketId) {
             fetchTicketData();
             fetchImages();
+            fetchLog();
         }
     }, [infoTicketId]);
 
@@ -218,7 +247,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable }) => {
                             <Paragraph className='text-start'><strong>Photos :</strong></Paragraph> 
                             <div className="">
                                 {imageView.map((image, index) => (
-                                    <Image key={index} src={`https://rational-wealthy-panther.ngrok-free.app/api/get-images?filename=${image}`} style={{ width: 100, height: 100, margin: 5 }} />
+                                    <Image key={index} src={`${BASE_URL_BE}/api/get-images?filename=${image}`} style={{ width: 100, height: 100, margin: 5 }} />
                                 ))}
 
                             </div>
@@ -251,13 +280,13 @@ Jalan Mangga Dua Raya - Jakarta Pusat 10730</div>
                 items={[
                 {
                     title: 'Submitted',
-                    description: "test",
+                    subTitle: '12:00 12 Jan 2021',
                     status:'finish',
                 },
                 {
-                    title: 'Aprroved',
+                    title: 'Received',
                     description: "test",
-                    status:'finish',
+                    status:'process',
                 },
                 {
                     title: 'Received',

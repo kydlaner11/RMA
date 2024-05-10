@@ -17,12 +17,8 @@ const steps = [
     content: "Click here if you forgot your password",
   },
   {
-    selector: ".login-oauth",
-    content: "Login using OAuth if you have one",
-  },
-  {
     selector: ".login-signup",
-    content: "Click here if you don't have any account",
+    content: "Click here if you need to register your account",
   },
 ];
 
@@ -45,7 +41,9 @@ const LoginForm = () => {
       }
     } catch (error) {
       //console.log error, if any error occurs during login process message with status 401 will be displayed to user message from backend, else message if doesn't have status display error message
-      if (error.response.status === 401) {
+      if (error) {
+        message.error('Login failed, please try again later');
+      } else if (error.response.status === 401) {
         message.error('Invalid email or password');
       } else {
         message.error('Login failed, please try again later');

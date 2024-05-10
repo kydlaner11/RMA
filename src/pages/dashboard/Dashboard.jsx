@@ -9,6 +9,8 @@ import api from "../../api";
 import UserDrawer from "./components/userDrawer";
 import ModalEdit from "./components/modalEdit";
 import CancelTicket from "./components/cancelTicket";
+import { useDispatch } from "react-redux";
+import { logout } from "../../redux/actions/authAction";
 
 const {Item} = Form;
 const {Option} = Select;
@@ -18,6 +20,7 @@ const {Title, Paragraph} = Typography;
 
 const Dashboard = () => {
   const [form] = Form.useForm();
+  const dispatch = useDispatch();
   const [data, setData] = useState('');
   const [note, setNote] = useState('');
   const searchProps = useSearchColumn();
@@ -36,6 +39,7 @@ const Dashboard = () => {
   const [openFormEdit, setOpenFormEdit] = useState(false); 
   const [remainingDays, setRemainingDays] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [cancelTicketId, setCancelTicketId] = useState(null);
   // const [editTicketData, setEditTicketData] = useState(null);
   const [filterCancelled, setFilterCancelled] = useState(false);
 
@@ -73,7 +77,7 @@ const Dashboard = () => {
   }
   const beforeUpload = (file) => {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-    const isLt2M = file.size / 1024 / 1024 < 5; // Maksimum 2 MB
+    const isLt2M = file.size / 1024 / 1024 < 5; 
 
     if (!isJpgOrPng) {
         message.error('You can only upload JPG/PNG file!');
@@ -99,8 +103,11 @@ const Dashboard = () => {
       console.error('Error uploading image:', error);
       message.error('Failed to upload image');
     }
+  }; 
+  const handleImageChange = ({ fileList }) => {
+    setImages(fileList.map(file => file.response || file));
   };
-  // const handleImageChange = ({ fileList: newFileList }) => setImages(newFileList);
+  
   const uploadButton = (
     <button style={{ border: 0, background: 'none' }} type="button">
       <PlusOutlined />
@@ -121,6 +128,18 @@ const Dashboard = () => {
     } catch (error) {
       console.error('Error fetching cargo options:', error);
     }
+  };
+
+  const modalSession = () => {
+    Modal.info({
+      title: 'Session Expired',
+      content: <div>
+        Your session has expired. Please log in again.
+      </div>,
+      onOk: () => {
+        dispatch(logout());   
+      }
+    });
   };
 
 
@@ -156,7 +175,7 @@ const Dashboard = () => {
       form.resetFields();
       let errorMessage;
       if (error.response && error.response.status === 401) {
-          errorMessage = 'Your session has ended. Please login again.';
+        modalSession();
       } else if (error.response && error.response.status === 400) {
           errorMessage = (
             <span>
@@ -165,9 +184,14 @@ const Dashboard = () => {
             </span>
         );
       } else if (error.response && error.response.status === 404){
-        errorMessage = 'MAC Address or Serial Number not found. Please contact an administrator.'
+        errorMessage = (
+          <span>
+              MAC Address or Serial Number not found. Please contact an administrator or 
+              <a href="#" style={{ textDecoration: 'underline', marginLeft: '5px' }}>Click Here</a>
+          </span>
+      );
       } else {
-        errorMessage = 'An error occurred. Please try again later.'
+        errorMessage = 'An error occurred. Please try again.'
       }
       setErrorAlert(errorMessage);
     }finally {
@@ -270,12 +294,14 @@ const Dashboard = () => {
     } catch (error) {
       console.error('Error adding ticket:', error);
       if (error.response && error.response.status === 400) {
-        message.error('Mac Address already created RMA Ticket');
+        message.error(error.response.data.error || 'Failed to add ticket');
+        handleCloseFormModal();
       } else if (error.response && error.response.status === 404) {
-        message.error('Server down, Please try again later');
+        message.error(error.response.data.error || 'Failed to add ticket');
+        handleCloseFormModal();
       } else {
-        // Tangani status respons lainnya di sini
         message.error('Failed to add ticket');
+        handleCloseFormModal();
       }
     } finally {
       setLoadings(false);
@@ -291,19 +317,21 @@ const Dashboard = () => {
       }// Tutup modal konfirmasi
       // Lakukan embatalan tiket jika dikonfirmasi
       try {
-        await api.put(`api/customer/cancel-ticket?ticket_id=${editTicketId}`, null, {
-          headers: {
-            Authorization: `Bearer ${bearerToken}`,
-          },
-        }); 
-        await apiTable();
+        await api.put(`api/endpoint/change-status-ticket2/?token=6JtTi601HTYhMy4Ax7dJ6JtTi601HTYhMy4Ax7dJuuQclWEg8fZ3uuQclWEg8fZ3&odoo_rma_ticket_id=${cancelTicketId}&action=${2}`); 
         message.success('Ticket cancelled successfully');
+        await apiTable();
       } catch (error) {
         console.log(error);
-        message.error('Failed to cancel ticket');
+        await apiTable();
+        if (error.response && error.response.status === 400) {
+          message.error('Failed to cancel ticket');
+        } else if (error.response && error.response.status === 401) {
+          modalSession();
+        } else {
+          message.error('Failed to cancel ticket');
+        }
       }finally {
         setLoadings(false);
-      
       }
     
   };
@@ -322,12 +350,13 @@ const Dashboard = () => {
     setOpenFormEdit(true); // Open the modal for editing
   };
   const handleCancelClick = (id) => {
-    setEditTicketId(id);
+    setCancelTicketId(id);
     console.log("ini",id) // Set the ID of the ticket being edited
     setIsModalVisible(true); // Open the modal for editing
   };
   
   const apiTable = async (cancelled) => {
+    setLoadings(true);
     try {
       const bearerToken = Cookies.get("access_token");
       if (!bearerToken) {
@@ -343,9 +372,11 @@ const Dashboard = () => {
         },
       });
       setDataTable(response.data);
-      console.log(response.data)
+
     } catch (error) {
       console.error('Error fetching data:', error);
+    } finally {
+      setLoadings(false);
     }
   };
   const handleChange = async (checked) => {
@@ -353,7 +384,6 @@ const Dashboard = () => {
     apiTable(checked);
   };
   useEffect(() => {
-    //refresh data table in every change 
     apiTable();
     fetchCargoOptions();
   }, []);
@@ -433,6 +463,7 @@ const Dashboard = () => {
           okText="Submit"
           width={'90vw'}
         >
+        
         <div style={{ padding: '0 32px'}}>
           <Spin spinning={loadings} size="large">
             <Form form={form} initialValues={detailData}  labelCol={{span: 4,}} wrapperCol={{span: 18,}} layout="horizontal" style={{ marginTop:36 }}>
@@ -520,9 +551,9 @@ const Dashboard = () => {
                     <Upload
                       customRequest={customRequest}
                       beforeUpload={beforeUpload}
-                      // onChange={handleImageChange}
+                      onChange={handleImageChange}
                       listType="picture-card"
-                      maxCount={3}
+                      // maxCount={3}
                     >
                       {images.length >= 3 ? null : uploadButton}
                     </Upload>
@@ -547,8 +578,8 @@ const Dashboard = () => {
           <CancelTicket openModal={isModalVisible}  handleCancel={handleCancel} handleClose={handleCancelClose} />
           </Spin>
         </div>
-        <ModalEdit openFormEdit={openFormEdit} setOpenFormEdit={setOpenFormEdit}  editTicketId={editTicketId} cargoOptions={cargoOptions} apiTable={apiTable}/>
-        <UserDrawer openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} infoTicketId={infoTicketId} apiTable={apiTable} />
+        <ModalEdit openFormEdit={openFormEdit} setOpenFormEdit={setOpenFormEdit}  editTicketId={editTicketId} cargoOptions={cargoOptions} apiTable={apiTable} modalSession={modalSession}/>
+        <UserDrawer openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} infoTicketId={infoTicketId} apiTable={apiTable} modalSession={modalSession} />
       </Spin>
     </>
   );
