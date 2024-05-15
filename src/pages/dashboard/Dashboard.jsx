@@ -87,7 +87,6 @@ const Dashboard = () => {
     } else if (!isLt2M) {
         message.error('Image must be smaller than 2MB!');
     }
-
     return isJpgOrPng && isLt2M;
 };
   const customRequest = async ({file, onSuccess }) => {
@@ -111,7 +110,25 @@ const Dashboard = () => {
   const handleImageChange = ({ fileList }) => {
     setImages(fileList.map(file => file.response || file));
   };
-  
+
+  //remove dengan api api/endpoint/remove-image mengambil hashname dari image yang diupload
+  const handleRemoveImage = async (file) => {
+    try {
+      const index = imagesSub.find(image => image.uid === file.uid).hashname;
+      console.log("index",index)
+      const response = await api.delete(`/api/endpoint/remove-image?hashname=${index}`);
+      if (response.status === 200) {
+        setImagesSub(imagesSub.filter(image => image.hashname !== file.hashname));
+        message.success('Image removed successfully');
+      } else {
+        message.error('Failed to remove image');
+      }
+    } catch (error) {
+      console.error('Error removing image:', error);
+      message.error('Failed to remove image');
+    }
+  };
+
   const uploadButton = (
     <button style={{ border: 0, background: 'none' }} type="button">
       <PlusOutlined />
@@ -567,9 +584,7 @@ const Dashboard = () => {
                     <Upload
                       customRequest={customRequest}
                       beforeUpload={beforeUpload}
-                      onRemove={(file) => {
-                        console.log("dcc", file)
-                      }}
+                      onRemove={handleRemoveImage}
                       onChange={handleImageChange}
                       listType="picture-card"
                       // maxCount={3}

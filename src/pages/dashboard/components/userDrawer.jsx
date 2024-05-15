@@ -281,7 +281,7 @@ Jalan Mangga Dua Raya - Jakarta Pusat 10730</div>
                 <TicketSteps infoTicketId={infoTicketId} />
             </div>     
         </TabPane>
-        <TabPane tab={<span><CheckCircleOutlined />Log</span>} key="3" style={{width: 330, marginTop: 16,}}>
+        <TabPane tab={<span><CheckCircleOutlined />Log</span>} key="3" style={{width: 500, marginTop: 16, marginLeft: 25}}>
             <LogTicket infoTicketId={infoTicketId} />
         </TabPane>
         {ticketData?.status_ticket === "Finished" && (
