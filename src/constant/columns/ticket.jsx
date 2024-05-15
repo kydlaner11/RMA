@@ -5,7 +5,7 @@ import {
   EditOutlined,
   // CloseOutlined
 } from "@ant-design/icons";
-import {  Button, Tag, Space, Rate } from "antd";
+import {  Button, Tag, Space, Rate, Tooltip } from "antd";
 import { accountAbility } from "../../utils/ability";
 import { getColumnSearchProps } from "../../utils/column";
 
@@ -21,6 +21,28 @@ const isOutOfWarranty = (warranty, created_at) => {
   } else {
     return false;
   }
+};
+
+
+
+const CustomRateColumn = ({ value }) => {
+  const renderRate = () => {
+    if (value === 5) {
+      return <Rate value={1} count={1} allowHalf disabled style={{ fontSize: "23px", color: '#ffb800'}}/>;
+    } else if (value === 4) {
+      return <Rate value={1} count={1} disabled style={{ fontSize: "23px", color: '#ffc634' }}/>;
+    } else if (value === 3) {
+      return <Rate value={1} count={1} disabled style={{ fontSize: "23px", color: '#ffd363' }}/>;
+    } else if (value === 2){
+      return <Rate value={1} count={1} disabled style={{ fontSize: "23px", color: '#ffdb7d' }}/>;
+    } else if (value === 1) {
+      return <Rate value={1} count={1} disabled style={{ fontSize: "23px", color: '#ffe39b' }}/>;
+    } else {
+      return <Rate value={0} count={1} disabled style={{ fontSize: "23px" }}/>;
+    }
+  };
+
+  return renderRate();
 };
 
 const statusOptions = [
@@ -80,7 +102,7 @@ const warrantyOptions = [
   },
 ];
 
-export const ticketsColumn = ({ searchProps, handleInfoClick, handleEditClick, handleCancelClick}) =>
+export const ticketsColumn = ({ searchProps, handleInfoClick, handleEditClick, handleCancelClick, handleTool}) =>
   [
     {
       title: "Ticket RMA",
@@ -185,15 +207,51 @@ export const ticketsColumn = ({ searchProps, handleInfoClick, handleEditClick, h
         </Tag>
       ),
     },
-    //buat rate di ticket column 
     {
       title: "Rate",
       dataIndex: "rate",
       key: "rate",
-      width: 164,
       render: (_, record) => (
-        <Rate disabled defaultValue={record.rate} />
+        <Space>
+          {record.status_ticket === "Finished" && record.rate === null && (
+            <div>
+            <Tooltip title="Rate Now" open placement="bottomLeft" id="customTooltip" arrow={false} color="blue" >
+              <div style={{ marginBottom: "12px" }}>
+                <Button type="link" onClick={() => handleTool(record.id)}>
+                <span style={{ marginRight: "8px" }}>
+                  {record.rate === null ? "0" : (record.rate)}
+                </span>
+                  <CustomRateColumn value={record.rate}/>
+                </Button>
+              </div>
+            </Tooltip>
+            </div>
+          )}
+          {record.status_ticket === "Finished" && record.rate !== null && (
+            <div>
+              <div style={{ marginBottom: "12px" }}>
+                <Button type="link" onClick={() => handleTool(record.id)}>
+                <span style={{ marginRight: "8px" }}>
+                  {record.rate === null ? "0" : (record.rate)}
+                </span>
+                  <CustomRateColumn value={record.rate}/>
+                </Button>
+              </div>
+            </div>
+          )}
+          {record.status_ticket !== "Finished" && (
+            <div style={{ marginBottom: "12px"}}>
+              <Button type="link" disabled>
+                <span style={{ marginRight: "8px" }}>
+                  {record.rate === null ? "0" : (record.rate)}
+                </span>
+                <CustomRateColumn value={record.rate}/>
+              </Button>
+            </div>
+          )}
+        </Space>
       ),
+
     },
     {
       title: "Action",
@@ -209,11 +267,6 @@ export const ticketsColumn = ({ searchProps, handleInfoClick, handleEditClick, h
           )}
           {record.status_ticket !== "Waiting Approval" && (
             <Button icon={<SearchOutlined />} onClick={() => handleInfoClick(record.id)} >Info</Button>
-          )}
-          {record.rate === "Finished" && (
-            <>
-              <Button type="link" onClick={() => handleInfoClick(record.id)}  >Rate Now!</Button>
-            </>
           )}
         </Space>
       ),
