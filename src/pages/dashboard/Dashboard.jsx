@@ -27,12 +27,14 @@ const Dashboard = () => {
   const [open, setOpen] = useState(false);
   const [problem, setProblem] = useState('');
   const [images, setImages] = useState([]);
+  const [imagesSub, setImagesSub] = useState([]);
   const [loadings, setLoadings] = useState(false);
   const [openForm, setOpenForm] = useState(false);
   const [dataTable, setDataTable] = useState(false);
   const [detailData, setDetailData] = useState(null);
   const [errorAlert, setErrorAlert] = useState(null);
   const [openDrawer, setOpenDrawer] = useState(false);
+  const [activeTabKey, setActiveTabKey] = useState('1');
   const [cargoOptions, setCargoOptions] = useState([]);
   const [editTicketId, setEditTicketId] = useState(null);
   const [infoTicketId, setInfoTicketId] = useState(null);
@@ -68,6 +70,7 @@ const Dashboard = () => {
       });
       console.log(response.data)
       console.log(images)
+      console.log("rcfc",imagesSub)
       return response.data;
       
     } catch (error) {
@@ -87,17 +90,18 @@ const Dashboard = () => {
 
     return isJpgOrPng && isLt2M;
 };
-  const customRequest = async ({ file, onSuccess }) => {
+  const customRequest = async ({file, onSuccess }) => {
     try {
       if (images.length > 3) {
         message.error('You can only upload up to 3 images');
         return;
       }
+      
       const response = await uploadImages([file]);
-      setImages(prevImages => prevImages.length < 3 ? [...prevImages, response] : prevImages);
+      setImagesSub(prevImages => [...prevImages, {...response, uid: file.uid}]);
       onSuccess();
       message.success('Image uploaded successfully');
-      
+      console.log("first",file)
 
     } catch (error) {
       console.error('Error uploading image:', error);
@@ -118,6 +122,7 @@ const Dashboard = () => {
   useEffect(() => {
     if (!openForm) {
       setImages([]);
+      setImagesSub([]);
     }
   }, [openForm]);
   
@@ -256,7 +261,7 @@ const Dashboard = () => {
           tracking_number: form.getFieldValue('tracking_number'),
           customer_id: customerId,
           //mengirim data photos ke API dengan menghilangkan variable angka 
-          photos: images
+          photos: imagesSub
         };
         
         console.log(newTicket)
@@ -343,6 +348,8 @@ const Dashboard = () => {
     setInfoTicketId(id)
     console.log("info",id)
     setOpenDrawer(true);
+    setActiveTabKey('1');
+    document.getElementById('customTooltip').style.display = 'none';
   };
   const handleEditClick = (id) => {
     setEditTicketId(id);
@@ -353,6 +360,13 @@ const Dashboard = () => {
     setCancelTicketId(id);
     console.log("ini",id) // Set the ID of the ticket being edited
     setIsModalVisible(true); // Open the modal for editing
+  };
+
+  const handleTool = (id) => {
+    handleInfoClick(id);
+    setActiveTabKey('4');
+    document.getElementById('customTooltip').style.display = 'none';
+
   };
   
   const apiTable = async (cancelled) => {
@@ -372,6 +386,7 @@ const Dashboard = () => {
         },
       });
       setDataTable(response.data);
+      console.log(response.data)
 
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -386,6 +401,7 @@ const Dashboard = () => {
   useEffect(() => {
     apiTable();
     fetchCargoOptions();
+    // uploadImages();
   }, []);
 
 
@@ -551,6 +567,9 @@ const Dashboard = () => {
                     <Upload
                       customRequest={customRequest}
                       beforeUpload={beforeUpload}
+                      onRemove={(file) => {
+                        console.log("dcc", file)
+                      }}
                       onChange={handleImageChange}
                       listType="picture-card"
                       // maxCount={3}
@@ -569,7 +588,7 @@ const Dashboard = () => {
         <div style={{ padding: 32 }}>
           <Table
             // loading={loading}
-            columns={ticketsColumn({ searchProps, handleInfoClick, handleEditClick, handleCancelClick })}
+            columns={ticketsColumn({ searchProps, handleInfoClick, handleEditClick, handleCancelClick, handleTool })}
             dataSource={dataTable}
             // TODO: Fix bug undefined
             scroll={{ x: 1000 }}
@@ -579,7 +598,7 @@ const Dashboard = () => {
           </Spin>
         </div>
         <ModalEdit openFormEdit={openFormEdit} setOpenFormEdit={setOpenFormEdit}  editTicketId={editTicketId} cargoOptions={cargoOptions} apiTable={apiTable} modalSession={modalSession}/>
-        <UserDrawer openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} infoTicketId={infoTicketId} apiTable={apiTable} modalSession={modalSession} />
+        <UserDrawer openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} infoTicketId={infoTicketId} apiTable={apiTable} modalSession={modalSession} activeTabKey={activeTabKey} />
       </Spin>
     </>
   );

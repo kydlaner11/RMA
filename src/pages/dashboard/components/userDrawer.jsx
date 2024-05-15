@@ -1,23 +1,27 @@
-import { Button, Drawer, Tabs, Steps, Rate,  Card, Typography, Input, message, Spin, Divider, Tag, Image, theme } from 'antd';
+import {  Drawer, Tabs,  Card, Typography, message, Spin, Divider, Tag, Image, theme } from 'antd';
 import { AlertOutlined, CheckCircleOutlined, FileSearchOutlined, StarOutlined,FileOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import Api from '../../../api';
+import TicketSteps from '../../activity/TicketSteps';
+import RateTicket from '../../activity/RateTicket';
+import LogTicket from '../../activity/LogTicket';
 import { BASE_URL_BE } from '../../../constant/url';
 
 
 const { TabPane } = Tabs;
 const { useToken } = theme;
-const {Title, Paragraph} = Typography;
+const { Paragraph} = Typography;
 
-const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSession }) => {
+const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSession, activeTabKey }) => {
     const [loading, setLoading] = useState(false);
     const [ticketData, setTicketData] = useState(null);
     const [expiredTime, setExpiredTime] = useState(null);
     const [imageView, setImageView] = useState([]);
+   
+
     const { token } = useToken();
 
-    
     const isOutOfWarranty = (warranty, created_at) => {
         const endDate = new Date(warranty);
         const creationDate = new Date(created_at);
@@ -154,7 +158,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
       open={openDrawer}
       onClose={onClose}
     >
-      <Tabs defaultActiveKey="1" type="card" centered>
+      <Tabs defaultActiveKey={activeTabKey} type="card" centered>
         <TabPane tab={<span><FileSearchOutlined />Details</span>} key="1">
             <div className="" style={{width: 500, marginTop: 16, marginLeft: 25}}>
                 <Card>
@@ -174,7 +178,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
                                         : ticketData?.status_ticket === "Testing and Processing" ? "purple"
                                         : ticketData?.status_ticket === "Fullfilment" ? "success"
                                         : ticketData?.status_ticket === "Finished" ? "geekblue"
-                                        : ticketData?.status_ticket === "Rejected" ? "error"
+                                        : ticketData?.status_ticket === "Cancelled" ? "error"
                                         : "default"
                                     }
                                     >
@@ -273,75 +277,20 @@ Jalan Mangga Dua Raya - Jakarta Pusat 10730</div>
             </div>     
         </TabPane>
         <TabPane tab={<span><AlertOutlined />Status</span>} key="2">
-            <div className="" style={{width: 330, padding: 15}}>
-            <Steps
-                current={3}
-                direction="vertical"
-                items={[
-                {
-                    title: 'Submitted',
-                    subTitle: '12:00 12 Jan 2021',
-                    status:'finish',
-                },
-                {
-                    title: 'Received',
-                    description: "test",
-                    status:'process',
-                },
-                {
-                    title: 'Received',
-                    description: "test",
-                    status:'error',
-                },
-                {
-                    title: 'Testing and Processing',
-                    description: "test",
-                    status:'wait',
-                },
-                {
-                    title: 'Fulfillment',
-                    description: "test",
-                    status:'wait',
-                },
-                {
-                    title: 'Product Shipped',
-                    description: "test",
-                    status:'wait',
-                },
-                {
-                    title: 'Completed',
-                    description: "test",
-                    status:'wait',
-                },
-                ]}
-            />
+            <div className="" style={{width: 500, padding: 15}}>
+                <TicketSteps infoTicketId={infoTicketId} />
             </div>     
         </TabPane>
         <TabPane tab={<span><CheckCircleOutlined />Log</span>} key="3" style={{width: 330, marginTop: 16,}}>
-            
+            <LogTicket infoTicketId={infoTicketId} />
         </TabPane>
-        <TabPane tab={<span><StarOutlined />Rate</span>}  key="4">
-            <div style={{ maxWidth: 400, margin: 'auto' }}>
-                <Title level={3}>Rate Our Service</Title>
-                <Paragraph>
-                    We value your feedback. Please rate our service and leave a comment below.
-                </Paragraph>
-                <div style={{ marginBottom: 16 }}>
-                    <Rate  />
+        {ticketData?.status_ticket === "Finished" && (
+            <TabPane tab={<span><StarOutlined />Rate</span>}  key="4">
+                <div style={{width: 500, marginTop: 16, marginLeft: 25}}>
+                    <RateTicket infoTicketId={infoTicketId} apiTable={apiTable} setOpenDrawer={setOpenDrawer}/>
                 </div>
-                <div style={{ marginBottom: 16 }}>
-                    <Input.TextArea
-                    placeholder="Leave a comment..."
-                    rows={4}
-                    />
-                </div>
-                <div style={{ marginBottom: 16 }}>
-                    <Button type="primary" >
-                    Submit
-                    </Button>
-                </div>
-            </div>
-        </TabPane>
+            </TabPane>
+        )}
         <TabPane tab={<span><FileOutlined />Document</span>} key="5">
             <div className="" style={{width: 330, marginTop: 16,}}>
                 <Card>

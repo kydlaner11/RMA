@@ -2,7 +2,7 @@ const env = import.meta.env.VITE_APP_ENV;
 
 const url = {
   development: {
-    BASE_URL_BE: "https://rational-wealthy-panther.ngrok-free.app/",
+    BASE_URL_BE: "https://yearly-engaging-arachnid.ngrok-free.app/",
     BASE_URL_PUSHER: "d9af-202-148-7-130.ngrok.io",
     BASE_URL_FE: "https://localhost:3010",
   },
