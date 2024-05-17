@@ -110,15 +110,15 @@ const Dashboard = () => {
   const handleImageChange = ({ fileList }) => {
     setImages(fileList.map(file => file.response || file));
   };
-
-  //remove dengan api api/endpoint/remove-image mengambil hashname dari image yang diupload
   const handleRemoveImage = async (file) => {
     try {
       const index = imagesSub.find(image => image.uid === file.uid).hashname;
       console.log("index",index)
       const response = await api.delete(`/api/endpoint/remove-image?hashname=${index}`);
       if (response.status === 200) {
-        setImagesSub(imagesSub.filter(image => image.hashname !== file.hashname));
+        //newImage adalah state imagesSub yang di filter dengan menghapus image yang dihapus
+        const newImage = imagesSub.filter(image => image.hashname === index);
+        console.log("ddad",newImage);
         message.success('Image removed successfully');
       } else {
         message.error('Failed to remove image');
@@ -289,7 +289,7 @@ const Dashboard = () => {
             Authorization: `Bearer ${bearerToken}`,
           },
         });
-  
+        console.log("response",response)
         if (response.status === 200) {
           setData([...data, newTicket]); 
           setNote(''); 

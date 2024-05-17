@@ -251,7 +251,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
                             <Paragraph className='text-start'><strong>Photos :</strong></Paragraph> 
                             <div className="">
                                 {imageView.map((image, index) => (
-                                    <Image key={index} src={`${BASE_URL_BE}/api/get-images?filename=${image}`} style={{ width: 100, height: 100, margin: 5 }} />
+                                    <Image key={index} src={`${BASE_URL_BE}api/get-images?filename=${image}`} style={{ width: 100, height: 100, margin: 5 }} />
                                 ))}
 
                             </div>
