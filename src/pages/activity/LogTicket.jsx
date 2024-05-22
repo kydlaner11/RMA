@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { List, Typography } from 'antd';
 import Api from '../../api';
-// import {
-//   ArrowRightOutlined,
-// } from '@ant-design/icons';
+import {
+  ArrowRightOutlined,
+} from '@ant-design/icons';
 
 const { Text } = Typography;
 
@@ -19,7 +19,7 @@ const LogTicket = ({infoTicketId}) => {
     //get api api/endpoint/log-status
     const fetchTicketSteps = async () => {
       try {
-        const response = await Api.get(`api/endpoint/log-ticket?ticket_id=${infoTicketId}`);
+        const response = await Api.get(`/api/endpoint/log-ticket?ticket_id=${infoTicketId}`);
         console.log(response)
         if (response.status === 200) {
           setLogTicket(response.data);
@@ -35,20 +35,43 @@ const LogTicket = ({infoTicketId}) => {
     fetchTicketSteps();
   }, [infoTicketId]); 
 
+  //saya mendapatkan respone api dari log-ticket yang berisi field_name, saya ingin merubah value dari field_name menjadi nama field yang lebih jelas
+  const field_name = {
+    'tracking_number': 'Ticket Number',
+    'StatusTicket': 'Status Ticket',
+    'cargo': 'Cargo',
+  }
+
+
   return (
     <div >
       <List
         itemLayout="horizontal"
         dataSource={logTicket}
         renderItem={(item) => (
-          <List.Item>
+          <List.Item style={{ 
+            display: 'flex',
+            justifyContent: 'space-between',
+            // alignItems: 'center',
+            // padding: '10px 20px',
+            borderBottom: '1px solid #f0f0f0',
+           }}>
             <List.Item.Meta
               // avatar={<Avatar icon={<i className="anticon anticon-app" />} />}
-              title={<Text strong>{item.old_value}</Text>}
+              title={<Text strong> 
+                {field_name[item.field_name]}
+              </Text>}
               description={<Text>{formatDate(item.created_at)}</Text>}
+              style={{ flex: 1 }}
             />
-            <div>
-              <div>{item.new_value}</div>
+            <div style={{ 
+               display: 'flex',
+               alignItems: 'center',
+               justifyContent: 'flex-end',
+             }}>
+              <Text>{item.old_value}</Text>
+              <ArrowRightOutlined style={{ margin: '0 10px', color: '#1890ff', }} />
+              <Text>{item.new_value}</Text>
             </div>
           </List.Item>
         )}

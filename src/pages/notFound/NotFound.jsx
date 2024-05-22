@@ -1,24 +1,36 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Lottie from "lottie-react";
 import networkAnimation from "../../assets/lottie/network.json";
 import { Button, Col, Grid, Row, theme } from "antd";
 import { removeAllCookies } from "../../utils/cookies";
-
-
+import { isAuthenticated } from "../../utils/auth";
 
 const { useBreakpoint } = Grid;
 const { useToken } = theme;
 
 const NotFound = () => {
+  const navigate = useNavigate();
   const screens = useBreakpoint();
   const { token } = useToken();
+
+  useEffect(() => {
+    if (isAuthenticated()) {
+      navigate('/dashboard');
+    }
+  }, [navigate]);
 
   const removeCookies = () => {
     removeAllCookies();
     window.location.href = "/";
   }
+
+  if (isAuthenticated()) {
+    // If authenticated, return null to render nothing
+    return null;
+  }
+
   return (
-    <>
     <Row
       justify={{ xs: "center", sm: "start" }}
       style={{
@@ -63,10 +75,7 @@ const NotFound = () => {
         </Button>
       </Col>
     </Row>
-    
-    </>
-    
-  )
+  );
 };
 
 export default NotFound;

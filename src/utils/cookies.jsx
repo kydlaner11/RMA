@@ -14,4 +14,5 @@ export const getCookies = (name) => {
 export const removeAllCookies = () => {
   Cookies.remove("refresh_token");
   Cookies.remove("access_token");
+  // Cookies.remove("token");
 };

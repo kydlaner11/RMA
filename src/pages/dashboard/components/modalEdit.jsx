@@ -18,15 +18,15 @@ const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions, 
       if (!bearerToken) {
         throw new Error('Bearer token not found.');
       }
-      const response = await Api.get(`api/customer/ticket/${editTicketId}`, {
+      const response = await Api.get(`/api/customer/ticket/${editTicketId}`, {
         headers: {
           Authorization: `Bearer ${bearerToken}`,
         },
       });
       if (response.status === 200) {
         setTicketData(response.data.ticket);
-        console.log(ticketData)
-        form.setFieldsValue(response.data); // Set initial form values with the ticket data
+        console.log("ticket", ticketData)
+        form.setFieldsValue(response.data.ticket); // Set initial form values with the ticket data
       } else {
         message.error(response.data.message || 'Failed to fetch ticket data');
       }
@@ -44,12 +44,6 @@ const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions, 
     }
   };
 
-  useEffect(() => {
-    if (openFormEdit && editTicketId) {
-      fetchTicketData();
-    }
-  }, [openFormEdit, editTicketId, form]);
-
   const handleOk = async () => {
     try {
       setLoading(true);
@@ -58,7 +52,7 @@ const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions, 
         throw new Error('Bearer token not found.');
       }
       const formData = await form.validateFields();
-      const response = await Api.post(`api/customer/ticket/${editTicketId}`, formData, {
+      const response = await Api.post(`/api/customer/ticket/${editTicketId}`, formData, {
         headers: {
           Authorization: `Bearer ${bearerToken}`,
         },
@@ -70,14 +64,22 @@ const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions, 
         await apiTable();
       } else {
         message.error(response.data.message || 'Failed to update ticket');
+        await apiTable();
       }
     } catch (error) {
       console.error('Error updating ticket:', error);
       message.error('Failed to update ticket');
+      await apiTable();
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (openFormEdit && editTicketId) {
+      fetchTicketData();
+    }
+  }, [openFormEdit, editTicketId, form]);
 
   const handleCancel = () => {
     setOpenFormEdit(false);

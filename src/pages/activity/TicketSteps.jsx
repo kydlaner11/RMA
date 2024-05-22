@@ -25,7 +25,7 @@ const TicketSteps = ({infoTicketId}) => {
     //get api api/endpoint/log-status
     const fetchTicketSteps = async () => {
       try {
-        const response = await Api.get(`api/endpoint/log-status?ticket_id=${infoTicketId}`);
+        const response = await Api.get(`/api/endpoint/log-status?ticket_id=${infoTicketId}`);
         if (response.status === 200) {
           //how to get response.data in array
           setTicketSteps(response.data);
@@ -47,14 +47,14 @@ const TicketSteps = ({infoTicketId}) => {
       subTitle:  ticketSteps.find(step => step.status_ticket.status_name === 'Waiting Approval') ? formatDate(ticketSteps.find(step => step.status_ticket.status_name === 'Waiting Approval').created_at): '',
       description: 'The RMA ticket has been submitted by the customer. Information and details about the faulty item have been included in the request.',
       status: ticketSteps.find(step => step.status_ticket.status_name === 'Received') ? 'finish' : ticketSteps.find(step => step.status_ticket.status_name === 'Cancelled')? 'finish' : ticketSteps.find(step => step.status_ticket.status_name !== 'Received')? 'process':'finish',
-      icon: ticketSteps.find(step => step.status_ticket.status_name === 'Received') ? <FieldTimeOutlined /> : ticketSteps.find(step => step.status_ticket.status_name === 'Cancelled' ) ? <FieldTimeOutlined /> : ticketSteps.find(step => step.status_ticket.status_name !== 'Received' )?<LoadingOutlined />:  <FieldTimeOutlined />,
+      icon: <FieldTimeOutlined />
     },
     {
       title: 'Received',
       subTitle: ticketSteps.find(step => step.status_ticket.status_name === 'Received') ? formatDate(ticketSteps.find(step => step.status_ticket.status_name === 'Received').updated_at) : '',
       description: 'The returned item has been received by the RMA department. This reception process involves physical verification of the item.',
       status:  ticketSteps.find(step => step.status_ticket.status_name === 'Testing and Processing') ? 'finish' : ticketSteps.find(step => step.status_ticket.status_name === 'Cancelled')? 'wait' : ticketSteps.find(step => step.status_ticket.status_name === 'Received') ? 'process' : 'wait',
-      icon: ticketSteps.find(step => step.status_ticket.status_name === 'Testing and Processing') ? <ContainerOutlined /> : ticketSteps.find(step => step.status_ticket.status_name === 'Cancelled' ) ? <ContainerOutlined /> : ticketSteps.find(step => step.status_ticket.status_name === 'Received' ) ? <LoadingOutlined />  : <ContainerOutlined />,
+      icon: <ContainerOutlined /> 
     },
     {
       title: 'Testing and Processing',
