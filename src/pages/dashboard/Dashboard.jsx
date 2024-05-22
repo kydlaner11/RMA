@@ -117,8 +117,9 @@ const Dashboard = () => {
       const response = await api.delete(`/api/endpoint/remove-image?hashname=${index}`);
       if (response.status === 200) {
         //newImage adalah state imagesSub yang di filter dengan menghapus image yang dihapus
-        const newImage = imagesSub.filter(image => image.hashname === index);
-        console.log("ddad",newImage);
+        const newImages = imagesSub.filter(image => image.hashname !== index);
+        setImagesSub(newImages);
+        console.log("Updated imagesSub:", newImages);
         message.success('Image removed successfully');
       } else {
         message.error('Failed to remove image');
@@ -174,7 +175,7 @@ const Dashboard = () => {
         throw new Error('Bearer token not found.');
       }
       
-      const response = await api.get(`api/customer/search?mac_address=${value}`, {
+      const response = await api.get(`/api/customer/search?mac_address=${value}`, {
         headers: {
           Authorization: `Bearer ${bearerToken}`,
         },
@@ -339,7 +340,7 @@ const Dashboard = () => {
       }// Tutup modal konfirmasi
       // Lakukan embatalan tiket jika dikonfirmasi
       try {
-        await api.put(`api/endpoint/change-status-ticket2/?token=6JtTi601HTYhMy4Ax7dJ6JtTi601HTYhMy4Ax7dJuuQclWEg8fZ3uuQclWEg8fZ3&odoo_rma_ticket_id=${cancelTicketId}&action=${2}`); 
+        await api.put(`/api/endpoint/change-status-ticket2/?token=6JtTi601HTYhMy4Ax7dJ6JtTi601HTYhMy4Ax7dJuuQclWEg8fZ3uuQclWEg8fZ3&odoo_rma_ticket_id=${cancelTicketId}&action=${2}`); 
         message.success('Ticket cancelled successfully');
         await apiTable();
       } catch (error) {
@@ -362,15 +363,15 @@ const Dashboard = () => {
   }
 
   const handleInfoClick = (id) => {
-    setInfoTicketId(id)
+    setInfoTicketId(id);
     console.log("info",id)
     setOpenDrawer(true);
     setActiveTabKey('1');
-    document.getElementById('customTooltip').style.display = 'none';
+    document.getElementById('customTooltip').display = 'none';
   };
   const handleEditClick = (id) => {
     setEditTicketId(id);
-    console.log("ini",id) // Set the ID of the ticket being edited
+    console.log("ini",id) 
     setOpenFormEdit(true); // Open the modal for editing
   };
   const handleCancelClick = (id) => {
@@ -382,7 +383,7 @@ const Dashboard = () => {
   const handleTool = (id) => {
     handleInfoClick(id);
     setActiveTabKey('4');
-    document.getElementById('customTooltip').style.display = 'none';
+    document.getElementById('customTooltip').display = 'none';
 
   };
   

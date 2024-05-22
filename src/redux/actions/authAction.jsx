@@ -11,7 +11,7 @@ export const login = (values) => async (dispatch) => {
     const res = response.data;
     console.log("res", res  );
 
-    Cookies.set("refresh_token", res.data.refreshToken, {
+    Cookies.set("refresh_token", res.data.refresh_token, {
       secure: true,
       sameSite: "strict",
       expires: 30,
@@ -47,28 +47,22 @@ export const login = (values) => async (dispatch) => {
 
 export const refreshToken = () => async (dispatch) => {
   const refresh_token = Cookies.get("refresh_token");
-  const access_token = Cookies.get("access_token"); // Jika server memerlukan access token dalam header
+  const access_token = Cookies.get("access_token");
 
-  console.log('Refresh Token:', refresh_token);
-  console.log('Access Token:', access_token);
+  console.log("rt",refresh_token)
+  console.log("at",access_token)
 
   if (refresh_token) {
     try {
-      let config = {};
-      if (access_token) {
-        config = {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-            "Content-Type": "application/json",
-          },
-        };
-      }
-
-      const response = await Api.post("/api/customer/refresh", { refresh_token }, config);
-      const res = response.data;
-      console.log('Refresh Token Response:', res);
-
-
+      const response = await Api.post("/api/customer/refresh", { refresh_token } , {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+          "Content-Type": "application/json",
+        },
+      })
+      const res = response.data
+      const resp = response
+      console.log("res", resp)
 
       Cookies.set("access_token", res.data.accessToken, {
         secure: true,
@@ -83,15 +77,20 @@ export const refreshToken = () => async (dispatch) => {
 
       dispatch(generatePages());
     } catch (error) {
-      dispatch({
+      console.log('Error refreshing token:', error);
+      if (error.response && error.response.status === 401) {
+        removeAllCookies();
+        window.location.href = "/login";
+      }
+      
+        dispatch({
         type: GLOBALTYPES.MESSAGE,
         payload: {
           error: "Something went wrong",
         },
       });
-      console.log(error)
-    }
-  }
+    } 
+  } 
 };
 
 export const logout = () => async (dispatch) => {

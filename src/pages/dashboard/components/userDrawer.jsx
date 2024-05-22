@@ -37,7 +37,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
     const fetchLog = async () => {
         try {
             setLoading(true);
-            const response = await Api.get(`api/endpoint/log-status/?ticket_id=${infoTicketId}`);
+            const response = await Api.get(`/api/endpoint/log-status/?ticket_id=${infoTicketId}`);
             console.log(response.data)
 
         } catch (error) {
@@ -88,7 +88,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
                 throw new Error('Bearer token not found.');
             }
             await apiTable();
-            const response = await Api.get(`api/customer/get-ticket-details/${infoTicketId}`, {
+            const response = await Api.get(`/api/customer/get-ticket-details/${infoTicketId}`, {
                 headers: {
                     Authorization: `Bearer ${bearerToken}`,
                     "ngrok-skip-browser-warning": "69420"
@@ -120,7 +120,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
           if (!bearerToken) {
             throw new Error('Bearer token not found.');
           }
-          const response = await Api.get(`api/images?ticket_id=${infoTicketId}`, {
+          const response = await Api.get(`/api/images?ticket_id=${infoTicketId}`, {
             headers: {
               Authorization: `Bearer ${bearerToken}`,
                 "ngrok-skip-browser-warning": "69420"
@@ -251,7 +251,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
                             <Paragraph className='text-start'><strong>Photos :</strong></Paragraph> 
                             <div className="">
                                 {imageView.map((image, index) => (
-                                    <Image key={index} src={`${BASE_URL_BE}api/get-images?filename=${image}`} style={{ width: 100, height: 100, margin: 5 }} />
+                                    <Image key={index} src={`${BASE_URL_BE}/api/get-images?filename=${image}&ngrok-skip-browser-warning=69420`} style={{ width: 100, height: 100, margin: 5 }} />
                                 ))}
 
                             </div>

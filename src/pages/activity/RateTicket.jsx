@@ -17,7 +17,7 @@ const RateTicket = ({infoTicketId, apiTable, setOpenDrawer}) => {
         if (!bearerToken) {
           throw new Error('Bearer token not found.');
         }
-        const response = await Api.get(`api/customer/get-ticket-details/${infoTicketId}`, {
+        const response = await Api.get(`/api/customer/get-ticket-details/${infoTicketId}`, {
           headers: {
             Authorization: `Bearer ${bearerToken}`,
             "ngrok-skip-browser-warning": "69420"
@@ -42,7 +42,7 @@ const RateTicket = ({infoTicketId, apiTable, setOpenDrawer}) => {
       throw new Error('Bearer token not found.');
       }
     console.log("bearer",bearerToken)
-      const response = await Api.post(`api/customer/ticket-rate?ticket_id=${infoTicketId}&rate=${values.rate}`,null, {
+      const response = await Api.post(`/api/customer/ticket-rate?ticket_id=${infoTicketId}&rate=${values.rate}`,null, {
         headers: {
           Authorization: `Bearer ${bearerToken}`,
         },

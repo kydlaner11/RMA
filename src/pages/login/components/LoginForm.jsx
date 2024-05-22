@@ -1,7 +1,7 @@
 import { PlayCircleFilled } from "@ant-design/icons";
 import { useTour } from "@reactour/tour";
 import { Button, Form, Input, message } from "antd";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../../redux/actions/authAction"; // import login action
@@ -24,10 +24,12 @@ const steps = [
 
 const LoginForm = () => {
   const { setIsOpen, setSteps, setCurrentStep } = useTour();
+  const [loading, setLoading] = useState(false); 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const onFinish = async (values) => {
+    setLoading(true);
     try {
       const response = await Api.post('/api/logincust', values);
       const resp = response.data;
@@ -48,6 +50,8 @@ const LoginForm = () => {
       } else {
         message.error('Login failed, please try again later');
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -130,7 +134,7 @@ const LoginForm = () => {
         </div>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
+          <Button type="primary" htmlType="submit" style={{ width: "100%" }} loading={loading}>
             Login
           </Button>
         </Form.Item>
