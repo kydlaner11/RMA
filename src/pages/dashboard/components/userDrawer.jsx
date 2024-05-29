@@ -1,5 +1,5 @@
 import {  Drawer, Tabs,  Card, Typography, message, Spin, Divider, Tag, Image, theme } from 'antd';
-import { AlertOutlined, CheckCircleOutlined, FileSearchOutlined, StarOutlined,FileOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { AlertOutlined, CheckCircleOutlined, FileSearchOutlined, StarOutlined,FileOutlined, ExclamationCircleOutlined, FileDoneOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import Api from '../../../api';
@@ -7,6 +7,8 @@ import TicketSteps from '../../activity/TicketSteps';
 import RateTicket from '../../activity/RateTicket';
 import LogTicket from '../../activity/LogTicket';
 import { BASE_URL_BE } from '../../../constant/url';
+import Result from '../../activity/Result';
+import Document from '../../activity/Document';
 
 
 const { TabPane } = Tabs;
@@ -154,13 +156,20 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
       title={ticketData ? `Ticket Details: ${ticketData.no_tickets}` : 'RMA Ticket Details'}
       className="user-drawer"
       placement={"right"}
-      width={600}
+      width={670}
       open={openDrawer}
       onClose={onClose}
     >
       <Tabs defaultActiveKey={activeTabKey} type="card" centered>
-        <TabPane tab={<span><FileSearchOutlined />Details</span>} key="1">
-            <div className="" style={{width: 500, marginTop: 16, marginLeft: 25}}>
+      {ticketData?.status_ticket === "Finished" && (
+            <TabPane tab={<span><FileDoneOutlined />Result</span>}  key="1">
+                <div style={{width: 570, marginTop: 16, marginLeft: 25}}>
+                    <Result infoTicketId={infoTicketId} apiTable={apiTable}/>
+                </div>
+            </TabPane>
+        )}
+        <TabPane tab={<span><FileSearchOutlined />Details</span>} key="2">
+            <div className="" style={{width: 570, marginTop: 16, marginLeft: 25}}>
                 <Card>
                     <div style={{ padding: 22 }}>
                         <Paragraph style={{ marginBottom: 0 }}>
@@ -276,26 +285,24 @@ Jalan Mangga Dua Raya - Jakarta Pusat 10730</div>
                 </Card>
             </div>     
         </TabPane>
-        <TabPane tab={<span><AlertOutlined />Status</span>} key="2">
-            <div className="" style={{width: 500, padding: 15}}>
+        <TabPane tab={<span><AlertOutlined />Status</span>} key="3">
+            <div className="" style={{width: 570, padding: 15}}>
                 <TicketSteps infoTicketId={infoTicketId} />
             </div>     
         </TabPane>
-        <TabPane tab={<span><CheckCircleOutlined />Log</span>} key="3" style={{width: 500, marginTop: 16, marginLeft: 25}}>
+        <TabPane tab={<span><CheckCircleOutlined />Log</span>} key="4" style={{width: 570, marginTop: 16, marginLeft: 25}}>
             <LogTicket infoTicketId={infoTicketId} />
         </TabPane>
         {ticketData?.status_ticket === "Finished" && (
-            <TabPane tab={<span><StarOutlined />Rate</span>}  key="4">
-                <div style={{width: 500, marginTop: 16, marginLeft: 25}}>
+            <TabPane tab={<span><StarOutlined />Rate</span>}  key="5">
+                <div style={{width: 570, marginTop: 16, marginLeft: 25}}>
                     <RateTicket infoTicketId={infoTicketId} apiTable={apiTable} setOpenDrawer={setOpenDrawer}/>
                 </div>
             </TabPane>
         )}
-        <TabPane tab={<span><FileOutlined />Document</span>} key="5">
-            <div className="" style={{width: 330, marginTop: 16,}}>
-                <Card>
-
-                </Card>
+        <TabPane tab={<span><FileOutlined />Document</span>} key="6">
+            <div className="" style={{width: 570, marginTop: 16, marginLeft: 25}}>
+                <Document />
             </div>     
         </TabPane>
     </Tabs>

@@ -61,8 +61,7 @@ export const refreshToken = () => async (dispatch) => {
         },
       })
       const res = response.data
-      const resp = response
-      console.log("res", resp)
+      console.log("res", res)
 
       Cookies.set("access_token", res.data.accessToken, {
         secure: true,

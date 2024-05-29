@@ -58,10 +58,8 @@ const Dashboard = () => {
   const uploadImages = async (Images) => {
     try {
       const formData = new FormData();
-      //image pertama akan diupload ke API dengan nama 'photos' dan image kedua akan diupload dengan nama 'photos' juga 
-      //state menerima data photos yang diupload
       Images.forEach((image) => {
-        formData.append(`photos`, image);
+        formData.append('photos', image);
       });
       const response = await api.post('/api/upload-image', formData, {
         headers: {
@@ -77,46 +75,64 @@ const Dashboard = () => {
       console.error('Error uploading images:', error);
       return [];
     }
-  }
+  };
+  
   const beforeUpload = (file) => {
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-    const isLt2M = file.size / 1024 / 1024 < 5; 
-
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg';
+    const isLt5M = file.size / 1024 / 1024 < 5;
+    console.log("file", file);
+  
     if (!isJpgOrPng) {
-        message.error('You can only upload JPG/PNG file!');
-    } else if (!isLt2M) {
-        message.error('Image must be smaller than 2MB!');
+      message.error('You can only upload JPG/PNG file!');
+    } else if (!isLt5M) {
+      message.error('Image must be smaller than 5MB!');
     }
-    return isJpgOrPng && isLt2M;
-};
-  const customRequest = async ({file, onSuccess }) => {
+    return isJpgOrPng && isLt5M;
+  };
+  
+  const customRequest = async ({ file, onSuccess, onError }) => {
     try {
       if (images.length > 3) {
         message.error('You can only upload up to 3 images');
+        onError(new Error('You can only upload up to 3 images'));
         return;
       }
-      
-      const response = await uploadImages([file]);
-      setImagesSub(prevImages => [...prevImages, {...response, uid: file.uid}]);
-      onSuccess();
-      message.success('Image uploaded successfully');
-      console.log("first",file)
 
+      if (!beforeUpload(file)) {
+        handleImageChange({ fileList: [{ ...file, status: 'error' }] });
+        onError(new Error('Invalid file'));
+        return;
+      }
+  
+      // Mengunggah gambar jika valid
+      const response = await uploadImages([file]);
+      if (response) { // Pastikan respons valid
+        setImagesSub(prevImages => [...prevImages, { ...response, uid: file.uid }]);
+        onSuccess();
+        message.success('Image uploaded successfully');
+      } else {
+        handleImageChange({ fileList: [{ ...file, status: 'error' }] });
+        onError(new Error('Failed to upload image'));
+        message.error('Failed to upload image');
+      }
     } catch (error) {
       console.error('Error uploading image:', error);
+      onError(error);
       message.error('Failed to upload image');
     }
-  }; 
+  };
+  
   const handleImageChange = ({ fileList }) => {
     setImages(fileList.map(file => file.response || file));
   };
+  
   const handleRemoveImage = async (file) => {
     try {
       const index = imagesSub.find(image => image.uid === file.uid).hashname;
-      console.log("index",index)
+      console.log("index", index);
       const response = await api.delete(`/api/endpoint/remove-image?hashname=${index}`);
       if (response.status === 200) {
-        //newImage adalah state imagesSub yang di filter dengan menghapus image yang dihapus
+        // newImage adalah state imagesSub yang di filter dengan menghapus image yang dihapus
         const newImages = imagesSub.filter(image => image.hashname !== index);
         setImagesSub(newImages);
         console.log("Updated imagesSub:", newImages);
@@ -129,7 +145,7 @@ const Dashboard = () => {
       message.error('Failed to remove image');
     }
   };
-
+  
   const uploadButton = (
     <button style={{ border: 0, background: 'none' }} type="button">
       <PlusOutlined />

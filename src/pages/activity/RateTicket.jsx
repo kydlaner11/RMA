@@ -66,7 +66,7 @@ const RateTicket = ({infoTicketId, apiTable, setOpenDrawer}) => {
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <Card style={{ width: 500, textAlign:"center" }}>
+      <Card style={{ width: 570, textAlign:"center" }}>
         <Title level={0} >Package has been delivered successfully</Title>
         <Paragraph>Rate our service</Paragraph>
         <Form layout="vertical" onFinish={handleSubmit}>

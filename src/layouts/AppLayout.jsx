@@ -19,6 +19,7 @@ const AppLayout = ({
   const { auth } = useSelector((state) => state);
   const {token} = useToken()
 
+  console.log(auth.accessToken)
   return (
     <Layout className="app">
       {alertApi.open && (
