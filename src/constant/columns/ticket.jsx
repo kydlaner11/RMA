@@ -51,8 +51,8 @@ const statusOptions = [
     value: "waiting",
   },
   {
-    text: "Approved",
-    value: "approved",
+    text: "Offering",
+    value: "Offering",
   },
   {
     text: "Received",
@@ -63,8 +63,8 @@ const statusOptions = [
     value: "testing",
   },
   {
-    text: "Fullfilment",
-    value: "fullfilment",
+    text: "Fulfillment",
+    value: "fulfillment",
   },
   {
     text: "Finished",
@@ -188,13 +188,13 @@ export const ticketsColumn = ({ searchProps, handleInfoClick, handleEditClick, h
           color={
             record.status_ticket === "Waiting Approval"
               ? "processing"
-              : record.status_ticket === "Approved"
+              : record.status_ticket === "Offering"
               ? "green"
               : record.status_ticket === "Received"
               ? "orange"
               : record.status_ticket === "Testing and Processing"
               ? "purple"
-              : record.status_ticket === "Fullfilment"
+              : record.status_ticket === "Fulfillment"
               ? "success"
               : record.status_ticket === "Finished"
               ? "geekblue"

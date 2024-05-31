@@ -105,7 +105,7 @@ const LoginForm = () => {
           rules={[
             {
               required: true,
-              message: "Please input your Email!",
+              message: "Please input your Email",
             },
           ]}
         >
@@ -119,7 +119,7 @@ const LoginForm = () => {
           rules={[
             {
               required: true,
-              message: "Please input your password!",
+              message: "Please input your password",
             },
           ]}
           style={{ marginBottom: 8 }}
