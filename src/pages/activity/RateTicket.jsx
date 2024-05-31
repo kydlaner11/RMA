@@ -8,7 +8,7 @@ import Cookies from "js-cookie";
 // const { TextArea } = Input;
 const { Title, Paragraph } = Typography;
 
-const RateTicket = ({infoTicketId, apiTable, setOpenDrawer}) => {
+const RateTicket = ({infoTicketId, apiTable, setOpenDrawer, setIsRateButtonClicked}) => {
   const [rating, setRating] = useState([]);
 
     const getRate = async () => {
@@ -51,6 +51,7 @@ const RateTicket = ({infoTicketId, apiTable, setOpenDrawer}) => {
       if (response.status === 200) {
         await apiTable();
         setOpenDrawer(false);
+        setIsRateButtonClicked(false)
         setRating(values.rate);
       } else {
         console.error('Failed to fetch ticket steps:', response.data.message);

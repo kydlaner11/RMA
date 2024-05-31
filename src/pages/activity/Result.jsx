@@ -1,4 +1,4 @@
-import {  Card, Typography,  Divider, Tag, Image, message, } from 'antd';
+import {  Card, Typography,  Divider, Tag, Image, message} from 'antd';
 // import { CheckCircleOutlined,  ExclamationCircleOutlined } from '@ant-design/icons';
 import React, {useState, useEffect} from "react";
 import { BASE_URL_BE } from '../../constant/url';
@@ -10,6 +10,7 @@ const {Paragraph} = Typography;
 const Result = ({infoTicketId, apiTable}) => {
   const [imageView, setImageView] = useState([]);
   const [dataResult, setDataResult] = useState(null);
+  // const [loading, setLoading] = useState(false);
 
   const fetchTicketData = async () => {
     try {
@@ -39,7 +40,7 @@ const Result = ({infoTicketId, apiTable}) => {
           } else {
             message.error('Failed to get info ticket');
           }
-    } 
+    }
 }
 
   const fetchImages = async () => {
@@ -70,7 +71,8 @@ const Result = ({infoTicketId, apiTable}) => {
 
 
   return (
-    <Card>
+    // <Spin loading={loading}>
+      <Card>
       <div style={{ padding: 22 }}>
           {/* <Paragraph style={{ marginBottom: 0 }}>
               Mac Address:    
@@ -152,8 +154,9 @@ const Result = ({infoTicketId, apiTable}) => {
               <Paragraph className='text-start'><strong>Address :</strong></Paragraph> 
               <div className='text-end'style={{ width: 275, textAlign: 'end' }}>Makanan</div>
           </div> */}
-      </div>
-  </Card>
+          </div>
+      </Card>
+    // </Spin>
   )
 }
 

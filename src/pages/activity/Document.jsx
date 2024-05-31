@@ -1,6 +1,7 @@
 import React from 'react';
 //  {  useState, useEffect } 
 import { Card, Button, Typography,} from 'antd';
+import { FileTextOutlined } from '@ant-design/icons';
 // import Api from '../../api';
 // import Cookies from "js-cookie";  
 
@@ -51,18 +52,54 @@ const Document = () => {
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <Card style={{ width: 570}}>
-        <Title level={3} style={{ marginTop: 10, marginBottom: 30 }} >Here’s All Your Document</Title>
-        <Button style={{ width: "100%", height: "60px", marginBottom: 15 }}>
-          duar
-        </Button>
-        <Button style={{ width: "100%", height: "60px", marginBottom: 15 }}>
-          duar
-        </Button>
-        <Button style={{ width: "100%", height: "60px", marginBottom: 15 }}>
-          duar
-        </Button>
-      </Card>
+       <Card style={{ width: 570 }}>
+      <Title level={3} style={{ marginTop: 10, marginBottom: 30 }}>Here’s All Your Document</Title>
+      <Button 
+        style={{ 
+          width: "100%", 
+          height: "60px", 
+          marginBottom: 15, 
+          display: 'flex', 
+          justifyContent: 'flex-start', 
+          alignItems: 'center',
+          backgroundColor: '#E0E0E0', // Background color similar to the image
+          border: 'none' 
+        }} 
+        icon={<FileTextOutlined style={{ fontSize: 24, marginRight: 10 }} />}
+      >
+        Surat Penawaran
+      </Button>
+      <Button 
+        style={{ 
+          width: "100%", 
+          height: "60px", 
+          marginBottom: 15, 
+          display: 'flex', 
+          justifyContent: 'flex-start', 
+          alignItems: 'center',
+          backgroundColor: '#E0E0E0', // Background color similar to the image
+          border: 'none' 
+        }} 
+        icon={<FileTextOutlined style={{ fontSize: 24, marginRight: 10 }} />}
+      >
+        Surat Pemberitahuan
+      </Button>
+      <Button 
+        style={{ 
+          width: "100%", 
+          height: "60px", 
+          marginBottom: 15, 
+          display: 'flex', 
+          justifyContent: 'flex-start', 
+          alignItems: 'center',
+          backgroundColor: '#E0E0E0', // Background color similar to the image
+          border: 'none' 
+        }} 
+        icon={<FileTextOutlined style={{ fontSize: 24, marginRight: 10 }} />}
+      >
+        Invoice
+      </Button>
+    </Card>
     </div>
   );
 

@@ -44,6 +44,7 @@ const Dashboard = () => {
   const [cancelTicketId, setCancelTicketId] = useState(null);
   // const [editTicketData, setEditTicketData] = useState(null);
   const [filterCancelled, setFilterCancelled] = useState(false);
+  const [isRateButtonClicked, setIsRateButtonClicked] = useState(false);
 
 
 
@@ -382,7 +383,6 @@ const Dashboard = () => {
     setInfoTicketId(id);
     console.log("info",id)
     setOpenDrawer(true);
-    setActiveTabKey('1');
     document.getElementById('customTooltip').display = 'none';
   };
   const handleEditClick = (id) => {
@@ -397,9 +397,10 @@ const Dashboard = () => {
   };
 
   const handleTool = (id) => {
-    handleInfoClick(id);
-    setActiveTabKey('4');
-    document.getElementById('customTooltip').display = 'none';
+    setInfoTicketId(id);
+    setOpenDrawer(true);
+    setIsRateButtonClicked(true);
+    document.getElementById('customTooltip').style.display = 'none';
 
   };
   
@@ -414,12 +415,13 @@ const Dashboard = () => {
       const response = await api.get('/api/customer/view-ticket-customerid', {
         headers: {
           Authorization: `Bearer ${bearerToken}`,
+          "ngrok-skip-browser-warning": "69420"
         },
         params: {
           filterCancelled: cancelled ? undefined:'true',
         },
       });
-      setDataTable(response.data);
+      setDataTable(response.data.data);
       console.log(response.data)
 
     } catch (error) {
@@ -630,7 +632,7 @@ const Dashboard = () => {
           </Spin>
         </div>
         <ModalEdit openFormEdit={openFormEdit} setOpenFormEdit={setOpenFormEdit}  editTicketId={editTicketId} cargoOptions={cargoOptions} apiTable={apiTable} modalSession={modalSession}/>
-        <UserDrawer openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} infoTicketId={infoTicketId} apiTable={apiTable} modalSession={modalSession} activeTabKey={activeTabKey} />
+        <UserDrawer openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} infoTicketId={infoTicketId} apiTable={apiTable} modalSession={modalSession} activeTabKey={activeTabKey} setActiveTabKey={setActiveTabKey} isRateButtonClicked={isRateButtonClicked} setIsRateButtonClicked={setIsRateButtonClicked}/>
       </Spin>
     </>
   );

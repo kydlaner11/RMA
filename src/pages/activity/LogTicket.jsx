@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { List, Typography } from 'antd';
 import Api from '../../api';
-import {
-  ArrowRightOutlined,
-} from '@ant-design/icons';
+import { RightOutlined } from '@ant-design/icons';
 
 const { Text } = Typography;
 
@@ -12,19 +10,16 @@ function formatDate(isoDate) {
   const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
   return date.toLocaleDateString('en-EN', options);
 }
-const LogTicket = ({infoTicketId}) => {
+
+const LogTicket = ({ infoTicketId }) => {
   const [logTicket, setLogTicket] = useState([]);
 
   useEffect(() => {
-    //get api api/endpoint/log-status
     const fetchTicketSteps = async () => {
       try {
         const response = await Api.get(`/api/endpoint/log-ticket?ticket_id=${infoTicketId}`);
-        console.log(response)
         if (response.status === 200) {
           setLogTicket(response.data);
-          console.log(response.data)
-          
         } else {
           console.error('Failed to fetch ticket steps:', response.data.message);
         }
@@ -33,51 +28,48 @@ const LogTicket = ({infoTicketId}) => {
       }
     };
     fetchTicketSteps();
-  }, [infoTicketId]); 
-
-  //saya mendapatkan respone api dari log-ticket yang berisi field_name, saya ingin merubah value dari field_name menjadi nama field yang lebih jelas
-  const field_name = {
-    'tracking_number': 'Ticket Number',
-    'StatusTicket': 'Status Ticket',
-    'cargo': 'Cargo',
-  }
-
+  }, [infoTicketId]);
 
   return (
-    <div >
+    <div style={{ padding: '10px' }}>
       <List
-        itemLayout="horizontal"
+        itemLayout="vertical"
         dataSource={logTicket}
         renderItem={(item) => (
-          <List.Item style={{ 
-            display: 'flex',
-            justifyContent: 'space-between',
-            // alignItems: 'center',
-            // padding: '10px 20px',
+          <List.Item style={{
             borderBottom: '1px solid #f0f0f0',
-           }}>
-            <List.Item.Meta
-              // avatar={<Avatar icon={<i className="anticon anticon-app" />} />}
-              title={<Text strong> 
-                {field_name[item.field_name]}
-              </Text>}
-              description={<Text>{formatDate(item.created_at)}</Text>}
-              style={{ flex: 1 }}
-            />
-            <div style={{ 
-               display: 'flex',
-               alignItems: 'center',
-               justifyContent: 'flex-end',
-             }}>
-              <Text>{item.old_value}</Text>
-              <ArrowRightOutlined style={{ margin: '0 10px', color: '#1890ff', }} />
-              <Text>{item.new_value}</Text>
+            padding: '10px 0',
+          }}>
+            <Text style={{ fontWeight: 'bold' }}>RMA</Text>
+            <Text style={{ color: '#888' }}> - {formatDate(item.created_at)}</Text>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              marginTop: '5px'
+            }}>
+               {item.description && (
+                <Text style={{ color: '#000', marginTop: '2px' }}>{item.description}</Text>
+              )}
             </div>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              marginTop: '5px'
+            }}>
+              <Text>{item.old_value}</Text>
+              <RightOutlined style={{ margin: '0 10px', color: '#373A40' }} />
+              <Text style={{ color:  '#2A629A' }}>{item.new_value}</Text>
+            </div>
+            {item.new_value.startsWith('Error') && (
+              <Text type="danger" style={{ marginTop: '5px' }}>
+                {item.new_value}
+              </Text>
+            )}
           </List.Item>
         )}
       />
     </div>
-  )
+  );
 };
 
 export default LogTicket;

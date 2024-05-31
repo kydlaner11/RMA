@@ -21,8 +21,10 @@ const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions, 
       const response = await Api.get(`/api/customer/ticket/${editTicketId}`, {
         headers: {
           Authorization: `Bearer ${bearerToken}`,
+          "ngrok-skip-browser-warning": "69420"
         },
       });
+      console.log("ticket",response.data)
       if (response.status === 200) {
         setTicketData(response.data.ticket);
         console.log("ticket", ticketData)
