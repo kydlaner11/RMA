@@ -20,6 +20,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
   const [ticketData, setTicketData] = useState(null);
   const [expiredTime, setExpiredTime] = useState(null);
   const [imageView, setImageView] = useState([]);
+  const [odooRmaTicket, setOdooRmaTicket] = useState(null);
 
   const { token } = useToken();
 
@@ -90,6 +91,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
       });
       if (response.status === 200) {
         setTicketData(response.data);
+        setOdooRmaTicket(response.data.odoo_rma_ticket_id)
         console.log('Ticket Data:', response.data);
       } else {
         message.error(response.data.message || 'Failed to fetch ticket data');
@@ -311,7 +313,7 @@ Jalan Mangga Dua Raya - Jakarta Pusat 10730</div>
         )}
         <TabPane tab={<span><FileOutlined />Document</span>} key="6">
           <div className="tab-content">
-            <Document />
+            <Document odooRmaTicket={odooRmaTicket} />
           </div>
         </TabPane>
       </Tabs>
