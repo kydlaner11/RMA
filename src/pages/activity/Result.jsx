@@ -84,7 +84,7 @@ const Result = ({infoTicketId, apiTable}) => {
                       <Tag style={{ marginRight: 0}}
                       color='success'
                       >
-                        {dataResult?.ticket_status.fulfillment_status}
+                        {dataResult?.ticket_status[0].fulfillment_status}
                       </Tag>
                   </div>
               </div>
@@ -126,12 +126,11 @@ const Result = ({infoTicketId, apiTable}) => {
           <Divider />
           
          <div style={{ marginTop: 30 }}>
-            <Paragraph className='text-start' style={{fontSize: 16}}><strong>Proof of Delivery</strong></Paragraph>
+            <Paragraph className='text-start' style={{fontSize: 16}}><strong>Evidences</strong></Paragraph>
             <div className="">
-                {imageView.map((image, index) => (
-                    <Image key={index} src={`${BASE_URL_BE}/api/get-images?filename=${image}&ngrok-skip-browser-warning=69420`} style={{ width: 100, height: 100, margin: 5 }} />
-                ))}
-
+            {dataResult?.evidences.map((evidence, index) => (
+              <Image key={index} src={`${BASE_URL_BE}/api/get-images?filename=${evidence.encrypted_filename}&ngrok-skip-browser-warning=69420`} style={{ width: 100, height: 100, margin: 5 }} />
+            ))}
             </div>
           </div>
           {/* <div style={{ display: 'flex', justifyContent: 'space-between' }}>

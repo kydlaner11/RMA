@@ -45,6 +45,7 @@ const Dashboard = () => {
   // const [editTicketData, setEditTicketData] = useState(null);
   const [filterCancelled, setFilterCancelled] = useState(false);
   const [isRateButtonClicked, setIsRateButtonClicked] = useState(false);
+  const [isImageUploading, setIsImageUploading] = useState(false);
 
 
 
@@ -87,12 +88,14 @@ const Dashboard = () => {
       message.error('You can only upload JPG/PNG file!');
     } else if (!isLt5M) {
       message.error('Image must be smaller than 5MB!');
+      file.status = 'error';
     }
     return isJpgOrPng && isLt5M;
   };
   
   const customRequest = async ({ file, onSuccess, onError }) => {
     try {
+      setIsImageUploading(true);
       if (images.length > 3) {
         message.error('You can only upload up to 3 images');
         onError(new Error('You can only upload up to 3 images'));
@@ -102,6 +105,7 @@ const Dashboard = () => {
       if (!beforeUpload(file)) {
         handleImageChange({ fileList: [{ ...file, status: 'error' }] });
         onError(new Error('Invalid file'));
+        setIsImageUploading(false);
         return;
       }
   
@@ -120,6 +124,8 @@ const Dashboard = () => {
       console.error('Error uploading image:', error);
       onError(error);
       message.error('Failed to upload image');
+    } finally {
+      setIsImageUploading(false);
     }
   };
   
@@ -128,6 +134,14 @@ const Dashboard = () => {
   };
   
   const handleRemoveImage = async (file) => {
+    if (file.status === 'error') {
+      // Directly remove the image from the state without making an API call
+      const newImages = imagesSub.filter(image => image.uid !== file.uid);
+      setImagesSub(newImages);
+      message.success('Invalid image removed successfully');
+      return;
+    }
+
     try {
       const index = imagesSub.find(image => image.uid === file.uid).hashname;
       console.log("index", index);
@@ -511,8 +525,21 @@ const Dashboard = () => {
           centered
           open={openForm}
           onCancel={handleCloseFormModal}
-          onOk={handleAddData}
-          okText="Submit"
+          footer={[
+            <Button key="cancel" onClick={handleCloseFormModal} style={{ marginRight: '10px' }}>
+              Cancel
+            </Button>,
+            <Button
+              key="submit"
+              type="primary"
+              htmlType="submit"
+              loading={loadings || isImageUploading}
+              disabled={isImageUploading}
+              onClick={handleAddData} // Submit form when button is clicked
+            >
+              Submit
+            </Button>,
+          ]}
           width={'90vw'}
         >
         
