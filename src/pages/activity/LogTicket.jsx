@@ -20,6 +20,7 @@ const LogTicket = ({ infoTicketId }) => {
         const response = await Api.get(`/api/endpoint/log-ticket?ticket_id=${infoTicketId}`);
         if (response.status === 200) {
           setLogTicket(response.data);
+          console.log(logTicket)
         } else {
           console.error('Failed to fetch ticket steps:', response.data.message);
         }
@@ -40,7 +41,7 @@ const LogTicket = ({ infoTicketId }) => {
             borderBottom: '1px solid #f0f0f0',
             padding: '10px 0',
           }}>
-            <Text style={{ fontWeight: 'bold' }}>RMA</Text>
+            <Text style={{ fontWeight: 'bold' }}>RMA <span style={{ fontWeight: 'normal' }}>[{item.field_name}]</span></Text>
             <Text style={{ color: '#888' }}> - {formatDate(item.created_at)}</Text>
             <div style={{
               display: 'flex',

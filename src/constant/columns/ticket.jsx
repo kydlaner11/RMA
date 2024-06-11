@@ -102,7 +102,7 @@ const warrantyOptions = [
   },
 ];
 
-export const ticketsColumn = ({ searchProps, handleInfoClick, handleEditClick, handleCancelClick, handleTool}) =>
+export const ticketsColumn = ({ searchProps, handleInfoClick, handleEditClick, handleCancelClick, handleTool}) => 
   [
     {
       title: "Ticket RMA",
@@ -215,7 +215,7 @@ export const ticketsColumn = ({ searchProps, handleInfoClick, handleEditClick, h
         <Space>
           {record.status_ticket === "Finished" && record.rate === null && (
             <div>
-            <Tooltip title="Rate Now" open placement="bottomLeft" id="customTooltip" arrow={false} color="blue" >
+            <Tooltip title="Rate Now" open placement="topLeft" id="customTooltip" arrow={false} color="blue" >
               <div style={{ marginBottom: "12px" }}>
                 <Button type="link" onClick={() => handleTool(record.id)}>
                 <span style={{ marginRight: "8px" }}>

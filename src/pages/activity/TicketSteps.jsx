@@ -29,6 +29,7 @@ const TicketSteps = ({infoTicketId}) => {
         if (response.status === 200) {
           //how to get response.data in array
           setTicketSteps(response.data);
+          console.log("dd",response.data)
           
         } else {
           console.error('Failed to fetch ticket steps:', response.data.message);
@@ -60,16 +61,16 @@ const TicketSteps = ({infoTicketId}) => {
       title: 'Testing and Processing',
       subTitle: ticketSteps.find(step => step.status_ticket.status_name === 'Testing and Processing') ? formatDate(ticketSteps.find(step => step.status_ticket.status_name === 'Testing and Processing').updated_at) : '',
       description: 'The received item is undergoing testing and processing. The technical team will conduct a thorough evaluation to identify the issue.',
-      status:  ticketSteps.find(step => step.status_ticket.status_name === 'Fullfilment') ? 'finish' :  ticketSteps.find(step => step.status_ticket.status_name === 'Cancelled')? 'wait' :  ticketSteps.find(step => step.status_ticket.status_name === 'Testing and Processing') ? 'process' : 'wait',
-      icon: ticketSteps.find(step => step.status_ticket.status_name === 'Fullfilment') ? <ToolOutlined /> : ticketSteps.find(step => step.status_ticket.status_name === 'Cancelled' ) ? <ToolOutlined /> : ticketSteps.find(step => step.status_ticket.status_name === 'Testing and Processing' ) ? <LoadingOutlined /> : <ToolOutlined />,
+      status:  ticketSteps.find(step => step.status_ticket.status_name === 'Fullfilment') ? 'finish' : ticketSteps.find(step => step.status_ticket.status_name === 'Offering') ? 'finish' : ticketSteps.find(step => step.status_ticket.status_name === 'Cancelled')? 'wait' :  ticketSteps.find(step => step.status_ticket.status_name === 'Testing and Processing') ? 'process' : 'wait',
+      icon: ticketSteps.find(step => step.status_ticket.status_name === 'Fullfilment') ? <ToolOutlined /> : ticketSteps.find(step => step.status_ticket.status_name === 'Offering') ? <ToolOutlined /> : ticketSteps.find(step => step.status_ticket.status_name === 'Cancelled' ) ? <ToolOutlined /> : ticketSteps.find(step => step.status_ticket.status_name === 'Testing and Processing' ) ? <LoadingOutlined /> : <ToolOutlined />,
       
     },
     {
       title:'Fulfillment',
       subTitle: ticketSteps.find(step => step.status_ticket.status_name === 'Fullfilment') ? formatDate(ticketSteps.find(step => step.status_ticket.status_name === 'Fullfilment').updated_at) : '',
       description: 'After the item successfully passes the testing and processing stage, steps for repair or replacement will be carried out.',
-      status:  ticketSteps.find(step => step.status_ticket.status_name === 'Finished') ? 'finish' :  ticketSteps.find(step => step.status_ticket.status_name === 'Cancelled')? 'wait' :  ticketSteps.find(step => step.status_ticket.status_name === 'Fullfilment') ? 'process' : 'wait',
-      icon: ticketSteps.find(step => step.status_ticket.status_name === 'Finished') ? <FileDoneOutlined/> : ticketSteps.find(step => step.status_ticket.status_name === 'Cancelled' ) ? <FileDoneOutlined/>   : ticketSteps.find(step => step.status_ticket.status_name === 'Fullfilment' ) ? <LoadingOutlined /> : <FileDoneOutlined/>,
+      status:  ticketSteps.find(step => step.status_ticket.status_name === 'Finished') ? 'finish' :  ticketSteps.find(step => step.status_ticket.status_name === 'Cancelled')? 'wait' :  ticketSteps.find(step => step.status_ticket.status_name === 'Fullfilment') ? 'process' :  ticketSteps.find(step => step.status_ticket.status_name === 'Offering') ? 'process' :'wait',
+      icon: ticketSteps.find(step => step.status_ticket.status_name === 'Finished') ? <FileDoneOutlined/> : ticketSteps.find(step => step.status_ticket.status_name === 'Cancelled' ) ? <FileDoneOutlined/>   : ticketSteps.find(step => step.status_ticket.status_name === 'Fullfilment' ) ? <LoadingOutlined /> : ticketSteps.find(step => step.status_ticket.status_name === 'Offering' ) ? <LoadingOutlined /> : <FileDoneOutlined/>,
     },
     {
       title:'Finished',

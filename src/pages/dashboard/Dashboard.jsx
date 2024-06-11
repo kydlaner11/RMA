@@ -397,7 +397,7 @@ const Dashboard = () => {
     setInfoTicketId(id);
     console.log("info",id)
     setOpenDrawer(true);
-    document.getElementById('customTooltip').display = 'none';
+    document.getElementById('customTooltip').style.display = 'none';
   };
   const handleEditClick = (id) => {
     setEditTicketId(id);

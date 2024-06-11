@@ -53,7 +53,13 @@ const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions, 
       if (!bearerToken) {
         throw new Error('Bearer token not found.');
       }
-      const formData = await form.validateFields();
+      const formData =  {
+        problem: form.getFieldValue('problem'),
+        address: form.getFieldValue('address'),
+        phone: form.getFieldValue('phone'),
+        cargo_id: form.getFieldValue('cargo_id'), 
+        tracking_number: form.getFieldValue('tracking_number'),
+      };
       const response = await Api.post(`/api/customer/ticket/${editTicketId}`, formData, {
         headers: {
           Authorization: `Bearer ${bearerToken}`,

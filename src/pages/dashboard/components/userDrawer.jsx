@@ -151,6 +151,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
   const onClose = () => {
     setOpenDrawer(false);
     setIsRateButtonClicked(false);
+    document.getElementById('customTooltip').style.display = 'block';
   };
 
   if (loading) {
@@ -196,7 +197,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
                             : ticketData?.status_ticket === "Offering" ? "green"
                               : ticketData?.status_ticket === "Received" ? "orange"
                                 : ticketData?.status_ticket === "Testing and Processing" ? "purple"
-                                  : ticketData?.status_ticket === "Fullfilment" ? "success"
+                                  : ticketData?.status_ticket === "Fulfillment" ? "success"
                                     : ticketData?.status_ticket === "Finished" ? "geekblue"
                                       : ticketData?.status_ticket === "Cancelled" ? "error"
                                         : "default"
@@ -316,6 +317,7 @@ Jalan Mangga Dua Raya - Jakarta Pusat 10730</div>
             <Document odooRmaTicket={odooRmaTicket} />
           </div>
         </TabPane>
+
       </Tabs>
     </Drawer>
   );
