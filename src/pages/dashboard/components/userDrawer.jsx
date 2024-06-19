@@ -15,7 +15,7 @@ const { TabPane } = Tabs;
 const { useToken } = theme;
 const { Paragraph } = Typography;
 
-const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSession, activeTabKey, setActiveTabKey, isRateButtonClicked, setIsRateButtonClicked}) => {
+const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSession, activeTabKey, setActiveTabKey, isRateButtonClicked, setIsRateButtonClicked, isOfferClicked, setIsOfferClicked}) => {
   const [loading, setLoading] = useState(false);
   const [ticketData, setTicketData] = useState(null);
   const [expiredTime, setExpiredTime] = useState(null);
@@ -141,16 +141,19 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
     console.log(activeTabKey);
     if (isRateButtonClicked && ticketData?.status_ticket === 'Finished') {
         setActiveTabKey('5');
+    } else if (isOfferClicked && ticketData?.status_ticket === 'Offering') {
+        setActiveTabKey('6');
     } else if (ticketData?.status_ticket === 'Finished') {
         setActiveTabKey('1');
     } else if (ticketData?.status_ticket !== 'Finished') {
         setActiveTabKey('2');
     }
-}, [ticketData, setActiveTabKey, activeTabKey, isRateButtonClicked]);
+}, [ticketData, setActiveTabKey, activeTabKey, isRateButtonClicked, isOfferClicked]);
 
   const onClose = () => {
     setOpenDrawer(false);
     setIsRateButtonClicked(false);
+    setIsOfferClicked(false);
     document.getElementById('customTooltip').style.display = 'block';
   };
 
@@ -178,7 +181,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
         {ticketData?.status_ticket === "Finished" && (
           <TabPane tab={<span><FileDoneOutlined />Result</span>} key="1">
             <div className="tab-content">
-              <Result infoTicketId={infoTicketId} apiTable={apiTable} />
+              <Result infoTicketId={infoTicketId} apiTable={apiTable} ticketData={ticketData}/>
             </div>
           </TabPane>
         )}

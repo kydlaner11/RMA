@@ -26,9 +26,6 @@ const MenuBar = () => {
   const { app } = useSelector((state) => state);
 
 
-
-
-
   // const [current, setCurrent] = useState('mail');
   // const onClick = (e) => {
   //   console.log('click ', e);

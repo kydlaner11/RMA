@@ -64,7 +64,7 @@ const EditProfile = ({ isModalVisible, handleModalClose }) => {
   return (
     <Modal
       title="Edit Profile"
-      visible={isModalVisible}
+      open={isModalVisible}
       onCancel={handleModalClose}
       footer={null}
     >

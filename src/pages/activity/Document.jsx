@@ -57,7 +57,7 @@ const Document = ({ odooRmaTicket }) => {
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <Card style={{ width: 570 }}>
+      <Card style={{ width: 570, }}>
         <Title level={3} style={{ marginTop: 10, marginBottom: 30 }}>Here’s All Your Document</Title>
         {documents.penawaran && (
           <Button

@@ -1,7 +1,7 @@
 import {PlusOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
-import { Alert, Button, Col,  Form, Input,  Modal, Row, Select, Spin, Switch, Table, Typography, Upload, message } from "antd";
+import { Alert, Button, Col,  Form, Input,  Modal, Pagination, Row, Select, Spin, Switch, Table, Typography, Upload, message } from "antd";
 import Cookies from "js-cookie";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState} from "react";
 import StickyHeader from "../../layouts/StickyHeader";
 import useSearchColumn from "../../hooks/useSearchColumn";
 import { ticketsColumn } from "../../constant/columns/ticket";
@@ -45,7 +45,12 @@ const Dashboard = () => {
   // const [editTicketData, setEditTicketData] = useState(null);
   const [filterCancelled, setFilterCancelled] = useState(false);
   const [isRateButtonClicked, setIsRateButtonClicked] = useState(false);
+  const [isOfferClicked, setIsOfferClicked] = useState(false);
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
   const [isImageUploading, setIsImageUploading] = useState(false);
+  const [current, setCurrent] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [total, setTotal] = useState(0);
 
 
 
@@ -265,6 +270,9 @@ const Dashboard = () => {
     setProblem('');
     form.resetFields();
   };
+  useEffect(() => {
+    setIsSubmitDisabled(!problem);
+  }, [problem]);
 
   const handleAddData = async () => {
     try {
@@ -399,6 +407,12 @@ const Dashboard = () => {
     setOpenDrawer(true);
     document.getElementById('customTooltip').style.display = 'none';
   };
+  const handleOfferClick = (id) => {
+    setInfoTicketId(id);
+    console.log("info",id)
+    setOpenDrawer(true);
+    setIsOfferClicked(true);
+  };
   const handleEditClick = (id) => {
     setEditTicketId(id);
     console.log("ini",id) 
@@ -415,9 +429,8 @@ const Dashboard = () => {
     setOpenDrawer(true);
     setIsRateButtonClicked(true);
     document.getElementById('customTooltip').style.display = 'none';
-
   };
-  
+
   const apiTable = async (cancelled) => {
     setLoadings(true);
     try {
@@ -425,36 +438,46 @@ const Dashboard = () => {
       if (!bearerToken) {
         throw new Error('Bearer token not found.');
       }
-      
+
       const response = await api.get('/api/customer/view-ticket-customerid', {
         headers: {
           Authorization: `Bearer ${bearerToken}`,
           "ngrok-skip-browser-warning": "69420"
         },
         params: {
-          filterCancelled: cancelled ? undefined:'true',
+          filterCancelled: cancelled ? undefined : 'true',
+          page: current,
         },
       });
       setDataTable(response.data.data);
+      setTotal(response.data.pagination.total);
+      setCurrent(response.data.pagination.current);
+      setPageSize(response.data.pagination.pageSize);
       console.log(response.data)
-
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
       setLoadings(false);
     }
   };
+
   const handleChange = async (checked) => {
     setFilterCancelled(checked);
-    apiTable(checked);
+    // setCurrent(1); // Reset to first page when filter changes
+    await apiTable(checked);
   };
+
   useEffect(() => {
     apiTable();
-    fetchCargoOptions();
-    // uploadImages();
-  }, []);
+    fetchCargoOptions()
+  }, [current]);
 
-
+  const onChange = (page, pageSize) => {
+    setCurrent(page);
+    setPageSize(pageSize);
+    console.log(`Page: ${page}, PageSize: ${pageSize}`);
+  };
+  
 
 
   return (
@@ -526,7 +549,7 @@ const Dashboard = () => {
           open={openForm}
           onCancel={handleCloseFormModal}
           footer={[
-            <Button key="cancel" onClick={handleCloseFormModal} style={{ marginRight: '10px' }}>
+            <Button key="cancel" onClick={handleCloseFormModal} style={{ marginRight: '10px' }} disabled={loadings || isImageUploading}>
               Cancel
             </Button>,
             <Button
@@ -534,7 +557,7 @@ const Dashboard = () => {
               type="primary"
               htmlType="submit"
               loading={loadings || isImageUploading}
-              disabled={isImageUploading}
+              disabled={isImageUploading || isSubmitDisabled}
               onClick={handleAddData} // Submit form when button is clicked
             >
               Submit
@@ -649,17 +672,26 @@ const Dashboard = () => {
         <div style={{ padding: 32 }}>
           <Table
             // loading={loading}
-            columns={ticketsColumn({ searchProps, handleInfoClick, handleEditClick, handleCancelClick, handleTool })}
+            columns={ticketsColumn({ searchProps, handleInfoClick, handleOfferClick, handleEditClick, handleCancelClick, handleTool})}
             dataSource={dataTable}
             // TODO: Fix bug undefined
             scroll={{ x: 1000 }}
+            pagination={false}
           />
+         <div style={{ display:"flex", justifyContent: "end", marginTop: 15}}>
+          <Pagination
+              current={current}
+              onChange={onChange}
+              total={total}
+              pageSize={pageSize}
+          />
+         </div>
           <Spin spinning={loadings}>
           <CancelTicket openModal={isModalVisible}  handleCancel={handleCancel} handleClose={handleCancelClose} />
           </Spin>
         </div>
         <ModalEdit openFormEdit={openFormEdit} setOpenFormEdit={setOpenFormEdit}  editTicketId={editTicketId} cargoOptions={cargoOptions} apiTable={apiTable} modalSession={modalSession}/>
-        <UserDrawer openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} infoTicketId={infoTicketId} apiTable={apiTable} modalSession={modalSession} activeTabKey={activeTabKey} setActiveTabKey={setActiveTabKey} isRateButtonClicked={isRateButtonClicked} setIsRateButtonClicked={setIsRateButtonClicked}/>
+        <UserDrawer openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} infoTicketId={infoTicketId} apiTable={apiTable} modalSession={modalSession} activeTabKey={activeTabKey} setActiveTabKey={setActiveTabKey} isRateButtonClicked={isRateButtonClicked} setIsRateButtonClicked={setIsRateButtonClicked} isOfferClicked={isOfferClicked} setIsOfferClicked={setIsOfferClicked}/>
       </Spin>
     </>
   );

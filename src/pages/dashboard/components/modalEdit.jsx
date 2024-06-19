@@ -90,7 +90,9 @@ const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions, 
   }, [openFormEdit, editTicketId, form]);
 
   const handleCancel = () => {
-    setOpenFormEdit(false);
+    if (!loading) {
+      setOpenFormEdit(false);
+    }
   };
 
   if (loading) {
@@ -106,6 +108,8 @@ const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions, 
           onCancel={handleCancel}
           onOk={handleOk}
           okText="Save"
+          cancelButtonProps={{ disabled: loading }} // Disable Cancel button when loading
+          okButtonProps={{ loading: loading }}
           width={'90vw'}  
         >
         <div style={{ padding: '0 32px'}}>

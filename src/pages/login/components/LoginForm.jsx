@@ -1,11 +1,14 @@
 import { PlayCircleFilled } from "@ant-design/icons";
 import { useTour } from "@reactour/tour";
-import { Button, Form, Input, message } from "antd";
+import { Button, Form, Input, message, Carousel } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../../redux/actions/authAction"; // import login action
 import Api from "../../../api";
+import logo3 from "../../../assets/images/TEAKWAVE LOGO.png";
+import logo2 from "../../../assets/images/IJW LOGO.png";
+import logo from "../../../assets/images/SPECTRUM LOGO.png";
 
 const steps = [
   {
@@ -70,6 +73,19 @@ const LoginForm = () => {
 
   return (
     <div style={{ width: "80%" }}>
+      <div style={{ marginBottom: 20,  }}>
+        <Carousel autoplay dots={false} arrows={false}>
+          <div>
+            <img src={logo} alt="logo" style={{ width: 70, margin: '0 1px' }} />
+          </div>
+          <div>
+            <img src={logo2} alt="logo" style={{ width: 70, display: 'block', margin: '0 1px' }} />
+          </div>
+          <div>
+            <img src={logo3} alt="logo" style={{ width: 70, display: 'block', margin: '0 1px' }} />
+          </div>
+        </Carousel>
+      </div>
       <div
         style={{
           fontSize: "32px",
