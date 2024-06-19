@@ -3,9 +3,10 @@ import {
   SearchOutlined,
   CheckCircleOutlined,
   EditOutlined,
+  ContainerOutlined,
   // CloseOutlined
 } from "@ant-design/icons";
-import {  Button, Tag, Space, Rate, Tooltip } from "antd";
+import {  Button, Tag, Space, Rate } from "antd";
 import { accountAbility } from "../../utils/ability";
 import { getColumnSearchProps } from "../../utils/column";
 
@@ -102,7 +103,7 @@ const warrantyOptions = [
   },
 ];
 
-export const ticketsColumn = ({ searchProps, handleInfoClick, handleEditClick, handleCancelClick, handleTool}) =>
+export const ticketsColumn = ({ searchProps, handleInfoClick, handleOfferClick, handleEditClick, handleCancelClick, handleTool}) => 
   [
     {
       title: "Ticket RMA",
@@ -214,18 +215,16 @@ export const ticketsColumn = ({ searchProps, handleInfoClick, handleEditClick, h
       render: (_, record) => (
         <Space>
           {record.status_ticket === "Finished" && record.rate === null && (
-            <div>
-            <Tooltip title="Rate Now" open placement="bottomLeft" id="customTooltip" arrow={false} color="blue" >
-              <div style={{ marginBottom: "12px" }}>
-                <Button type="link" onClick={() => handleTool(record.id)}>
-                <span style={{ marginRight: "8px" }}>
-                  {record.rate === null ? "0" : (record.rate)}
-                </span>
-                  <CustomRateColumn value={record.rate}/>
-                </Button>
-              </div>
-            </Tooltip>
-            </div>
+             <div>
+               <div>
+                 <Button type="primary" onClick={() => handleTool(record.id)}>
+                   <span >
+                     {record.rate === null ? "Rate Now" : record.rate}
+                   </span>
+                   {/* <CustomRateColumn value={record.rate} /> */}
+                 </Button>
+               </div>
+             </div>
           )}
           {record.status_ticket === "Finished" && record.rate !== null && (
             <div>
@@ -267,6 +266,9 @@ export const ticketsColumn = ({ searchProps, handleInfoClick, handleEditClick, h
           )}
           {record.status_ticket !== "Waiting Approval" && (
             <Button icon={<SearchOutlined />} onClick={() => handleInfoClick(record.id)} >Info</Button>
+          )}
+          {record.status_ticket === "Offering" && (
+            <Button icon={<ContainerOutlined />} type="primary" onClick={() => handleOfferClick(record.id)} >Offering letter</Button>
           )}
         </Space>
       ),

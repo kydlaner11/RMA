@@ -57,7 +57,7 @@ const Document = ({ odooRmaTicket }) => {
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <Card style={{ width: 570 }}>
+      <Card style={{ width: 570, }}>
         <Title level={3} style={{ marginTop: 10, marginBottom: 30 }}>Here’s All Your Document</Title>
         {documents.penawaran && (
           <Button
@@ -70,25 +70,16 @@ const Document = ({ odooRmaTicket }) => {
               alignItems: 'center',
             }}
             icon={<FileTextOutlined style={{ fontSize: 24, marginRight: 10 }} />}
-            onClick={() => window.open(documents.penawaran, '_blank')}
+            onClick={() => {
+              if (documents.ticket_status === 10) {
+                showModal(documents.penawaran);
+              } else {
+                window.open(documents.penawaran, '_blank');
+              }
+            }}
+
           >
             Surat Penawaran
-          </Button>
-        )}
-        {documents.pemberitahuan && (
-          <Button
-            style={{
-              width: "100%",
-              height: "60px",
-              marginBottom: 15,
-              display: 'flex',
-              justifyContent: 'flex-start',
-              alignItems: 'center',
-            }}
-            icon={<FileTextOutlined style={{ fontSize: 24, marginRight: 10 }} />}
-            onClick={() => showModal(documents.pemberitahuan)}
-          >
-            Surat Pemberitahuan
           </Button>
         )}
         {documents.invoice && (
@@ -107,8 +98,24 @@ const Document = ({ odooRmaTicket }) => {
             Invoice
           </Button>
         )}
+        {documents.pemberitahuan && (
+          <Button
+            style={{
+              width: "100%",
+              height: "60px",
+              marginBottom: 15,
+              display: 'flex',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+            }}
+            icon={<FileTextOutlined style={{ fontSize: 24, marginRight: 10 }} />}
+            onClick={() => window.open(documents.pemberitahuan, '_blank')}
+          >
+            Surat Pemberitahuan
+          </Button>
+        )}
       </Card>
-      <ModalDoc isModalVisible={isModalVisible} handleOk={handleOk} handleCancel={handleCancel} pdfUrl={pdfUrl} />
+      <ModalDoc isModalVisible={isModalVisible} handleOk={handleOk} handleCancel={handleCancel} pdfUrl={pdfUrl} odooRmaTicket={odooRmaTicket} />
       
     </div>
   );

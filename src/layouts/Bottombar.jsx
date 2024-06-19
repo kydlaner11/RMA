@@ -10,7 +10,7 @@ const Bottombar = () => {
         fontSize: "12px",
       }}
     >
-      React Boilerplate ANTD ©2023 Created by IT Apps
+      
     </Footer>
   );
 };
