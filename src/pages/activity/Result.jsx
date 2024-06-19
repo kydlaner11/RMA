@@ -86,7 +86,7 @@ const Result = ({ infoTicketId, apiTable, ticketData }) => {
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
         <Paragraph style={{ fontSize: 30, margin: 0 }}><strong>{ticketData?.mac_address}</strong></Paragraph>
         <RightOutlined style={{ fontSize: 24, margin: '0 10px' }} />
-        <Paragraph style={{ fontSize: 30, margin: 0 }}><strong>{dataResult.ticket_status[0].sn}</strong></Paragraph>
+        <Paragraph style={{ fontSize: 30, margin: 0 }}><strong>{dataResult?.ticket_status[0].sn}</strong></Paragraph>
       </div>
       <Divider />
       <div style={{ marginBottom: 20 }}>
