@@ -19,7 +19,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
   const [loading, setLoading] = useState(false);
   const [ticketData, setTicketData] = useState(null);
   const [expiredTime, setExpiredTime] = useState(null);
-  const [imageView, setImageView] = useState([]);
+  const [imageView, setImageView] = useState({ evidence_cust: []});
   const [odooRmaTicket, setOdooRmaTicket] = useState(null);
 
   const { token } = useToken();
@@ -194,7 +194,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
                   <Paragraph style={{ fontSize: 30 }}><strong>{ticketData?.mac_address}</strong></Paragraph>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <div className='text-end'>
-                      <Tag
+                      <Tag style={{ marginRight: 0 }}
                         color={
                           ticketData?.status_ticket === "Waiting Approval" ? "processing"
                             : ticketData?.status_ticket === "Offering" ? "green"
@@ -209,7 +209,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
                         {ticketData?.status_ticket}
                       </Tag>
                       {ticketData?.status_ticket === "Waiting Approval" && expiredTime && (
-                        <span>{expiredTime}</span>
+                        <span  style={{ display: 'block', marginTop: 3 }}>{expiredTime}</span>
                       )}
                     </div>
                   </div>
@@ -225,6 +225,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
                     <Tag
                       icon={isExpired ? <ExclamationCircleOutlined /> : <CheckCircleOutlined />}
                       color={isExpired ? "red" : "green"}
+                      style={{ marginRight: 0 }}
                     >
                       {ticketData?.warranty}
                     </Tag>
@@ -273,7 +274,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
                 <div>
                   <Paragraph><strong>Photos :</strong></Paragraph>
                   <div className="image-container">
-                    {imageView.map((image, index) => (
+                    {imageView.evidence_cust?.map((image, index) => (
                       <Image key={index} src={`${BASE_URL_BE}/api/get-images?filename=${image}&ngrok-skip-browser-warning=69420`} style={{ width: 100, height: 100, margin: 5 }} />
                     ))}
                   </div>

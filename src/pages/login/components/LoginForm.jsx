@@ -1,32 +1,33 @@
-import { PlayCircleFilled } from "@ant-design/icons";
-import { useTour } from "@reactour/tour";
+// import { PlayCircleFilled } from "@ant-design/icons";
+// import { useTour } from "@reactour/tour";
 import { Button, Form, Input, message, Carousel } from "antd";
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../../redux/actions/authAction"; // import login action
 import Api from "../../../api";
-import logo3 from "../../../assets/images/TEAKWAVE LOGO.png";
-import logo2 from "../../../assets/images/IJW LOGO.png";
-import logo from "../../../assets/images/SPECTRUM LOGO.png";
+import logo3 from "../../../assets/images/Teakwave.png";
+import logo2 from "../../../assets/images/Voltech.png";
+import logo1 from "../../../assets/images/Spectrum.png";
+import logo from "../../../assets/images/RMA.png";
 
-const steps = [
-  {
-    selector: ".login-form",
-    content: "Login using email and password if you have one",
-  },
-  {
-    selector: ".login-forgot",
-    content: "Click here if you forgot your password",
-  },
-  {
-    selector: ".login-signup",
-    content: "Click here if you need to register your account",
-  },
-];
+// const steps = [
+//   {
+//     selector: ".login-form",
+//     content: "Login using email and password if you have one",
+//   },
+//   {
+//     selector: ".login-forgot",
+//     content: "Click here if you forgot your password",
+//   },
+//   {
+//     selector: ".login-signup",
+//     content: "Click here if you need to register your account",
+//   },
+// ];
 
 const LoginForm = () => {
-  const { setIsOpen, setSteps, setCurrentStep } = useTour();
+  // const { setIsOpen, setSteps, setCurrentStep } = useTour();
   const [loading, setLoading] = useState(false); 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -62,46 +63,48 @@ const LoginForm = () => {
     console.log("Failed:", errorInfo);
   };
 
-  const handleTour = () => {
-    setIsOpen(true);
-  };
+  // const handleTour = () => {
+  //   setIsOpen(true);
+  // };
 
-  useEffect(() => {
-    setCurrentStep(0);
-    setSteps(steps);
-  }, []);
+  // useEffect(() => {
+  //   setCurrentStep(0);
+    // setSteps(steps);
+  // }, []);
 
   return (
-    <div style={{ width: "80%" }}>
-      <div style={{ marginBottom: 20,  }}>
-        <Carousel autoplay dots={false} arrows={false}>
-          <div>
-            <img src={logo} alt="logo" style={{ width: 70, margin: '0 1px' }} />
-          </div>
-          <div>
-            <img src={logo2} alt="logo" style={{ width: 70, display: 'block', margin: '0 1px' }} />
-          </div>
-          <div>
-            <img src={logo3} alt="logo" style={{ width: 70, display: 'block', margin: '0 1px' }} />
-          </div>
-        </Carousel>
-      </div>
+    <div style={{ width: "80%", margin: "0 auto", paddingTop: "50px" }}>
       <div
-        style={{
-          fontSize: "32px",
-          fontWeight: "bold",
-          marginBottom: "3px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <span>Welcome!</span>
-
-        <Button icon={<PlayCircleFilled />} onClick={handleTour} size="small">
+          style={{
+            fontSize: "32px",
+            fontWeight: "bold",
+            marginBottom: "3px",
+            display: "flex",
+            // justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <span>Welcome to</span>
+          <div style={{ marginLeft: 10 }}>
+            <Carousel autoplay dots={false} arrows={false} style={{ width: 90 }}>
+              <div>
+                <img src={logo} alt="logo" style={{ width: 90,  margin: '0 1px' }} />
+              </div>
+              <div>
+                <img src={logo1} alt="logo" style={{ width: 90, margin: '0 1px' }} />
+              </div>
+              <div>
+                <img src={logo2} alt="logo" style={{ width: 90, display: 'block', margin: '0 1px' }} />
+              </div>
+              <div>
+                <img src={logo3} alt="logo" style={{ width: 90, display: 'block', margin: '0 1px' }} />
+              </div>
+            </Carousel>
+          </div>
+        </div>
+        {/* <Button icon={<PlayCircleFilled />} onClick={handleTour} size="small">
           Run tour
-        </Button>
-      </div>
+        </Button> */}
       <div style={{ fontSize: "14px", marginBottom: "36px", opacity: 0.7 }}>
         Log In your account
       </div>

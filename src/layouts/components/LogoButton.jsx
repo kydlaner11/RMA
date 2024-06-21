@@ -1,7 +1,7 @@
 import { Button } from "antd";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import logo from "../../assets/images/rma.png";
+import logo from "../../assets/images/rma-ori.png";
 
 // const { useToken } = theme;
 

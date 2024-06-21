@@ -8,7 +8,11 @@ import Api from '../../api';
 const { Paragraph } = Typography;
 
 const Result = ({ infoTicketId, apiTable, ticketData }) => {
-  const [imageView, setImageView] = useState([]);
+  const [imageView, setImageView] = useState({
+    evidence_cust: [],
+    evidence_do: [],
+    evidence_invoice: []
+  });
   const [dataResult, setDataResult] = useState(null);
 
   const fetchTicketData = async () => {
@@ -27,6 +31,7 @@ const Result = ({ infoTicketId, apiTable, ticketData }) => {
       console.log('Result:', response.data)
       if (response.status === 200) {
         setDataResult(response.data);
+        console.log("dor",response.data)
       } else {
         message.error(response.data.message || 'Failed to fetch ticket data');
       }
@@ -76,21 +81,37 @@ const Result = ({ infoTicketId, apiTable, ticketData }) => {
 
   return (
     <Card style={{ padding: 22 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 20 }}>
-        <Paragraph style={{ fontSize: 16, marginBottom: 0 }}><strong>Fulfillment Status</strong></Paragraph>
-        <div style={{ width: 150, textAlign: 'end' }}>
-          {dataResult?.ticket_status[0] && getStatusTag(dataResult.ticket_status[0].fulfillment_status)}
-        </div>
-      </div>
-      <Paragraph style={{ color: "#8c8c8c" }}>Your MAC address has been successfully changed to a new one.</Paragraph>
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
-        <Paragraph style={{ fontSize: 30, margin: 0 }}><strong>{ticketData?.mac_address}</strong></Paragraph>
-        <RightOutlined style={{ fontSize: 24, margin: '0 10px' }} />
-        <Paragraph style={{ fontSize: 30, margin: 0 }}><strong>{dataResult?.ticket_status[0].sn}</strong></Paragraph>
-      </div>
+      {dataResult?.ticket_status[0].fulfillment_status === 'replace' && (
+        <>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 20 }}>
+            <Paragraph style={{ fontSize: 16, marginBottom: 0 }}><strong>Fulfillment Status</strong></Paragraph>
+            <div style={{ width: 150, textAlign: 'end' }}>
+              {dataResult?.ticket_status[0] && getStatusTag(dataResult.ticket_status[0].fulfillment_status)}
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
+            <Paragraph style={{ fontSize: 30, margin: 0 }}><strong>{ticketData?.mac_address}</strong></Paragraph>
+            <RightOutlined style={{ fontSize: 24, margin: '0 10px' }} />
+            <Paragraph style={{ fontSize: 30, margin: 0 }}><strong>{dataResult?.ticket_status[0].sn}</strong></Paragraph>
+          </div>
+          <Paragraph><strong>{dataResult?.ticket_status[0].product}</strong></Paragraph>
+          {/* <Paragraph style={{ color: "#8c8c8c" }}>Your MAC address has been successfully changed to a new one.</Paragraph> */}
+        </>
+      )}
+      {dataResult?.ticket_status[0].fulfillment_status !== 'replace' && (
+        <>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 20 }}>
+            <Paragraph style={{ fontSize: 16, marginBottom: 0 }}><strong>Fulfillment Status</strong></Paragraph>
+            <div style={{ width: 150, textAlign: 'end' }}>
+              {dataResult?.ticket_status[0] && getStatusTag(dataResult.ticket_status[0].fulfillment_status)}
+            </div>
+          </div>
+          <Paragraph style={{ fontSize: 30, margin: 0 }}><strong>{ticketData?.mac_address}</strong></Paragraph>
+        </>
+      )}
       <Divider />
       <div style={{ marginBottom: 20 }}>
-        <Paragraph style={{ fontSize: 16 }}><strong>Repair Item</strong></Paragraph> 
+        <Paragraph style={{ fontSize: 16 }}><strong>Repair Item :</strong></Paragraph> 
         {dataResult?.solutions.map((solution, index) => (
           <Card key={index} style={{ marginBottom: 10 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -100,13 +121,39 @@ const Result = ({ infoTicketId, apiTable, ticketData }) => {
           </Card>
         ))}
       </div>
-      {imageView.length > 0 && (
+      {imageView.evidence_cust?.length > 0 && (
         <>
           <Divider />
           <div style={{ marginBottom: 20 }}>
             <Paragraph style={{ fontSize: 16 }}><strong>Photos</strong></Paragraph>
             <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-              {imageView.map((image, index) => (
+              {imageView.evidence_cust?.map((image, index) => (
+                <Image key={index} src={`${BASE_URL_BE}/api/get-images?filename=${image}&ngrok-skip-browser-warning=69420`} style={{ width: 100, height: 100, margin: 5 }} />
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+      {imageView.evidence_do?.length > 0 && (
+        <>
+          <Divider />
+          <div style={{ marginBottom: 20 }}>
+            <Paragraph style={{ fontSize: 16 }}><strong>Proof of Payment</strong></Paragraph>
+            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+              {imageView.evidence_do?.map((image, index) => (
+                <Image key={index} src={`${BASE_URL_BE}/api/get-images?filename=${image}&ngrok-skip-browser-warning=69420`} style={{ width: 100, height: 100, margin: 5 }} />
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+      {imageView.evidence_invoice?.length > 0 && (
+        <>
+          <Divider />
+          <div style={{ marginBottom: 20 }}>
+            <Paragraph style={{ fontSize: 16 }}><strong>Proof of Delivery</strong></Paragraph>
+            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+              {imageView.evidence_invoice?.map((image, index) => (
                 <Image key={index} src={`${BASE_URL_BE}/api/get-images?filename=${image}&ngrok-skip-browser-warning=69420`} style={{ width: 100, height: 100, margin: 5 }} />
               ))}
             </div>
@@ -120,7 +167,7 @@ const Result = ({ infoTicketId, apiTable, ticketData }) => {
             <Paragraph style={{ fontSize: 16 }}><strong>Evidences</strong></Paragraph>
             <div style={{ display: 'flex', flexWrap: 'wrap' }}>
               {dataResult?.evidences.map((evidence, index) => (
-                <Image key={index} src={`${BASE_URL_BE}/api/get-images?filename=${evidence.encrypted_filename}&ngrok-skip-browser-warning=69420`} style={{ width: 100, height: 100, margin: 5 }} />
+                <Image key={index} src={`${BASE_URL_BE}/api/get-images?filename=${evidence.encrypted_filename}&path=files&ngrok-skip-browser-warning=69420`} style={{ width: 100, height: 100, margin: 5 }} />
               ))}
             </div>
           </div>
