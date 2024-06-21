@@ -9,7 +9,7 @@ import Api from "../../../api";
 import logo3 from "../../../assets/images/Teakwave.png";
 import logo2 from "../../../assets/images/Voltech.png";
 import logo1 from "../../../assets/images/Spectrum.png";
-import logo from "../../../assets/images/RMA.png";
+import logo from "../../../assets/images/rma.png";
 
 // const steps = [
 //   {
