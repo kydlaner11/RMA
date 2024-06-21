@@ -240,7 +240,7 @@ const ModalDoc = ({ isModalVisible, handleOk, handleCancel, pdfUrl, odooRmaTicke
                     type="primary"
                     style={{ marginRight: '10px' }}
                     onClick={handleApprove}
-                    disabled={images.length === 0}
+                    disabled={imagesSub.length === 0}
                     loading={loading}
                   >
                     Approve
