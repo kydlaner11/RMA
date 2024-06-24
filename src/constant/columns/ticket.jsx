@@ -9,6 +9,7 @@ import {
 import {  Button, Tag, Space, Rate } from "antd";
 import { accountAbility } from "../../utils/ability";
 import { getColumnSearchProps } from "../../utils/column";
+import "../../assets/css/ticket.css"; 
 
 
 
@@ -217,7 +218,7 @@ export const ticketsColumn = ({ searchProps, handleInfoClick, handleOfferClick, 
           {record.status_ticket === "Finished" && record.rate === null && (
              <div>
                <div>
-                 <Button type="primary" onClick={() => handleTool(record.id)}>
+                 <Button type="primary"  onClick={() => handleTool(record.id)}>
                    <span >
                      {record.rate === null ? "Rate Now" : record.rate}
                    </span>
@@ -268,7 +269,16 @@ export const ticketsColumn = ({ searchProps, handleInfoClick, handleOfferClick, 
             <Button icon={<SearchOutlined />} onClick={() => handleInfoClick(record.id)} >Info</Button>
           )}
           {record.status_ticket === "Offering" && (
-            <Button icon={<ContainerOutlined />} type="primary" onClick={() => handleOfferClick(record.id)} >Offering letter</Button>
+            //buatkan tooltip antd untuk button offering letter dan berikan tampilan tooltip yang menarik
+            // <Tooltip 
+            //   title="Offering Letter" 
+            //   color="#108ee9" 
+            //   placement="topLeft" 
+            //   overlayClassName="tooltip" 
+            // >
+            //   <Button icon={<ContainerOutlined />} danger  className="first_button"  onClick={() => handleOfferClick(record.id)} >We Need Your Response!</Button>
+            // </Tooltip>
+              <Button icon={<ContainerOutlined />} danger  className="first_button"  onClick={() => handleOfferClick(record.id)} >We Need Your Response!</Button>
           )}
         </Space>
       ),
