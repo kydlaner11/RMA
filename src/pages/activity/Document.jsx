@@ -4,6 +4,7 @@ import { FileTextOutlined } from '@ant-design/icons';
 import ModalDoc from './components/modalDoc';
 import Api from '../../api';
 import Cookies from "js-cookie";
+import '../../assets/css/ticket.css';
 
 
 const { Title } = Typography;
@@ -59,7 +60,25 @@ const Document = ({ odooRmaTicket }) => {
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
       <Card style={{ width: 570, }}>
         <Title level={3} style={{ marginTop: 10, marginBottom: 30 }}>Here’s All Your Document</Title>
-        {documents.penawaran && (
+        {documents.penawaran && documents.ticket_status === 10 &&(
+          <Button
+            className='first_button'
+            danger
+            style={{
+              width: "100%",
+              height: "60px",
+              marginBottom: 15,
+              display: 'flex',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+            }}
+            icon={<FileTextOutlined style={{ fontSize: 24, marginRight: 10 }} />}
+            onClick={() => showModal(documents.penawaran)}
+          >
+            Surat Penawaran
+          </Button>
+        )}
+        {documents.penawaran && documents.ticket_status !== 10 &&(
           <Button
             style={{
               width: "100%",
@@ -70,14 +89,7 @@ const Document = ({ odooRmaTicket }) => {
               alignItems: 'center',
             }}
             icon={<FileTextOutlined style={{ fontSize: 24, marginRight: 10 }} />}
-            onClick={() => {
-              if (documents.ticket_status === 10) {
-                showModal(documents.penawaran);
-              } else {
-                window.open(documents.penawaran, '_blank');
-              }
-            }}
-
+            onClick={() => window.open(documents.penawaran, '_blank')}
           >
             Surat Penawaran
           </Button>

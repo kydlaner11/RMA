@@ -1,0 +1,25 @@
+.first_button {
+  animation: push-pull 4s cubic-bezier(.36, .07, .19, .97) both infinite;
+  transform-origin: center;
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+.first_button:hover {
+  animation: none;
+}
+
+@keyframes push-pull {
+  0%, 100% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.05);
+  }
+  50% {
+    transform: scale(0.95);
+  }
+  75% {
+    transform: scale(1.05);
+  }
+}
