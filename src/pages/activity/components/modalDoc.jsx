@@ -40,15 +40,15 @@ const ModalDoc = ({ isModalVisible, handleOk, handleCancel, pdfUrl, odooRmaTicke
 
   const beforeUpload = (file) => {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg';
-    const isLt5M = file.size / 1024 / 1024 < 5;
+    const isLt2M = file.size / 1024 / 1024 < 2;
 
     if (!isJpgOrPng) {
       message.error('You can only upload JPG/PNG file!');
-    } else if (!isLt5M) {
-      message.error('Image must be smaller than 5MB!');
+    } else if (!isLt2M) {
+      message.error('Image must be smaller than 2MB!');
       file.status = 'error';
     }
-    return isJpgOrPng && isLt5M;
+    return isJpgOrPng && isLt2M;
   };
 
   const customRequest = async ({ file, onSuccess, onError }) => {

@@ -134,13 +134,26 @@ const Result = ({ infoTicketId, apiTable, ticketData }) => {
           </div>
         </>
       )}
+      {dataResult?.evidences.length > 0 && (
+        <>
+          <Divider />
+          <div>
+            <Paragraph style={{ fontSize: 16 }}><strong>Evidences</strong></Paragraph>
+            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+              {dataResult?.evidences.map((evidence, index) => (
+                <Image key={index} src={`${BASE_URL_BE}/api/get-images?filename=${evidence.encrypted_filename}&path=files&ngrok-skip-browser-warning=69420`} style={{ width: 100, height: 100, margin: 5 }} />
+              ))}
+            </div>
+          </div>
+        </>
+      )}
       {imageView.evidence_do?.length > 0 && (
         <>
           <Divider />
           <div style={{ marginBottom: 20 }}>
             <Paragraph style={{ fontSize: 16 }}><strong>Proof of Payment</strong></Paragraph>
             <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-              {imageView.evidence_do?.map((image, index) => (
+              {imageView.evidence_invoice?.map((image, index) => (
                 <Image key={index} src={`${BASE_URL_BE}/api/get-images?filename=${image}&ngrok-skip-browser-warning=69420`} style={{ width: 100, height: 100, margin: 5 }} />
               ))}
             </div>
@@ -153,21 +166,8 @@ const Result = ({ infoTicketId, apiTable, ticketData }) => {
           <div style={{ marginBottom: 20 }}>
             <Paragraph style={{ fontSize: 16 }}><strong>Proof of Delivery</strong></Paragraph>
             <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-              {imageView.evidence_invoice?.map((image, index) => (
+              {imageView.evidence_do?.map((image, index) => (
                 <Image key={index} src={`${BASE_URL_BE}/api/get-images?filename=${image}&ngrok-skip-browser-warning=69420`} style={{ width: 100, height: 100, margin: 5 }} />
-              ))}
-            </div>
-          </div>
-        </>
-      )}
-      {dataResult?.evidences.length > 0 && (
-        <>
-          <Divider />
-          <div>
-            <Paragraph style={{ fontSize: 16 }}><strong>Evidences</strong></Paragraph>
-            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-              {dataResult?.evidences.map((evidence, index) => (
-                <Image key={index} src={`${BASE_URL_BE}/api/get-images?filename=${evidence.encrypted_filename}&path=files&ngrok-skip-browser-warning=69420`} style={{ width: 100, height: 100, margin: 5 }} />
               ))}
             </div>
           </div>

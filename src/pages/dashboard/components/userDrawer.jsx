@@ -318,7 +318,7 @@ Jalan Mangga Dua Raya - Jakarta Pusat 10730</div>
         )}
         <TabPane tab={<span><FileOutlined />Document</span>} key="6">
           <div className="tab-content">
-            <Document odooRmaTicket={odooRmaTicket} />
+            <Document odooRmaTicket={odooRmaTicket} setOpenDrawer={setOpenDrawer} />
           </div>
         </TabPane>
 
