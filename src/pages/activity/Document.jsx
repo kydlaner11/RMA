@@ -9,7 +9,7 @@ import '../../assets/css/ticket.css';
 
 const { Title } = Typography;
 
-const Document = ({ odooRmaTicket }) => {
+const Document = ({ odooRmaTicket, setOpenDrawer }) => {
   const [documents, setDocuments] = useState({
     invoice: null,
     pemberitahuan: null,
@@ -48,6 +48,7 @@ const Document = ({ odooRmaTicket }) => {
 
   const handleOk = () => {
     setIsModalVisible(false);
+    setOpenDrawer(false);
     setPdfUrl('');
   };
 

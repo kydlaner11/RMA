@@ -86,16 +86,16 @@ const Dashboard = () => {
   
   const beforeUpload = (file) => {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg';
-    const isLt5M = file.size / 1024 / 1024 < 5;
+    const isLt2M = file.size / 1024 / 1024 < 2;
     console.log("file", file);
   
     if (!isJpgOrPng) {
       message.error('You can only upload JPG/PNG file!');
-    } else if (!isLt5M) {
-      message.error('Image must be smaller than 5MB!');
+    } else if (!isLt2M) {
+      message.error('Image must be smaller than 2MB!');
       file.status = 'error';
     }
-    return isJpgOrPng && isLt5M;
+    return isJpgOrPng && isLt2M;
   };
   
   const customRequest = async ({ file, onSuccess, onError }) => {
@@ -649,7 +649,7 @@ const Dashboard = () => {
                       <Input  placeholder="Masukan Nomer Resi"/>
                     </Form.Item>
   
-                    <Form.Item label="Upload Image" name="photos" extra="Upload your device image. Images must be JPG or PNG format and smaller than 5MB.">
+                    <Form.Item label="Upload Image" name="photos" extra="Upload your device image. Images must be JPG or PNG format and smaller than 2MB.">
                     <Upload
                       customRequest={customRequest}
                       beforeUpload={beforeUpload}

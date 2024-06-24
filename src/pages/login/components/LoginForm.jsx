@@ -74,40 +74,33 @@ const LoginForm = () => {
 
   return (
     <div style={{ width: "80%", margin: "0 auto", paddingTop: "50px" }}>
-      <div
-          style={{
-            fontSize: "32px",
-            fontWeight: "bold",
-            marginBottom: "3px",
-            display: "flex",
-            // justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <span>Welcome to</span>
-          <div style={{ marginLeft: 10 }}>
-            <Carousel autoplay dots={false} arrows={false} style={{ width: 90 }}>
-              <div>
-                <img src={logo} alt="logo" style={{ width: 90,  margin: '0 1px' }} />
-              </div>
-              <div>
-                <img src={logo1} alt="logo" style={{ width: 90, margin: '0 1px' }} />
-              </div>
-              <div>
-                <img src={logo2} alt="logo" style={{ width: 90, display: 'block', margin: '0 1px' }} />
-              </div>
-              <div>
-                <img src={logo3} alt="logo" style={{ width: 90, display: 'block', margin: '0 1px' }} />
-              </div>
-            </Carousel>
-          </div>
+      <div >
+        <div style={{ marginBottom: '40px', display:'flex', justifyContent: 'center' }}>
+          <Carousel autoplay dots={false} arrows={false} style={{ width: 90, margin: '0 auto 0 5' }}>
+            <div>
+              <img src={logo1} alt="logo1" style={{ width: 90, margin: '0 auto' }} />
+            </div>
+            <div>
+              <img src={logo2} alt="logo2" style={{ width: 90, margin: '0 auto' }} />
+            </div>
+            <div>
+              <img src={logo3} alt="logo3" style={{ width: 90, margin: '0 auto' }} />
+            </div>
+          </Carousel>
         </div>
-        {/* <Button icon={<PlayCircleFilled />} onClick={handleTour} size="small">
-          Run tour
-        </Button> */}
-      <div style={{ fontSize: "14px", marginBottom: "36px", opacity: 0.7 }}>
-        Log In your account
+          <div style={{ fontSize: '28px', display:'flex', fontWeight: 'bold', alignItems: 'center' }}>
+            Hey, Welcome to 
+            <div style={{marginLeft: 7  }}>
+              <img src={logo} alt="logo" style={{ width: 75,  marginTop: 6}} />
+            </div>
+          </div>
+        {/* <div style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '3px', display: 'flex', alignItems:"center" }}>
+        </div> */}
+        <div style={{ fontSize: '14px', opacity: 0.7, marginBottom: 20 }}>
+          Log in your account
+        </div>
       </div>
+      
 
       <Form
         onFinish={onFinish}
