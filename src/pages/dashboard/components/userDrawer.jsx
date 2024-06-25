@@ -1,4 +1,4 @@
-import { Drawer, Tabs, Card, Typography, message, Spin, Divider, Tag, Image, theme } from 'antd';
+import { Drawer, Tabs, Card, Typography, message, Spin, Divider, Tag, Image } from 'antd';
 import { AlertOutlined, CheckCircleOutlined, FileSearchOutlined, StarOutlined, FileOutlined, ExclamationCircleOutlined, FileDoneOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
@@ -12,7 +12,7 @@ import Document from '../../activity/Document';
 import './css/responsive.css';
 
 const { TabPane } = Tabs;
-const { useToken } = theme;
+// const { useToken } = theme;
 const { Paragraph } = Typography;
 
 const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSession, activeTabKey, setActiveTabKey, isRateButtonClicked, setIsRateButtonClicked, isOfferClicked, setIsOfferClicked}) => {
@@ -22,7 +22,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
   const [imageView, setImageView] = useState({ evidence_cust: []});
   const [odooRmaTicket, setOdooRmaTicket] = useState(null);
 
-  const { token } = useToken();
+  // const { token } = useToken();
 
   const isOutOfWarranty = (warranty, created_at) => {
     const endDate = new Date(warranty);
@@ -281,7 +281,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
                 </div>
               </Card>
               <Divider />
-              <div style={{ backgroundColor: token.colorBgBase }}>
+              <div>
                         <Paragraph>
                             <strong>Shipping Address</strong>
                         </Paragraph>

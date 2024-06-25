@@ -48,6 +48,8 @@ const Dashboard = () => {
   const [isOfferClicked, setIsOfferClicked] = useState(false);
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
   const [isImageUploading, setIsImageUploading] = useState(false);
+  const [products, setProducts] = useState([]);
+// const [selectedProduct, setSelectedProduct] = useState(null);
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
@@ -216,17 +218,36 @@ const Dashboard = () => {
           Authorization: `Bearer ${bearerToken}`,
         },
       });
-      setDetailData(response.data);
-      console.log(response.data)
-      form.setFieldsValue(response.data);
-      setOpenForm(true);
-      setOpen(false)
-      setErrorAlert(null); 
 
-      
-      const warrantyDate = response.data?.warranty;
-      const daysLeft = calculateRemainingDays(warrantyDate);
-      setRemainingDays(daysLeft);
+      const totalProducts = response.data.total;
+      console.log(response.data)
+
+      if (totalProducts !== 1) {
+          setProducts(response.data);
+          setOpen(true);
+      } else {
+          const detailData = {
+              ...response.data.items[0],
+              address: response.data.address,
+              email: response.data.email,
+              mac_address: response.data.mac_address,
+              name: response.data.name,
+              phone: response.data.phone,
+              total: response.data.total,
+          };
+
+          setDetailData(detailData);
+          console.log(detailData)
+          form.setFieldsValue(detailData);
+          const warrantyDate = detailData?.warranty;
+          const daysLeft = calculateRemainingDays(warrantyDate);
+          setRemainingDays(daysLeft);
+          // setSelectedProduct(null);
+          setOpenForm(true);
+          setErrorAlert(null);
+      }
+
+
 
     } catch (error) {
       console.log(error);
@@ -250,7 +271,7 @@ const Dashboard = () => {
           </span>
       );
       } else {
-        errorMessage = 'An error occurred. Please try again.'
+        console.log(error.response)
       }
       setErrorAlert(errorMessage);
     }finally {
@@ -258,21 +279,61 @@ const Dashboard = () => {
     }
   }
 
+  const handleProductSelect = (value) => {
+    const selected = products.items[value];
+    const detailData = {
+        ...selected,
+        address: products.address,
+        email: products.email,
+        mac_address: products.mac_address,
+        name: products.name,
+        phone: products.phone,
+        total: products.total,
+    };
+
+    setDetailData(detailData);
+    form.setFieldsValue(detailData);
+    const warrantyDate = detailData?.warranty;
+    const daysLeft = calculateRemainingDays(warrantyDate);
+    setRemainingDays(daysLeft);
+    setOpenForm(true);
+    setOpen(false);
+    // setSelectedProduct(selected);
+};
+
   const handleCloseModal = () => {
-    setOpen(false); 
+    setOpen(false);
+    setProducts([]);
     setErrorAlert(null);
   };
   const handleCloseFormModal = () => {
     setOpenForm(false); 
+    setOpen(false);
+    setProducts([]);
     setErrorAlert(null);
     // setData([...data, newTicket]); 
     setNote(''); 
     setProblem('');
     form.resetFields();
   };
+  const handleCancelFormModal = () => {
+    setOpenForm(false);
+    setOpen(true); 
+    setProducts([]);
+    setErrorAlert(null);
+    // setData([...data, newTicket]); 
+    setNote(''); 
+    setProblem('');
+    form.resetFields();
+  };
+
   useEffect(() => {
-    setIsSubmitDisabled(!problem);
-  }, [problem]);
+    setIsSubmitDisabled(
+      !problem || 
+      images.some(image => image.status === 'error') || 
+      isImageUploading
+    );
+  }, [problem, images, isImageUploading]);
 
   const handleAddData = async () => {
     try {
@@ -336,6 +397,7 @@ const Dashboard = () => {
           setProblem('');
           form.resetFields();
           setOpenForm(false);
+          setOpen(false);
           // message.success('Ticket added successfully');
 
           Modal.success({
@@ -538,6 +600,25 @@ const Dashboard = () => {
                     />
                   )}
                   </Item>
+
+                  {products.total > 1 && (
+                    <Item
+                        label="Select Product"
+                        name="selectedProduct"
+                        rules={[{ required: true, message: 'Please select your product!' }]}
+                    >
+                        <Select
+                            placeholder="Select your product"
+                            onChange={handleProductSelect}
+                        >
+                            {Object.keys(products.items).map((key) => (
+                                <Option key={key} value={key}>
+                                    {products.items[key].product_name}
+                                </Option>
+                            ))}
+                        </Select>
+                    </Item>
+                )}
             </Form>
           </Spin>
         </div>
@@ -549,7 +630,7 @@ const Dashboard = () => {
           open={openForm}
           onCancel={handleCloseFormModal}
           footer={[
-            <Button key="cancel" onClick={handleCloseFormModal} style={{ marginRight: '10px' }} disabled={loadings || isImageUploading}>
+            <Button key="cancel" onClick={handleCancelFormModal} style={{ marginRight: '10px' }} disabled={loadings || isImageUploading}>
               Cancel
             </Button>,
             <Button
