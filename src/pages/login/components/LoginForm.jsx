@@ -48,7 +48,7 @@ const LoginForm = () => {
     } catch (error) {
       //console.log error, if any error occurs during login process message with status 401 will be displayed to user message from backend, else message if doesn't have status display error message
       if (error) {
-        message.error('Login failed, please try again later');
+        message.error('Invalid email or password');
       } else if (error.response.status === 401) {
         message.error('Invalid email or password');
       } else {
@@ -73,18 +73,18 @@ const LoginForm = () => {
   // }, []);
 
   return (
-    <div style={{ width: "80%", margin: "0 auto", paddingTop: "50px" }}>
+    <div style={{ width: "80%", margin: "0 auto", paddingTop: "40px" }}>
       <div >
-        <div style={{ marginBottom: '40px', display:'flex', justifyContent: 'center' }}>
-          <Carousel autoplay dots={false} arrows={false} style={{ width: 90, margin: '0 auto 0 5' }}>
+        <div style={{ marginBottom: '20px', display:'flex', justifyContent: 'center' }}>
+          <Carousel autoplay dots={false} arrows={false} style={{ width: 120, margin: '0 auto 0 5' }}>
             <div>
-              <img src={logo1} alt="logo1" style={{ width: 90, margin: '0 auto' }} />
+              <img src={logo1} alt="logo1" style={{ width: 120, margin: '0 auto' }} />
             </div>
             <div>
-              <img src={logo2} alt="logo2" style={{ width: 90, margin: '0 auto' }} />
+              <img src={logo2} alt="logo2" style={{ width: 120, margin: '0 auto' }} />
             </div>
             <div>
-              <img src={logo3} alt="logo3" style={{ width: 90, margin: '0 auto' }} />
+              <img src={logo3} alt="logo3" style={{ width: 120, margin: '0 auto' }} />
             </div>
           </Carousel>
         </div>
