@@ -147,7 +147,7 @@ const Result = ({ infoTicketId, apiTable, ticketData }) => {
           </div>
         </>
       )}
-      {imageView.evidence_do?.length > 0 && (
+      {imageView.evidence_invoice?.length > 0 && (
         <>
           <Divider />
           <div style={{ marginBottom: 20 }}>
@@ -160,7 +160,7 @@ const Result = ({ infoTicketId, apiTable, ticketData }) => {
           </div>
         </>
       )}
-      {imageView.evidence_invoice?.length > 0 && (
+      {imageView.evidence_do?.length > 0 && (
         <>
           <Divider />
           <div style={{ marginBottom: 20 }}>

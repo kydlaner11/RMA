@@ -97,7 +97,7 @@ const LoginForm = () => {
         {/* <div style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '3px', display: 'flex', alignItems:"center" }}>
         </div> */}
         <div style={{ fontSize: '14px', opacity: 0.7, marginBottom: 20 }}>
-          Log in your account
+          Log in to your account
         </div>
       </div>
       

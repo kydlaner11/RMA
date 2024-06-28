@@ -1,5 +1,5 @@
-import {PlusOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
-import { Alert, Button, Col,  Form, Input,  Modal, Pagination, Row, Select, Spin, Switch, Table, Typography, Upload, message } from "antd";
+import {PlusOutlined, ExclamationCircleOutlined, WhatsAppOutlined } from "@ant-design/icons";
+import { Alert, Button, Col,  Form, Input,  Modal, Pagination, Row, Select, Spin, Switch, Table, Typography, Upload, message, FloatButton } from "antd";
 import Cookies from "js-cookie";
 import React, { useEffect, useState} from "react";
 import StickyHeader from "../../layouts/StickyHeader";
@@ -767,6 +767,21 @@ const Dashboard = () => {
               pageSize={pageSize}
           />
          </div>
+         <FloatButton
+            icon={
+              <span style={{ color: 'white' }}>
+                <WhatsAppOutlined />
+              </span>
+            }
+            type="prima"
+            onClick={() => window.open('https://wa.me/6281212345678', '_blank')}
+            style={{
+              width: 56, 
+              height: 56,
+              right: 24,
+              backgroundColor: '#25D366',
+            }}
+          />
           <Spin spinning={loadings}>
           <CancelTicket openModal={isModalVisible}  handleCancel={handleCancel} handleClose={handleCancelClose} />
           </Spin>
