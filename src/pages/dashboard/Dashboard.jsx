@@ -531,8 +531,10 @@ const Dashboard = () => {
 
   useEffect(() => {
     apiTable();
-    fetchCargoOptions()
-  }, [current]);
+    if (openForm) {
+      fetchCargoOptions();
+    }
+  }, [current, openForm]);
 
   const onChange = (page, pageSize) => {
     setCurrent(page);
@@ -774,7 +776,7 @@ const Dashboard = () => {
               </span>
             }
             type="prima"
-            onClick={() => window.open('https://wa.me/6281212345678', '_blank')}
+            onClick={() => window.open('https://wa.me/6285853739948', '_blank')}
             style={{
               width: 56, 
               height: 56,
