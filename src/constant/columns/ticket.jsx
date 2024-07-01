@@ -110,7 +110,7 @@ export const ticketsColumn = ({ searchProps, handleInfoClick, handleOfferClick, 
       title: "Ticket RMA",
       dataIndex: "no_tickets",
       key: "no_tickets",
-      ...getColumnSearchProps("no_tickets", searchProps),
+      ...getColumnSearchProps("No Tickets", searchProps),
       render: (_, record) => (
         <div>
           {record.no_tickets}
@@ -121,7 +121,7 @@ export const ticketsColumn = ({ searchProps, handleInfoClick, handleOfferClick, 
       title: "Seller",
       dataIndex: "customer_2",
       key: "customer_2",
-      ...getColumnSearchProps("customer_2", searchProps),
+      ...getColumnSearchProps("Seller", searchProps),
       render: (_, record) => (
         <div>
           {record.customer_2}
@@ -132,7 +132,7 @@ export const ticketsColumn = ({ searchProps, handleInfoClick, handleOfferClick, 
       title: "Device",
       dataIndex: "product_name",
       key: "product_name",
-      ...getColumnSearchProps("product_name", searchProps), 
+      ...getColumnSearchProps("Device", searchProps), 
       render: (_, record) => (
         <div>
           {record.product_name}
@@ -144,7 +144,7 @@ export const ticketsColumn = ({ searchProps, handleInfoClick, handleOfferClick, 
       dataIndex: "mac_address",
       key: "mac_address",
       filters: speciesOptions,
-      ...getColumnSearchProps("mac_address", searchProps),
+      ...getColumnSearchProps("MAC Address", searchProps),
       render: (_, record) => (
         <div>
           {record.mac_address}

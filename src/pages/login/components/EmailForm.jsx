@@ -73,7 +73,7 @@ const EmailForm = () => {
           alignItems: "center",
         }}
       >
-        <span>Check Your Email</span>
+        <span>Register</span>
 
       </div>
       <div style={{ fontSize: "14px", marginBottom: "36px", opacity: 0.7 }}>
