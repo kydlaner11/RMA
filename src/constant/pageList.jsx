@@ -11,6 +11,7 @@ import {
 } from "@ant-design/icons";
 import { lazy } from "react";
 import { generateAuthPage } from "../utils/pages";
+const PageOtp = lazy(() => import("../pages/login/PageOtp"));
 // const History = lazy(() => import("../pages/activity/History"));
 const Dashboard = lazy(() => import("../pages/dashboard/Dashboard"));
 const ModalEdit = lazy(() =>
@@ -44,11 +45,11 @@ export const unauthenticatedPageList = [
     element: <ForgetPass />,
     key: "forgot_password",
   },
-  // {
-  //   path: "hanya",
-  //   element: <Dashboard />,
-  //   key: "hanya",
-  // },
+  {
+    path: "verification",
+    element: <PageOtp />,
+    key: "verification",
+  },
 ];
 
 // ? Documentation in src/utils/pages.js

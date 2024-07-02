@@ -7,8 +7,7 @@ import Api from "../../api";
 
 export const login = (values) => async (dispatch) => {
   try {
-    const response = await Api.post('/api/logincust', values);
-    const res = response.data;
+    const res = values;
     console.log("res", res  );
 
     Cookies.set("refresh_token", res.data.refresh_token, {
