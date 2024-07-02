@@ -1,10 +1,8 @@
 // import { PlayCircleFilled } from "@ant-design/icons";
 // import { useTour } from "@reactour/tour";
-import { Button, Form, Input, message, Carousel } from "antd";
+import { Button, Form, Input, message, Carousel, notification } from "antd";
 import React, {  useState } from "react";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { login } from "../../../redux/actions/authAction"; // import login action
 import Api from "../../../api";
 import logo3 from "../../../assets/images/Teakwave.png";
 import logo2 from "../../../assets/images/Voltech.png";
@@ -30,7 +28,6 @@ const LoginForm = () => {
   // const { setIsOpen, setSteps, setCurrentStep } = useTour();
   const [loading, setLoading] = useState(false); 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const onFinish = async (values) => {
     setLoading(true);
@@ -41,14 +38,18 @@ const LoginForm = () => {
       if (Object.keys(resp).length === 0) {
         message.error('Please enter a valid Email');
       } else {
-        dispatch(login(values));
-        navigate('/');
-        message.success('Login successful');
+        notification.success({
+          message: 'OTP Sent',
+          description: 'A verification code has been sent to your email.',
+        });
+        navigate('/verification', { state: { values } });
+        // message.success('Login successful');
       }
     } catch (error) {
+      console.log(error)
       //console.log error, if any error occurs during login process message with status 401 will be displayed to user message from backend, else message if doesn't have status display error message
       if (error) {
-        message.error('Invalid email or password');
+        message.error(error.response.data.error );
       } else if (error.response.status === 401) {
         message.error('Invalid email or password');
       } else {
