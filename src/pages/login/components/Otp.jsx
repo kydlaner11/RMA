@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Input, Row, Col, Typography, Button, Form, message, Spin, notification } from 'antd';
+import { Input, Row, Col, Typography, Button, Form, message, Spin, notification, Grid } from 'antd';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Lottie from "lottie-react";
 import otpAnimation from "../../../assets/lottie/otp2.json";
@@ -7,7 +7,9 @@ import Api from '../../../api';
 import { login } from '../../../redux/actions/authAction';
 import { useDispatch } from 'react-redux';
 
+
 const { Text, Title } = Typography;
+const { useBreakpoint } = Grid;
 
 const OTP = () => {
   const [failedAttempts, setFailedAttempts] = useState(0);
@@ -16,6 +18,8 @@ const OTP = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const screens = useBreakpoint();
+  const divWidth = screens.xs ? 350 : 500;
 
   const { values } = location.state || { values: {} };
   const { email } = values;
@@ -80,13 +84,14 @@ const OTP = () => {
   };
 
   return (
+    //make responsive
     <Spin spinning={loading}>
       <div 
         style={{
           backgroundColor: 'white',
           borderRadius: '12px',
           padding: '40px',
-          width: '500px',
+          width: divWidth,
           textAlign: 'center',
           boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
         }}
