@@ -161,7 +161,7 @@ const LoginForm = () => {
           opacity: 0.7,
         }}
       >
-        Don&lsquo;t have any account? <a href="/register">Register</a>
+        Don&lsquo;t have an account? <a href="/register">Register</a>
       </div>
     </div>
   );
