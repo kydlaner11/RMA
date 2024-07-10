@@ -56,7 +56,7 @@
     "workbox-streams": "^7.0.0"
   },
   "scripts": {
-    "start": "vite --host",
+    "start": "vite --host --no-open",
     "build": "vite build",
     "preview": "vite preview",
     "test:run": "vitest",
