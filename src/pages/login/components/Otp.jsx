@@ -136,6 +136,7 @@ const OTP = () => {
                   maxLength={6}
                   placeholder="OTP"
                   pattern="\d*"
+                  style={{ textAlign: 'center' }}
                   onChange={(e) => {
                     e.target.value = e.target.value.replace(/\D/g, '');
                   }}
