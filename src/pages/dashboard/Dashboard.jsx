@@ -186,6 +186,7 @@ const Dashboard = () => {
     try {
       const response = await api.get('/api/endpoint/kurir');
       setCargoOptions(response.data);
+      console.log("weww",cargoOptions)
     } catch (error) {
       console.error('Error fetching cargo options:', error);
     }
@@ -531,10 +532,10 @@ const Dashboard = () => {
 
   useEffect(() => {
     apiTable();
-    if (openForm) {
+    if (openForm, openFormEdit) {
       fetchCargoOptions();
     }
-  }, [current, openForm]);
+  }, [current, openForm, openFormEdit]);
 
   const onChange = (page, pageSize) => {
     setCurrent(page);
@@ -549,7 +550,7 @@ const Dashboard = () => {
       <Spin spinning={loadings} size="large">
         <StickyHeader title={'RMA Ticket'}>
           <div style={{ marginRight: "10px" }}>
-            <Switch checked={filterCancelled} onChange={handleChange} checkedChildren="Active Ticket" unCheckedChildren="View All"/>
+            <Switch checked={filterCancelled} onChange={handleChange} checkedChildren="All Ticket" unCheckedChildren="Active Ticket"/>
           </div>
           <Button
             icon={<PlusOutlined />}

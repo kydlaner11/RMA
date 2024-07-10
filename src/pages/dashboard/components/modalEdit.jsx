@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Cookies from "js-cookie";
-import { Modal, Form, Input, Spin, message, Row, Col, Select } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { Modal, Form, Input, Spin, message, Row, Col, Select, Divider, Button } from 'antd';
 import Api from '../../../api';
 
 const {Option} = Select;
@@ -9,6 +10,8 @@ const { TextArea } = Input;
 const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions, apiTable, modalSession }) => {
   const [loading, setLoading] = useState(false);
   const [ticketData, setTicketData] = useState(null);
+  const [newCargo, setNewCargo] = useState(null);
+  const [cargoList, setCargoList] = useState(cargoOptions);
   const [form] = Form.useForm();
 
   const fetchTicketData = async () => {
@@ -53,13 +56,26 @@ const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions, 
       if (!bearerToken) {
         throw new Error('Bearer token not found.');
       }
-      const formData =  {
+      let formData =  {
         problem: form.getFieldValue('problem'),
         address: form.getFieldValue('address'),
         phone: form.getFieldValue('phone'),
         cargo_id: form.getFieldValue('cargo_id'), 
         tracking_number: form.getFieldValue('tracking_number'),
       };
+
+      if (newCargo) { // If 'Lainnya' is selected
+        const otherCargoName = form.getFieldValue('other_cargo');
+        const addCargoResponse = await Api.post('/api/endpoint/AddCargo', { cargo_name: otherCargoName });
+        if (addCargoResponse.status === 200) {
+          message.success('Cargo added successfully');
+
+          formData.cargo_id = addCargoResponse.data.id; // Update cargo_id with new cargo ID
+        } else {
+          throw new Error('Failed to add new cargo');
+        }
+      }
+
       const response = await Api.post(`/api/customer/ticket/${editTicketId}`, formData, {
         headers: {
           Authorization: `Bearer ${bearerToken}`,
@@ -80,6 +96,35 @@ const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions, 
       await apiTable();
     } finally {
       setLoading(false);
+    }
+  };
+
+
+  const handleAddNewCargo = async () => {
+    try {
+      const bearerToken = Cookies.get("access_token");
+      if (!bearerToken) {
+        throw new Error('Bearer token not found.');
+      }
+
+      const addCargoResponse = await Api.post('/api/endpoint/AddCargo', { cargo_name: newCargo }, {
+        headers: {
+          Authorization: `Bearer ${bearerToken}`,
+        },
+      });
+
+      if (addCargoResponse.status === 200) {
+        message.success('Cargo added successfully');
+        const newCargoOption = { id: addCargoResponse.data.id, cargo_name: newCargo };
+        setCargoList([...cargoList, newCargoOption]);
+        form.setFieldsValue({ cargo_id: newCargoOption.id });
+        setNewCargo('');
+      } else {
+        message.error('Failed to add new cargo');
+      }
+    } catch (error) {
+      console.error('Error adding new cargo:', error);
+      message.error('Failed to add new cargo');
     }
   };
 
@@ -150,7 +195,21 @@ const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions, 
                     </Form.Item>  
                     </div>
                     <Form.Item label="Cargo" name="cargo_id">
-                      <Select placeholder="Pilih Jasa Pengiriman">
+                      <Select
+                        placeholder="Pilih Jasa Pengiriman"
+                        dropdownRender={menu => (
+                          <>
+                            {menu}
+                            <Divider style={{ margin: '8px 0' }} />
+                            <div style={{ display: 'flex', flexWrap: 'nowrap', padding: 8, gap: 6}}>
+                              <Input style={{ flex: 'auto' }} value={newCargo} onChange={e => setNewCargo(e.target.value)} placeholder="Tambahkan Jasa Pengiriman" />
+                              <Button  onClick={handleAddNewCargo}>
+                                <PlusOutlined />
+                              </Button>
+                            </div>
+                          </>
+                        )}
+                      >
                         {cargoOptions.map(option => (
                           <Option key={option.id} value={option.id}>{option.cargo_name}</Option>
                         ))}
