@@ -8,10 +8,13 @@ import { login } from '../../../redux/actions/authAction';
 import { useDispatch } from 'react-redux';
 
 
+
 const { Text, Title } = Typography;
 const { useBreakpoint } = Grid;
 
+
 const OTP = () => {
+  const [form] = Form.useForm();
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [loading, setLoading] = useState(false);
   const [resendTimer, setResendTimer] = useState(60);
@@ -115,6 +118,7 @@ const OTP = () => {
           <Text>Enter the 6-digit code from your two-factor authenticator app.</Text>
         </div>
         <Form
+          form={form}
           onFinish={onFinish}
           autoComplete="off"
           layout="vertical"
@@ -128,6 +132,10 @@ const OTP = () => {
                   {
                     required: true,
                     message: 'Please input your OTP!',
+                  },
+                  {
+                    len: 6,
+                    message: 'OTP must be exactly 6 digits!',
                   },
                 ]}
               >

@@ -263,7 +263,7 @@ const Dashboard = () => {
                 Your product warranty is false. Please contact an administrator or 
                 <Button
                   type="link"
-                  onClick={() => window.open('https://wa.me/628155048711', '_blank')}
+                  onClick={() => window.open('https://wa.me/628155048711/?text=Form%20Pengajuan%20Keluhan%0ANama:%20%0AEmail:%20%0AKeluhan:%20', '_blank')}
                   style={{ marginLeft: '5px' }}
                 >
                   <WhatsAppOutlined /> Chat Here
@@ -276,7 +276,7 @@ const Dashboard = () => {
               MAC Address or Serial Number not found. Please contact an administrator or 
               <Button
                 type="link"
-                onClick={() => window.open('https://wa.me/628155048711', '_blank')}
+                onClick={() => window.open('https://wa.me/628155048711/?text=Form%20Pengajuan%20Keluhan%0ANama:%20%0AEmail:%20%0AKeluhan:%20', '_blank')}
                 style={{ marginLeft: '5px' }}
               >
                 <WhatsAppOutlined /> Chat Here
@@ -789,7 +789,7 @@ const Dashboard = () => {
               </span>
             }
             type="prima"
-            onClick={() => window.open('https://wa.me/628155048711', '_blank')}
+            onClick={() => window.open('https://wa.me/628155048711/?text=Form%20Pengajuan%20Keluhan%0ANama:%20%0AEmail:%20%0AKeluhan:%20', '_blank')}
             style={{
               width: 56, 
               height: 56,
