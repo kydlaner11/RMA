@@ -23,7 +23,6 @@ const Dashboard = () => {
   const dispatch = useDispatch();
   const [data, setData] = useState('');
   const [note, setNote] = useState('');
-  const searchProps = useSearchColumn();
   const [open, setOpen] = useState(false);
   const [problem, setProblem] = useState('');
   const [images, setImages] = useState([]);
@@ -33,6 +32,10 @@ const Dashboard = () => {
   const [dataTable, setDataTable] = useState(false);
   const [detailData, setDetailData] = useState(null);
   const [errorAlert, setErrorAlert] = useState(null);
+  const [selectedCargo, setSelectedCargo] = useState(null);
+  const [showAlert, setShowAlert] = useState(false);
+  const [filterValues, setFilterValues] = useState({});
+  const searchProps = useSearchColumn(setFilterValues);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [activeTabKey, setActiveTabKey] = useState('1');
   const [cargoOptions, setCargoOptions] = useState([]);
@@ -65,13 +68,19 @@ const Dashboard = () => {
   };
 
   const uploadImages = async (Images) => {
+    const bearerToken = Cookies.get("access_token"); 
+      if (!bearerToken) {
+        throw new Error('Bearer token not found.');
+      }
     try {
       const formData = new FormData();
       Images.forEach((image) => {
         formData.append('photos', image);
       });
-      const response = await api.post('/api/upload-image', formData, {
+      const response = await api.post('/api/customer/upload-image', formData, {
         headers: {
+          Authorization: `Bearer ${bearerToken}`,
+          "ngrok-skip-browser-warning": "69420",
           'Content-Type': 'multipart/form-data',
         },
       });
@@ -149,10 +158,20 @@ const Dashboard = () => {
       return;
     }
 
+    const bearerToken = Cookies.get("access_token"); 
+      if (!bearerToken) {
+        throw new Error('Bearer token not found.');
+      }
+
     try {
       const index = imagesSub.find(image => image.uid === file.uid).hashname;
       console.log("index", index);
-      const response = await api.delete(`/api/endpoint/remove-image?hashname=${index}`);
+      const response = await api.delete(`/api/customer/remove-image?hashname=${index}`, {
+        headers: {
+            Authorization: `Bearer ${bearerToken}`,
+            "ngrok-skip-browser-warning": "69420"
+        }
+    });
       if (response.status === 200) {
         // newImage adalah state imagesSub yang di filter dengan menghapus image yang dihapus
         const newImages = imagesSub.filter(image => image.hashname !== index);
@@ -183,14 +202,36 @@ const Dashboard = () => {
   }, [openForm]);
   
   const fetchCargoOptions = async () => {
+    const bearerToken = Cookies.get("access_token"); 
+      if (!bearerToken) {
+        throw new Error('Bearer token not found.');
+      }
     try {
-      const response = await api.get('/api/endpoint/kurir');
-      setCargoOptions(response.data);
+      const response = await api.get('/api/customer/cargo', {
+        headers: {
+            Authorization: `Bearer ${bearerToken}`,
+            "ngrok-skip-browser-warning": "69420"
+        }
+    });
+      setCargoOptions(response.data.data);
       console.log("weww",cargoOptions)
     } catch (error) {
       console.error('Error fetching cargo options:', error);
     }
   };
+
+  const handleCargoChange = (value) => {
+    setSelectedCargo(value);
+    console.log("cargo",selectedCargo)
+    if (value === 9) {
+      // Menampilkan alert saat option.id adalah 9
+      setShowAlert(true);
+    } else {
+      setShowAlert(false);
+    }
+  };
+
+
 
   const modalSession = () => {
     Modal.info({
@@ -321,6 +362,8 @@ const Dashboard = () => {
   };
   const handleCloseFormModal = () => {
     setOpenForm(false); 
+    // setCargoOptions([]);
+    setShowAlert(false);
     setOpen(false);
     setProducts([]);
     setErrorAlert(null);
@@ -331,6 +374,8 @@ const Dashboard = () => {
   };
   const handleCancelFormModal = () => {
     setOpenForm(false);
+    // setCargoOptions([]);
+    setShowAlert(false);
     setOpen(true); 
     setProducts([]);
     setErrorAlert(null);
@@ -454,7 +499,12 @@ const Dashboard = () => {
       }// Tutup modal konfirmasi
       // Lakukan embatalan tiket jika dikonfirmasi
       try {
-        await api.put(`/api/endpoint/change-status-ticket2/?token=6JtTi601HTYhMy4Ax7dJ6JtTi601HTYhMy4Ax7dJuuQclWEg8fZ3uuQclWEg8fZ3&odoo_rma_ticket_id=${cancelTicketId}&action=${2}`); 
+        await api.put(`/api/customer/change-status-ticket2/?odoo_rma_ticket_id=${cancelTicketId}&action=${2}`,{
+          headers: {
+              Authorization: `Bearer ${bearerToken}`,
+              "ngrok-skip-browser-warning": "69420"
+          }
+      }); 
         message.success('Ticket cancelled successfully');
         await apiTable();
       } catch (error) {
@@ -522,6 +572,7 @@ const Dashboard = () => {
         params: {
           filterCancelled: cancelled ? undefined : 'true',
           page: current,
+          values: filterValues,
         },
       });
       setDataTable(response.data.data);
@@ -544,10 +595,8 @@ const Dashboard = () => {
 
   useEffect(() => {
     apiTable();
-    if (openForm, openFormEdit) {
-      fetchCargoOptions();
-    }
-  }, [current, openForm, openFormEdit]);
+    fetchCargoOptions();
+  }, [current, filterValues]);
 
   const onChange = (page, pageSize) => {
     setCurrent(page);
@@ -734,13 +783,29 @@ const Dashboard = () => {
                         <TextArea placeholder="" rows={4} value={note} onChange={(e) => setNote(e.target.value) } />
                     </Form.Item>  
                     </div>
-                    <Form.Item label="Cargo" name="cargo" extra="Select your shipping cargo" >
-                      <Select placeholder="Pilih Jasa Pengiriman" allowClear  >
+                    <Form.Item label="Cargo" name="cargo" extra="Select your shipping cargo">
+                      <Select placeholder="Pilih Jasa Pengiriman" allowClear onChange={handleCargoChange}>
                         {cargoOptions.map(option => (
-                          <Option key={option.id} value={option.id}>{option.cargo_name}</Option>
+                          <Option key={option.id} value={option.id}>
+                            {option.cargo_name}
+                          </Option>
                         ))}
                       </Select>
                     </Form.Item>
+                    <div style={{ maxWidth: '92%' }}>
+                    {showAlert && (
+                        <Alert
+                          message={
+                            <span>
+                              You have selected &quot;Other&quot; as your shipping cargo. Please enter the cargo name in the <b>Resi</b> field. <br/> &quot;Tracking Number (Cargo Name)&quot;
+                            </span>
+                          }
+                          type="warning"
+                          showIcon
+                          style={{ marginBottom: '25px' }}
+                        />
+                      )}  
+                    </div>
                     <Form.Item label="Resi" name="tracking_number" extra="Enter your shipping receipt">
                       <Input  placeholder="Masukan Nomer Resi"/>
                     </Form.Item>

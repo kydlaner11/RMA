@@ -10,6 +10,7 @@ import {
   CloseCircleOutlined,
   FileDoneOutlined
 } from '@ant-design/icons';
+import Cookies from "js-cookie";
 
 
 
@@ -22,10 +23,18 @@ const TicketSteps = ({infoTicketId}) => {
   const [ticketSteps, setTicketSteps] = useState([]);
 
   useEffect(() => {
-    //get api api/endpoint/log-status
     const fetchTicketSteps = async () => {
+      const bearerToken = Cookies.get("access_token"); 
+      if (!bearerToken) {
+        throw new Error('Bearer token not found.');
+      }// Tutup modal konfirmasi
       try {
-        const response = await Api.get(`/api/endpoint/log-status?ticket_id=${infoTicketId}`);
+        const response = await Api.get(`/api/customer/log-status?ticket_id=${infoTicketId}`, {
+          headers: {
+              Authorization: `Bearer ${bearerToken}`,
+              "ngrok-skip-browser-warning": "69420"
+          }
+      });
         if (response.status === 200) {
           //how to get response.data in array
           setTicketSteps(response.data);

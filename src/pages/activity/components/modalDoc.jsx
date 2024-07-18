@@ -94,10 +94,20 @@ const ModalDoc = ({ isModalVisible, handleOk, handleCancel, pdfUrl, odooRmaTicke
       return;
     }
 
+    const bearerToken = Cookies.get("access_token"); 
+    if (!bearerToken) {
+      throw new Error('Bearer token not found.');
+    }
+
     try {
       const index = imagesSub.find((image) => image.uid === file.uid).hashname;
       console.log("cdcs",index)
-      const response = await api.delete(`/api/endpoint/remove-image?hashname=${index}`);
+      const response = await api.delete(`/api/customer/remove-image?hashname=${index}`, {
+        headers: {
+            Authorization: `Bearer ${bearerToken}`,
+            "ngrok-skip-browser-warning": "69420"
+        }
+    });
       if (response.status === 200) {
         const newImages = imagesSub.filter((image) => image.hashname !== index);
         setImagesSub(newImages);

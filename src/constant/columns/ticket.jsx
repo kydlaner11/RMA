@@ -219,7 +219,7 @@ export const ticketsColumn = ({ searchProps, handleInfoClick, handleOfferClick, 
              <div>
                <div>
                  <Button type="primary"  onClick={() => handleTool(record.id)}>
-                   <span >
+                   <span style={{ marginRight: "8px" }}>
                      {record.rate === null ? "Rate Now" : record.rate}
                    </span>
                    {/* <CustomRateColumn value={record.rate} /> */}
@@ -229,7 +229,7 @@ export const ticketsColumn = ({ searchProps, handleInfoClick, handleOfferClick, 
           )}
           {record.status_ticket === "Finished" && record.rate !== null && (
             <div>
-              <div style={{ marginBottom: "12px" }}>
+              <div>
                 <Button type="link" onClick={() => handleTool(record.id)}>
                 <span style={{ marginRight: "8px" }}>
                   {record.rate === null ? "0" : (record.rate)}
@@ -240,7 +240,7 @@ export const ticketsColumn = ({ searchProps, handleInfoClick, handleOfferClick, 
             </div>
           )}
           {record.status_ticket !== "Finished" && (
-            <div style={{ marginBottom: "12px"}}>
+            <div>
               <Button type="link" disabled>
                 <span style={{ marginRight: "8px" }}>
                   {record.rate === null ? "0" : (record.rate)}

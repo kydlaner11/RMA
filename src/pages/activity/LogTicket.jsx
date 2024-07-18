@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { List, Typography } from 'antd';
 import Api from '../../api';
 import { RightOutlined } from '@ant-design/icons';
+import Cookies from "js-cookie";
 
 const { Text } = Typography;
 
@@ -16,8 +17,17 @@ const LogTicket = ({ infoTicketId }) => {
 
   useEffect(() => {
     const fetchTicketSteps = async () => {
+      const bearerToken = Cookies.get("access_token"); 
+      if (!bearerToken) {
+        throw new Error('Bearer token not found.');
+      }// Tutup modal konfirmasi
       try {
-        const response = await Api.get(`/api/endpoint/log-ticket?ticket_id=${infoTicketId}`);
+        const response = await Api.get(`/api/customer/log-ticket?ticket_id=${infoTicketId}`, {
+          headers: {
+              Authorization: `Bearer ${bearerToken}`,
+              "ngrok-skip-browser-warning": "69420"
+          }
+      });
         if (response.status === 200) {
           setLogTicket(response.data);
           console.log(logTicket)

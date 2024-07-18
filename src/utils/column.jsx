@@ -6,7 +6,7 @@ export const getColumnSearchProps = (
   dataIndex,
   {
     handleSearch,
-    handleReset,
+    // handleReset,
     searchInput,
     // setSearchText,
     // setSearchedColumn,
@@ -18,7 +18,7 @@ export const getColumnSearchProps = (
     setSelectedKeys,
     selectedKeys,
     confirm,
-    clearFilters,
+    // clearFilters,
     // close,
   }) => (
     <div
@@ -29,6 +29,7 @@ export const getColumnSearchProps = (
     >
       <Input
         ref={searchInput}
+        allowClear
         placeholder={`Search`}
         value={selectedKeys[0]}
         onChange={(e) =>
@@ -36,9 +37,10 @@ export const getColumnSearchProps = (
         }
         onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
         style={{
-          marginBottom: 8,
-          display: "block",
-          width: '300px'
+          // marginBottom: 8,
+          marginRight: 8,
+          // display: "block",
+          width: '200px'
         }}
       />
       <Space>
@@ -49,11 +51,12 @@ export const getColumnSearchProps = (
           size="small"
           style={{
             width: 90,
+            height: 30
           }}
         >
           Search
         </Button>
-        <Button
+        {/* <Button
           onClick={() => clearFilters && handleReset(clearFilters)}
           size="small"
           style={{
@@ -61,7 +64,7 @@ export const getColumnSearchProps = (
           }}
         >
           Reset
-        </Button>
+        </Button> */}
 
         {/* <Button
           type="link"

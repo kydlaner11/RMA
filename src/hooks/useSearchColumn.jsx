@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 
-const useSearchColumn = () => {
+const useSearchColumn = (setFilterValues) => {
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef(null);
@@ -9,11 +9,18 @@ const useSearchColumn = () => {
     confirm();
     setSearchText(selectedKeys[0]);
     setSearchedColumn(dataIndex);
+    setFilterValues((prev) => {
+      const newFilterValues = { ...prev, [dataIndex]: selectedKeys[0] };
+      console.log('Updated filterValues:', newFilterValues); // Debug log
+      return newFilterValues;
+    });
   };
 
   const handleReset = (clearFilters) => {
-    clearFilters();
     setSearchText("");
+    setFilterValues({});
+    clearFilters();
+    // await apiTable();
   };
 
   return {

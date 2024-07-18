@@ -35,9 +35,18 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
   };
 
   const fetchLog = async () => {
+    const bearerToken = Cookies.get("access_token"); 
+      if (!bearerToken) {
+        throw new Error('Bearer token not found.');
+      }// Tutup modal konfirmasi
     try {
       setLoading(true);
-      const response = await Api.get(`/api/endpoint/log-status/?ticket_id=${infoTicketId}`);
+      const response = await Api.get(`/api/customer/log-status/?ticket_id=${infoTicketId}`, {
+        headers: {
+            Authorization: `Bearer ${bearerToken}`,
+            "ngrok-skip-browser-warning": "69420"
+        }
+    });
       console.log(response.data);
     } catch (error) {
       console.error('Error fetching ticket data:', error);
