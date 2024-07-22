@@ -304,10 +304,10 @@ const Dashboard = () => {
                 Your product warranty is false. Please contact an administrator or 
                 <Button
                   type="link"
-                  onClick={() => window.open('https://wa.me/628155048711/?text=Form%20Pengajuan%20Keluhan%0ANama:%20%0AEmail:%20%0AKeluhan:%20', '_blank')}
-                  style={{ marginLeft: '5px' }}
+                  onClick={() => window.open('https://wa.me/628155048711/?text=Terimakasih%20telah%20menghubungin%20admin.%20Untuk%20mempermudah%20proses%20penanganan%20keluhan%20atau permintaan.%20Mohon%20lengkapi%20data%20berikut:%0A1.%20Company:%20%0A2.%20Nama:%20%0A3.%20Perangkat:%20%0A4.%20Serial%20Number:%20%0A5.%20Keluhan:%20', '_blank')}
+                  style={{ marginLeft: 4, paddingLeft: 0 }}
                 >
-                  <WhatsAppOutlined /> Chat Here
+                  Chat Here
                 </Button>
             </span>
         );
@@ -317,10 +317,10 @@ const Dashboard = () => {
               MAC Address or Serial Number not found. Please contact an administrator or 
               <Button
                 type="link"
-                onClick={() => window.open('https://wa.me/628155048711/?text=Form%20Pengajuan%20Keluhan%0ANama:%20%0AEmail:%20%0AKeluhan:%20', '_blank')}
-                style={{ marginLeft: '5px' }}
+                onClick={() => window.open('https://wa.me/628155048711/?text=Terimakasih%20telah%20menghubungin%20admin.%20Untuk%20mempermudah%20proses%20penanganan%20keluhan%20atau permintaan.%20Mohon%20lengkapi%20data%20berikut:%0A1.%20Company:%20%0A2.%20Nama:%20%0A3.%20Perangkat:%20%0A4.%20Serial%20Number:%20%0A5.%20Keluhan:%20', '_blank')}
+                style={{ marginLeft: 4, paddingLeft: 0 }}
               >
-                <WhatsAppOutlined /> Chat Here
+                Chat Here
               </Button>
           </span>
       );
@@ -723,10 +723,10 @@ const Dashboard = () => {
                       <Input disabled style={{ color:'black' }} />
                     </Form.Item>
                     <Form.Item label="Phone" name="phone" rules={[{ required: true, message: 'Please enter your Phone' }]}>
-                      <Input variant="filled" />
+                      <Input />
                     </Form.Item>
                     <Form.Item label="Address" name="address" extra={[<ExclamationCircleOutlined key="exclamation" />," This address is the product return address"]} rules={[{ required: true, message: 'Please enter your Address' }]}>
-                      <TextArea variant="filled" />
+                      <TextArea />
                     </Form.Item>
                     <Form.Item label="Product" name="product_name">
                       <Input disabled style={{ color:'black' }}/>
@@ -792,7 +792,7 @@ const Dashboard = () => {
                         ))}
                       </Select>
                     </Form.Item>
-                    <div style={{ maxWidth: '92%' }}>
+                    <div style={{ maxWidth: '75%', marginLeft: 'auto', marginRight: '45px' }}>
                     {showAlert && (
                         <Alert
                           message={
@@ -854,7 +854,7 @@ const Dashboard = () => {
               </span>
             }
             type="prima"
-            onClick={() => window.open('https://wa.me/628155048711/?text=Form%20Pengajuan%20Keluhan%0ANama:%20%0AEmail:%20%0AKeluhan:%20', '_blank')}
+            onClick={() => window.open('https://wa.me/628155048711/?text=Terimakasih%20telah%20menghubungin%20admin.%20Untuk%20mempermudah%20proses%20penanganan%20keluhan%20atau permintaan.%20Mohon%20lengkapi%20data%20berikut:%0A1.%20Company:%20%0A2.%20Nama:%20%0A3.%20Perangkat:%20%0A4.%20Serial%20Number:%20%0A5.%20Keluhan:%20', '_blank')}
             style={{
               width: 56, 
               height: 56,

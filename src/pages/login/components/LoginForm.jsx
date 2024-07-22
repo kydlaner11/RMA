@@ -32,7 +32,11 @@ const LoginForm = () => {
   const onFinish = async (values) => {
     setLoading(true);
     try {
-      const response = await Api.post('/api/logincust', values);
+      const response = await Api.post('/api/logincust', values, {
+        params: {
+          attempts: 1,
+        }
+      });
       const resp = response.data;
       console.log(resp)
       if (Object.keys(resp).length === 0) {

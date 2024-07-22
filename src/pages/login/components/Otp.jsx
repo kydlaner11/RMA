@@ -16,6 +16,8 @@ const { useBreakpoint } = Grid;
 const OTP = () => {
   const [form] = Form.useForm();
   const [failedAttempts, setFailedAttempts] = useState(0);
+  const [resendAttempts, setResendAttempts] = useState(3);
+  const [newResend, setNewResend] = useState(4);
   const [loading, setLoading] = useState(false);
   const [resendTimer, setResendTimer] = useState(60);
   const location = useLocation();
@@ -32,7 +34,7 @@ const OTP = () => {
     if (resendTimer > 0) {
       timer = setInterval(() => {
         setResendTimer((prev) => prev - 1);
-      }, 1000);
+      }, 100);
     }
 
     return () => clearInterval(timer);
@@ -69,18 +71,33 @@ const OTP = () => {
     // const payload = { email };
     // console.log("Resending OTP to:", email);
     setLoading(true);
+    setNewResend(newResend -1);
+    setResendAttempts(resendAttempts - 1);
     try {
-      const response = await Api.post('/api/logincust', values);
+      const response = await Api.post('/api/logincust', values, {
+        params: {
+          attempts: newResend - 1,
+        }
+      });
       const resp = response.data;
+      console.log(resendAttempts);
       console.log(resp);
       notification.success({
         message: 'OTP Sent',
-        description: 'A verification code has been sent to your email.',
+        description: `Check your email for the verification code. You have ${resendAttempts - 1} more attempt to resend the code.`,
       });
       setResendTimer(60); // Reset the timer
     } catch (error) {
       console.log(error);
       message.error('Failed to resend OTP');
+      const newResendAttempts = newResend - 1;
+      setFailedAttempts(newResendAttempts);
+      if (newResendAttempts <= 0) {
+        message.error('You have entered the wrong OTP 3 times. Redirecting to login page.');
+        navigate('/login');
+      } else {
+        message.error('Invalid OTP, please try again.');
+      }
     } finally {
       setLoading(false);
     }
