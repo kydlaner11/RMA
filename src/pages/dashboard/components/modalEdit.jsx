@@ -58,7 +58,7 @@ const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions, 
         problem: form.getFieldValue('problem'),
         address: form.getFieldValue('address'),
         phone: form.getFieldValue('phone'),
-        cargo_name: form.getFieldValue('cargo_name'), 
+        cargo_id: form.getFieldValue('cargo_name'), 
         tracking_number: form.getFieldValue('tracking_number'),
       };
 

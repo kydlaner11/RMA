@@ -1,5 +1,5 @@
 import {PlusOutlined, ExclamationCircleOutlined, WhatsAppOutlined } from "@ant-design/icons";
-import { Alert, Button, Col,  Form, Input,  Modal, Pagination, Row, Select, Spin, Switch, Table, Typography, Upload, message, FloatButton } from "antd";
+import { Alert, Button, Col,  Form, Input,  Modal, Pagination, Row, Select, Spin, Switch, Table, Typography, Upload, message, FloatButton, Grid } from "antd";
 import Cookies from "js-cookie";
 import React, { useEffect, useState} from "react";
 import StickyHeader from "../../layouts/StickyHeader";
@@ -16,6 +16,7 @@ const {Item} = Form;
 const {Option} = Select;
 const {Search, TextArea} = Input;
 const {Title, Paragraph} = Typography;
+const { useBreakpoint } = Grid;
 
 
 const Dashboard = () => {
@@ -23,6 +24,8 @@ const Dashboard = () => {
   const dispatch = useDispatch();
   const [data, setData] = useState('');
   const [note, setNote] = useState('');
+  const screens = useBreakpoint();
+  const alert = screens.xs ? 0 : screens.xl ? 105 : screens.lg ? 75 : 60;
   const [open, setOpen] = useState(false);
   const [problem, setProblem] = useState('');
   const [images, setImages] = useState([]);
@@ -792,19 +795,21 @@ const Dashboard = () => {
                         ))}
                       </Select>
                     </Form.Item>
-                    <div style={{ maxWidth: '75%', marginLeft: 'auto', marginRight: '45px' }}>
+                    <div style={{ marginLeft: alert }} >
                     {showAlert && (
+                      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '25px', width: '90%' }}>
                         <Alert
                           message={
                             <span>
-                              You have selected &quot;Other&quot; as your shipping cargo. Please enter the cargo name in the <b>Resi</b> field. <br/> &quot;Tracking Number (Cargo Name)&quot;
+                              You have selected &quot;Other&quot; as your shipping cargo. Please enter the cargo name in the <b>Resi</b> field. <br /> &quot;Tracking Number (Cargo Name)&quot;
                             </span>
                           }
                           type="warning"
                           showIcon
-                          style={{ marginBottom: '25px' }}
+                          style={{ flex: 1 }}
                         />
-                      )}  
+                      </div>
+                      )}
                     </div>
                     <Form.Item label="Resi" name="tracking_number" extra="Enter your shipping receipt">
                       <Input  placeholder="Masukan Nomer Resi"/>
