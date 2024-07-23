@@ -34,7 +34,7 @@ const OTP = () => {
     if (resendTimer > 0) {
       timer = setInterval(() => {
         setResendTimer((prev) => prev - 1);
-      }, 100);
+      }, 1000);
     }
 
     return () => clearInterval(timer);

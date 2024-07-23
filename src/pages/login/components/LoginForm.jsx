@@ -32,14 +32,10 @@ const LoginForm = () => {
   const onFinish = async (values) => {
     setLoading(true);
     try {
-      const response = await Api.post('/api/logincust', values, {
-        params: {
-          attempts: 1,
-        }
-      });
+      const response = await Api.post('/api/logincust?attempts=1', values);
       const resp = response.data;
       console.log(resp)
-      if (Object.keys(resp).length === 0) {
+      if (Object.keys(resp).length === 0) { 
         message.error('Please enter a valid Email');
       } else {
         notification.success({

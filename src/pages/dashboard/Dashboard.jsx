@@ -841,6 +841,7 @@ const Dashboard = () => {
           />
          <div style={{ display:"flex", justifyContent: "end", marginTop: 15}}>
           <Pagination
+              showSizeChanger={false}
               current={current}
               onChange={onChange}
               total={total}
