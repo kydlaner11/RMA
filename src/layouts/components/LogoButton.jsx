@@ -1,7 +1,7 @@
 import { Button } from "antd";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import logo from "../../assets/images/rma-ori.png";
+import logo from "../../assets/images/rma-ori.webp";
 
 // const { useToken } = theme;
 
@@ -18,7 +18,7 @@ const LogoButton = () => {
       type="text"
       size="large"
       // style={{ backgroundColor: token.colorPrimaryBg }}
-      onClick={() => navigate("/")}
+      onClick={() => navigate("/dashboard")}
     />
   );
 };

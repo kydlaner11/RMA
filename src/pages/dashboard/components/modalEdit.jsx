@@ -58,7 +58,7 @@ const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions, 
         problem: form.getFieldValue('problem'),
         address: form.getFieldValue('address'),
         phone: form.getFieldValue('phone'),
-        cargo_id: form.getFieldValue('cargo_name'), 
+        cargo_id: form.getFieldValue('cargo_id'), 
         tracking_number: form.getFieldValue('tracking_number'),
       };
 
@@ -192,7 +192,7 @@ const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions, 
                       <TextArea placeholder="" rows={4} />
                     </Form.Item>  
                     </div>
-                    <Form.Item label="Cargo" name="cargo_name">
+                    <Form.Item label="Cargo" name="cargo_id">
                       <Select
                         placeholder="Pilih Jasa Pengiriman"
                       >

@@ -217,7 +217,7 @@ const Dashboard = () => {
         }
     });
       setCargoOptions(response.data.data);
-      console.log("weww",cargoOptions)
+      console.log("weww",response.data.data)
     } catch (error) {
       console.error('Error fetching cargo options:', error);
     }
@@ -502,7 +502,7 @@ const Dashboard = () => {
       }// Tutup modal konfirmasi
       // Lakukan embatalan tiket jika dikonfirmasi
       try {
-        await api.put(`/api/customer/change-status-ticket2/?odoo_rma_ticket_id=${cancelTicketId}&action=${2}`,{
+        await api.put(`/api/customer/change-status-ticket2/?odoo_rma_ticket_id=${cancelTicketId}&action=${2}`, null,{
           headers: {
               Authorization: `Bearer ${bearerToken}`,
               "ngrok-skip-browser-warning": "69420"
