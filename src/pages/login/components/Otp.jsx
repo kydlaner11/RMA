@@ -42,18 +42,18 @@ const OTP = () => {
 
   const onFinish = async (otpValues) => {
     const payload = { email, code: otpValues.otp };
-    console.log("Payload for verification:", payload);
+    // console.log("Payload for verification:", payload);
     setLoading(true);
     try {
       const response = await Api.post('/api/register/validate', payload);
       const resp = response.data;
-      console.log(resp);
+      // console.log(resp);
       message.success('OTP verified successfully');
       dispatch(login(resp));
       navigate('/dashboard');
-      setFailedAttempts(0); // Reset failed attempts if verification is successful
+      setFailedAttempts(0);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       const newFailedAttempts = failedAttempts + 1;
       setFailedAttempts(newFailedAttempts);
       if (newFailedAttempts >= 3) {
@@ -80,8 +80,8 @@ const OTP = () => {
         }
       });
       const resp = response.data;
-      console.log(resendAttempts);
-      console.log(resp);
+      // console.log(resendAttempts);
+      // console.log(resp);
       notification.success({
         message: 'OTP Sent',
         description: `Check your email for the verification code. You have ${resendAttempts - 1} more attempt to resend the code.`,

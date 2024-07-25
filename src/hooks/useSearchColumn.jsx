@@ -11,7 +11,7 @@ const useSearchColumn = (setFilterValues) => {
     setSearchedColumn(dataIndex);
     setFilterValues((prev) => {
       const newFilterValues = { ...prev, [dataIndex]: selectedKeys[0] };
-      console.log('Updated filterValues:', newFilterValues); // Debug log
+      // console.log('Updated filterValues:', newFilterValues); // Debug log
       return newFilterValues;
     });
   };

@@ -38,7 +38,7 @@ const TicketSteps = ({infoTicketId}) => {
         if (response.status === 200) {
           //how to get response.data in array
           setTicketSteps(response.data);
-          console.log("dd",response.data)
+          // console.log("dd",response.data)
           
         } else {
           console.error('Failed to fetch ticket steps:', response.data.message);

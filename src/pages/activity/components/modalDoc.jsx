@@ -30,7 +30,7 @@ const ModalDoc = ({ isModalVisible, handleOk, handleCancel, pdfUrl, odooRmaTicke
           'Content-Type': 'multipart/form-data',
         },
       });
-      console.log(response.data);
+      // console.log(response.data);
       return response.data;
     } catch (error) {
       console.error('Error uploading images:', error);
@@ -101,7 +101,7 @@ const ModalDoc = ({ isModalVisible, handleOk, handleCancel, pdfUrl, odooRmaTicke
 
     try {
       const index = imagesSub.find((image) => image.uid === file.uid).hashname;
-      console.log("cdcs",index)
+      // console.log("cdcs",index)
       const response = await api.delete(`/api/customer/remove-image?hashname=${index}`, {
         headers: {
             Authorization: `Bearer ${bearerToken}`,
@@ -132,14 +132,14 @@ const ModalDoc = ({ isModalVisible, handleOk, handleCancel, pdfUrl, odooRmaTicke
       const Image = {
         photos: imagesSub
       }
-      console.log(Image)
+      // console.log(Image)
       const response = await api.post(`/api/customer/approval-penawaran?status_approval=approved&odoo_rma_ticket_id=${odooRmaTicket}`, Image, {
         headers: {
           Authorization: `Bearer ${bearerToken}`,
           "ngrok-skip-browser-warning": "69420"
         },
       });
-      console.log(response)
+      // console.log(response)
       if (response.status === 200) {
         message.success('Approval successful');
         handleOk();

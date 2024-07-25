@@ -28,10 +28,10 @@ const Result = ({ infoTicketId, apiTable, ticketData }) => {
           "ngrok-skip-browser-warning": "69420"
         }
       });
-      console.log('Result:', response.data)
+      // console.log('Result:', response.data)
       if (response.status === 200) {
         setDataResult(response.data);
-        console.log("dor",response.data)
+        // console.log("dor",response.data)
       } else {
         message.error(response.data.message || 'Failed to fetch ticket data');
       }
@@ -53,7 +53,7 @@ const Result = ({ infoTicketId, apiTable, ticketData }) => {
           "ngrok-skip-browser-warning": "69420"
         },
       });
-      console.log(response.data)
+      // console.log(response.data)
       setImageView(response.data);
     } catch (error) {
       console.error('Error fetching image data:', error);

@@ -30,7 +30,7 @@ const Document = ({ odooRmaTicket, setOpenDrawer }) => {
           "ngrok-skip-browser-warning": "69420"
         },
       });
-      console.log(response.data);
+      // console.log(response.data);
       setDocuments(response.data);
     } catch (error) {
       console.log(error);

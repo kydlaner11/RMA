@@ -69,7 +69,7 @@ const Users = () => {
       // ? Diakali agar focus bisa mengetahui saat date picker terbuka
       action: async (node) => {
         await setTimeout(async () => {
-          console.log("node", node);
+          // console.log("node", node);
           await node.focus();
         }, 5000);
 
@@ -99,7 +99,7 @@ const Users = () => {
       // ? Diakali agar focus bisa mengetahui saat drawer terbuka
       action: async (node) => {
         await setTimeout(async () => {
-          console.log("node", node);
+          // console.log("node", node);
           await node.focus();
         }, 5000);
 

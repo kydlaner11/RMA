@@ -25,7 +25,7 @@ const RateTicket = ({infoTicketId, apiTable, setOpenDrawer, setIsRateButtonClick
         });
         if (response.status === 200) {
           setRating(response.data.rate);
-          console.log(rating)
+          // console.log(rating)
         } else {
           console.error('Failed to fetch ticket steps:', response.data.message);
         }
@@ -35,19 +35,19 @@ const RateTicket = ({infoTicketId, apiTable, setOpenDrawer, setIsRateButtonClick
     };
   
     const handleSubmit = async (values) => {
-      console.log('Submitted values:', values);
+      // console.log('Submitted values:', values);
       try {
       const bearerToken = Cookies.get("access_token"); 
       if (!bearerToken) {
       throw new Error('Bearer token not found.');
       }
-    console.log("bearer",bearerToken)
+    // console.log("bearer",bearerToken)
       const response = await Api.post(`/api/customer/ticket-rate?ticket_id=${infoTicketId}&rate=${values.rate}`,null, {
         headers: {
           Authorization: `Bearer ${bearerToken}`,
         },
       });
-      console.log(response)
+      // console.log(response)
       if (response.status === 200) {
         await apiTable();
         setOpenDrawer(false);

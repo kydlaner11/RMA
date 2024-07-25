@@ -47,7 +47,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
             "ngrok-skip-browser-warning": "69420"
         }
     });
-      console.log(response.data);
+      // console.log(response.data);
     } catch (error) {
       console.error('Error fetching ticket data:', error);
       if (error.response && error.response.status === 400) {
@@ -101,7 +101,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
       if (response.status === 200) {
         setTicketData(response.data);
         setOdooRmaTicket(response.data.odoo_rma_ticket_id)
-        console.log('Ticket Data:', response.data);
+        // console.log('Ticket Data:', response.data);
       } else {
         message.error(response.data.message || 'Failed to fetch ticket data');
       }
@@ -131,7 +131,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
           "ngrok-skip-browser-warning": "69420"
         },
       });
-      console.log(response.data);
+      // console.log(response.data);
       setImageView(response.data);
     } catch (error) {
       console.error('Error fetching image data:', error);
@@ -147,7 +147,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
   }, [infoTicketId, activeTabKey]);
 
   useEffect(() => {
-    console.log(activeTabKey);
+    // console.log(activeTabKey);
     if (isRateButtonClicked && ticketData?.status_ticket === 'Finished') {
         setActiveTabKey('5');
     } else if (isOfferClicked && ticketData?.status_ticket === 'Offering') {

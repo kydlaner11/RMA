@@ -25,10 +25,10 @@ const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions, 
           "ngrok-skip-browser-warning": "69420"
         },
       });
-      console.log("ticket",response.data)
+      // console.log("ticket",response.data)
       if (response.status === 200) {
         setTicketData(response.data.ticket);
-        console.log("ticket", ticketData)
+        // console.log("ticket", ticketData)
         form.setFieldsValue(response.data.ticket); // Set initial form values with the ticket data
       } else {
         message.error(response.data.message || 'Failed to fetch ticket data');
@@ -79,7 +79,7 @@ const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions, 
           Authorization: `Bearer ${bearerToken}`,
         },
       } );
-      console.log(formData)
+      // console.log(formData)
       if (response.status === 200) {
         message.success('Ticket updated successfully');
         setOpenFormEdit(false);

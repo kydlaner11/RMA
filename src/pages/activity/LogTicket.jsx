@@ -30,7 +30,7 @@ const LogTicket = ({ infoTicketId }) => {
       });
         if (response.status === 200) {
           setLogTicket(response.data);
-          console.log(logTicket)
+          // console.log(logTicket)
         } else {
           console.error('Failed to fetch ticket steps:', response.data.message);
         }

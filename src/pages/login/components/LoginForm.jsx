@@ -34,7 +34,7 @@ const LoginForm = () => {
     try {
       const response = await Api.post('/api/logincust?attempts=1', values);
       const resp = response.data;
-      console.log(resp)
+      // console.log(resp)
       if (Object.keys(resp).length === 0) { 
         message.error('Please enter a valid Email');
       } else {
@@ -46,8 +46,7 @@ const LoginForm = () => {
         // message.success('Login successful');
       }
     } catch (error) {
-      console.log(error)
-      //console.log error, if any error occurs during login process message with status 401 will be displayed to user message from backend, else message if doesn't have status display error message
+      // console.log(error)
       if (error) {
         message.error(error.response.data.error );
       } else if (error.response.status === 401) {

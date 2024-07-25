@@ -18,7 +18,7 @@ const PassForm = () => {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
     const newToken = params.get('token');
-    console.log('Token:', newToken);
+    // console.log('Token:', newToken);
 
   const handleRegister = async (values) => {
       try {
@@ -35,7 +35,7 @@ const PassForm = () => {
           navigate('/login');
       } catch (error) {
           setLoading(false);
-          console.log(error.response.data);
+          // console.log(error.response.data);
           message.error('Failed to reset password');
       }
   };

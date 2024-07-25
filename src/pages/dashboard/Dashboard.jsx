@@ -87,9 +87,9 @@ const Dashboard = () => {
           'Content-Type': 'multipart/form-data',
         },
       });
-      console.log(response.data)
-      console.log(images)
-      console.log("rcfc",imagesSub)
+      // console.log(response.data)
+      // console.log(images)
+      // console.log("rcfc",imagesSub)
       return response.data;
       
     } catch (error) {
@@ -101,7 +101,7 @@ const Dashboard = () => {
   const beforeUpload = (file) => {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg';
     const isLt2M = file.size / 1024 / 1024 < 2;
-    console.log("file", file);
+    // console.log("file", file);
   
     if (!isJpgOrPng) {
       message.error('You can only upload JPG/PNG file!');
@@ -168,7 +168,7 @@ const Dashboard = () => {
 
     try {
       const index = imagesSub.find(image => image.uid === file.uid).hashname;
-      console.log("index", index);
+      // console.log("index", index);
       const response = await api.delete(`/api/customer/remove-image?hashname=${index}`, {
         headers: {
             Authorization: `Bearer ${bearerToken}`,
@@ -179,7 +179,7 @@ const Dashboard = () => {
         // newImage adalah state imagesSub yang di filter dengan menghapus image yang dihapus
         const newImages = imagesSub.filter(image => image.hashname !== index);
         setImagesSub(newImages);
-        console.log("Updated imagesSub:", newImages);
+        // console.log("Updated imagesSub:", newImages);
         message.success('Image removed successfully');
       } else {
         message.error('Failed to remove image');
@@ -217,7 +217,7 @@ const Dashboard = () => {
         }
     });
       setCargoOptions(response.data.data);
-      console.log("weww",response.data.data)
+      // console.log("weww",response.data.data)
     } catch (error) {
       console.error('Error fetching cargo options:', error);
     }
@@ -225,7 +225,7 @@ const Dashboard = () => {
 
   const handleCargoChange = (value) => {
     setSelectedCargo(value);
-    console.log("cargo",selectedCargo)
+    // console.log("cargo",selectedCargo)
     if (value === 9) {
       // Menampilkan alert saat option.id adalah 9
       setShowAlert(true);
@@ -265,7 +265,7 @@ const Dashboard = () => {
       });
 
       const totalProducts = response.data.total;
-      console.log(response.data)
+      // console.log(response.data)
 
       if (totalProducts !== 1) {
           setProducts(response.data);
@@ -282,7 +282,7 @@ const Dashboard = () => {
           };
 
           setDetailData(detailData);
-          console.log(detailData)
+          // console.log(detailData)
           form.setFieldsValue(detailData);
           const warrantyDate = detailData?.warranty;
           const daysLeft = calculateRemainingDays(warrantyDate);
@@ -295,7 +295,7 @@ const Dashboard = () => {
 
 
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       setDetailData(null);
       form.resetFields();
       let errorMessage;
@@ -443,7 +443,7 @@ const Dashboard = () => {
           photos: imagesSub
         };
         
-        console.log(newTicket)
+        // console.log(newTicket)
   
         // Kirim permintaan POST untuk menambahkan tiket
         const response = await api.post('/api/customer/ticket', newTicket, {
@@ -451,7 +451,7 @@ const Dashboard = () => {
             Authorization: `Bearer ${bearerToken}`,
           },
         });
-        console.log("response",response)
+        // console.log("response",response)
         if (response.status === 200) {
           setData([...data, newTicket]); 
           setNote(''); 
@@ -511,7 +511,7 @@ const Dashboard = () => {
         message.success('Ticket cancelled successfully');
         await apiTable();
       } catch (error) {
-        console.log(error);
+        // console.log(error);
         await apiTable();
         if (error.response && error.response.status === 400) {
           message.error('Failed to cancel ticket');
@@ -531,24 +531,24 @@ const Dashboard = () => {
 
   const handleInfoClick = (id) => {
     setInfoTicketId(id);
-    console.log("info",id)
+    // console.log("info",id)
     setOpenDrawer(true);
     document.getElementById('customTooltip').style.display = 'none';
   };
   const handleOfferClick = (id) => {
     setInfoTicketId(id);
-    console.log("info",id)
+    // console.log("info",id)
     setOpenDrawer(true);
     setIsOfferClicked(true);
   };
   const handleEditClick = (id) => {
     setEditTicketId(id);
-    console.log("ini",id) 
+    // console.log("ini",id) 
     setOpenFormEdit(true); // Open the modal for editing
   };
   const handleCancelClick = (id) => {
     setCancelTicketId(id);
-    console.log("ini",id) // Set the ID of the ticket being edited
+    // console.log("ini",id) // Set the ID of the ticket being edited
     setIsModalVisible(true); // Open the modal for editing
   };
 
@@ -582,7 +582,7 @@ const Dashboard = () => {
       setTotal(response.data.pagination.total);
       setCurrent(response.data.pagination.current);
       setPageSize(response.data.pagination.pageSize);
-      console.log(response.data)
+      // console.log(response.data)
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -604,7 +604,7 @@ const Dashboard = () => {
   const onChange = (page, pageSize) => {
     setCurrent(page);
     setPageSize(pageSize);
-    console.log(`Page: ${page}, PageSize: ${pageSize}`);
+    // console.log(`Page: ${page}, PageSize: ${pageSize}`);
   };
   
 

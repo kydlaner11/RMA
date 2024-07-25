@@ -8,7 +8,7 @@ import Api from "../../api";
 export const login = (values) => async (dispatch) => {
   try {
     const res = values;
-    console.log("res", res  );
+    // console.log("res", res  );
 
     Cookies.set("refresh_token", res.data.refresh_token, {
       secure: true,
@@ -105,7 +105,7 @@ export const refreshToken = () => async (dispatch) => {
         },
       })
       const res = response
-      console.log("res", res.data.role)
+      // console.log("res", res.data.role)
 
       Cookies.set("access_token", access_token, {
         secure: true,
@@ -134,7 +134,7 @@ export const refreshToken = () => async (dispatch) => {
             },
           })
           const res = response.data
-          console.log("res", res)
+          // console.log("res", res)
 
           Cookies.set("access_token", res.data.accessToken, {
             secure: true,
@@ -182,7 +182,7 @@ export const refreshToken = () => async (dispatch) => {
         },
       })
       const res = response.data
-      console.log("res", res)
+      // console.log("res", res)
 
       Cookies.set("access_token", res.data.accessToken, {
         secure: true,
