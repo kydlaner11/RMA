@@ -35,7 +35,7 @@ const Dashboard = () => {
   const [dataTable, setDataTable] = useState(false);
   const [detailData, setDetailData] = useState(null);
   const [errorAlert, setErrorAlert] = useState(null);
-  const [selectedCargo, setSelectedCargo] = useState(null);
+  // const [selectedCargo, setSelectedCargo] = useState(null);
   const [showAlert, setShowAlert] = useState(false);
   const [filterValues, setFilterValues] = useState({});
   const searchProps = useSearchColumn(setFilterValues);
@@ -224,7 +224,7 @@ const Dashboard = () => {
   };
 
   const handleCargoChange = (value) => {
-    setSelectedCargo(value);
+    // setSelectedCargo(value);
     // console.log("cargo",selectedCargo)
     if (value === 9) {
       // Menampilkan alert saat option.id adalah 9
