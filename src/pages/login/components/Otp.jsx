@@ -74,12 +74,12 @@ const OTP = () => {
     setNewResend(newResend -1);
     setResendAttempts(resendAttempts - 1);
     try {
-      const response = await Api.post('/api/logincust', values, {
+      await Api.post('/api/logincust', values, {
         params: {
           attempts: newResend - 1,
         }
       });
-      const resp = response.data;
+      // const resp = response.data;
       // console.log(resendAttempts);
       // console.log(resp);
       notification.success({

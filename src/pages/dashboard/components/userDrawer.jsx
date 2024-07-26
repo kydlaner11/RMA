@@ -41,7 +41,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
       }// Tutup modal konfirmasi
     try {
       setLoading(true);
-      const response = await Api.get(`/api/customer/log-status/?ticket_id=${infoTicketId}`, {
+      await Api.get(`/api/customer/log-status/?ticket_id=${infoTicketId}`, {
         headers: {
             Authorization: `Bearer ${bearerToken}`,
             "ngrok-skip-browser-warning": "69420"
@@ -178,7 +178,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
       width={window.innerWidth > 600 ? 670 : '100%'}
       open={openDrawer}
       onClose={onClose}
-      bodyStyle={{ padding: 0 }}
+      style={{ padding: 0 }}
     >
       <Tabs
         defaultActiveKey={activeTabKey}

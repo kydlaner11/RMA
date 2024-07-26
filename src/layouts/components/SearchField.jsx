@@ -88,7 +88,7 @@ const SearchField = () => {
           />
         }
         footer={null}
-        bodyStyle={{
+        style={{
           padding: "10px 0",
           height: "60vh",
           overflowY: "scroll",
