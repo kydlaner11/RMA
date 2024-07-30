@@ -1,15 +1,20 @@
 import { useState, useEffect } from 'react';
 import Cookies from "js-cookie";
 // import { PlusOutlined } from '@ant-design/icons';
-import { Modal, Form, Input, Spin, message, Row, Col, Select } from 'antd';
+import { Modal, Form, Input, Spin, message, Row, Col, Select, Alert, Grid } from 'antd';
 import Api from '../../../api';
+
 
 const {Option} = Select;
 const { TextArea } = Input;
+const { useBreakpoint } = Grid;
 
 const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions, apiTable, modalSession }) => {
+  const screens = useBreakpoint();
+  const alert = screens.xs ? 0 : screens.xl ? 105 : screens.lg ? 75 : 60;
   const [loading, setLoading] = useState(false);
   const [ticketData, setTicketData] = useState(null);
+  const [showAlert, setShowAlert] = useState(false);
   const [form] = Form.useForm();
 
   const fetchTicketData = async () => {
@@ -29,7 +34,7 @@ const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions, 
       if (response.status === 200) {
         setTicketData(response.data.ticket);
         // console.log("ticket", ticketData)
-        form.setFieldsValue(response.data.ticket); // Set initial form values with the ticket data
+        form.setFieldsValue(response.data.ticket);
       } else {
         message.error(response.data.message || 'Failed to fetch ticket data');
       }
@@ -62,18 +67,6 @@ const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions, 
         tracking_number: form.getFieldValue('tracking_number'),
       };
 
-      // if (newCargo) { // If 'Lainnya' is selected
-      //   const otherCargoName = form.getFieldValue('other_cargo');
-      //   const addCargoResponse = await Api.post('/api/endpoint/AddCargo', { cargo_name: otherCargoName });
-      //   if (addCargoResponse.status === 200) {
-      //     message.success('Cargo added successfully');
-
-      //     formData.cargo_id = addCargoResponse.data.id; // Update cargo_id with new cargo ID
-      //   } else {
-      //     throw new Error('Failed to add new cargo');
-      //   }
-      // }
-
       const response = await Api.post(`/api/customer/ticket/${editTicketId}`, formData, {
         headers: {
           Authorization: `Bearer ${bearerToken}`,
@@ -97,35 +90,6 @@ const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions, 
     }
   };
 
-
-  // const handleAddNewCargo = async () => {
-  //   try {
-  //     const bearerToken = Cookies.get("access_token");
-  //     if (!bearerToken) {
-  //       throw new Error('Bearer token not found.');
-  //     }
-
-  //     const addCargoResponse = await Api.post('/api/endpoint/AddCargo', { cargo_name: newCargo }, {
-  //       headers: {
-  //         Authorization: `Bearer ${bearerToken}`,
-  //       },
-  //     });
-
-  //     if (addCargoResponse.status === 200) {
-  //       message.success('Cargo added successfully');
-  //       const newCargoOption = { id: addCargoResponse.data.id, cargo_name: newCargo };
-  //       setCargoList([...cargoList, newCargoOption]);
-  //       form.setFieldsValue({ cargo_id: newCargoOption.id });
-  //       setNewCargo('');
-  //     } else {
-  //       message.error('Failed to add new cargo');
-  //     }
-  //   } catch (error) {
-  //     console.error('Error adding new cargo:', error);
-  //     message.error('Failed to add new cargo');
-  //   }
-  // };
-
   useEffect(() => {
     if (openFormEdit && editTicketId) {
       fetchTicketData();
@@ -138,6 +102,15 @@ const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions, 
     }
   };
 
+  const handleCargoChange = (value) => {
+    if (value === 9) {
+      // Menampilkan alert saat option.id adalah 9
+      setShowAlert(true);
+    } else {
+      setShowAlert(false);
+    }
+  };
+
   if (loading) {
     return <Spin />;
   }
@@ -145,71 +118,88 @@ const ModalEdit = ({ openFormEdit, setOpenFormEdit, editTicketId, cargoOptions, 
 
   return (
     <Modal
-          title="Edit Ticket"
-          centered
-          open={openFormEdit}
-          onCancel={handleCancel}
-          onOk={handleOk}
-          okText="Save"
-          cancelButtonProps={{ disabled: loading }} // Disable Cancel button when loading
-          okButtonProps={{ loading: loading }}
-          width={'90vw'}  
-        >
-        <div style={{ padding: '0 32px'}}>
-          <Spin spinning={loading} size="large">
-            <Form form={form} initialValues={ticketData} labelCol={{span: 4,}} wrapperCol={{span: 18,}} layout="horizontal" style={{ marginTop:36 }}>
-                <Row gutter={[16, 16]}>
-                  <Col xs={24} sm={24} md={12} lg={12} xl={12} xxl={12}>
-                    <Form.Item label="Phone" name="phone">
-                      <Input disabled variant="filled" style={{ color:'black' }} />
+      title="Edit Ticket"
+      centered
+      open={openFormEdit}
+      onCancel={handleCancel}
+      onOk={handleOk}
+      okText="Save"
+      cancelButtonProps={{ disabled: loading }} 
+      okButtonProps={{ loading: loading }}
+      width={'90vw'}  
+    >
+      <div style={{ padding: '0 32px'}}>
+        <Spin spinning={loading} size="large">
+          <Form form={form} initialValues={ticketData} labelCol={{span: 4,}} wrapperCol={{span: 18,}} layout="horizontal" style={{ marginTop:36 }}>
+              <Row gutter={[16, 16]}>
+                <Col xs={24} sm={24} md={12} lg={12} xl={12} xxl={12}>
+                  <Form.Item label="Phone" name="phone">
+                    <Input disabled variant="filled" style={{ color:'black' }} />
+                  </Form.Item>
+                  <Form.Item label="Address" name="address">
+                    <TextArea disabled variant="filled" style={{ color:'black' }}/>
+                  </Form.Item>
+                  <Form.Item label="Product" name="product_name">
+                    <Input disabled style={{ color:'black' }}/>
+                  </Form.Item>
+                  <Form.Item label="MAC Address" name="mac_address">
+                    <Input disabled style={{ color:'black' }}/>
+                  </Form.Item>
+                  <div style={{ display:'none' }} >
+                    <Form.Item name="company_id">
+                      <Input  />
                     </Form.Item>
-                    <Form.Item label="Address" name="address">
-                      <TextArea disabled variant="filled" style={{ color:'black' }}/>
+                    <Form.Item name="unit">
+                      <Input  />
                     </Form.Item>
-                    <Form.Item label="Product" name="product_name">
-                      <Input disabled style={{ color:'black' }}/>
-                    </Form.Item>
-                    <Form.Item label="MAC Address" name="mac_address">
-                      <Input disabled style={{ color:'black' }}/>
-                    </Form.Item>
-                    <div style={{ display:'none' }} >
-                      <Form.Item name="company_id">
-                        <Input  />
-                      </Form.Item>
-                      <Form.Item name="unit">
-                        <Input  />
-                      </Form.Item>
+                  </div>
+                  
+                </Col>
+                <Col xs={24} sm={24} md={12} lg={12} xl={12} xxl={12}>
+                <Form.Item label="Problem" name="problem">
+                    <TextArea placeholder="Deskripsikan masalah perangkat anda" rows={4}  disabled style={{ color:'black' }}/>
+                  </Form.Item>
+                  <div style={{ display:'none' }}>
+                  <Form.Item label="Notes" name="note">
+                    <TextArea placeholder="" rows={4} />
+                  </Form.Item>  
+                  </div>
+                  <Form.Item label="Cargo" name="cargo_id">
+                    <Select
+                      placeholder="Pilih Jasa Pengiriman"
+                      allowClear
+                      onChange={handleCargoChange}
+                    >
+                      {cargoOptions.map(option => (
+                        <Option key={option.id} value={option.id}>{option.cargo_name}</Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                  <div style={{ marginLeft: alert }} >
+                    {showAlert && (
+                      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '25px', width: '90%' }}>
+                        <Alert
+                          message={
+                            <span>
+                              You have selected &quot;Other&quot; as your shipping cargo. Please enter the cargo name in the <b>Resi</b> field. <br /> &quot;Tracking Number (Cargo Name)&quot;
+                            </span>
+                          }
+                          type="warning"
+                          showIcon
+                          style={{ flex: 1 }}
+                        />
+                      </div>
+                      )}
                     </div>
-                   
-                  </Col>
-                  {/* <Col span={2}></Col> */}
-                  <Col xs={24} sm={24} md={12} lg={12} xl={12} xxl={12}>
-                  <Form.Item label="Problem" name="problem">
-                      <TextArea placeholder="Deskripsikan masalah perangkat anda" rows={4}  disabled style={{ color:'black' }}/>
-                    </Form.Item>
-                    <div style={{ display:'none' }}>
-                    <Form.Item label="Notes" name="note">
-                      <TextArea placeholder="" rows={4} />
-                    </Form.Item>  
-                    </div>
-                    <Form.Item label="Cargo" name="cargo_id">
-                      <Select
-                        placeholder="Pilih Jasa Pengiriman"
-                      >
-                        {cargoOptions.map(option => (
-                          <Option key={option.id} value={option.id}>{option.cargo_name}</Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-                    <Form.Item label="Resi" name="tracking_number">
-                      <Input  placeholder="Masukan Nomer Resi"/>
-                    </Form.Item>
-                  </Col>
-                </Row>
-            </Form>
-          </Spin>
-        </div>
-        </Modal>
+                  <Form.Item label="Resi" name="tracking_number">
+                    <Input  placeholder="Masukan Nomer Resi"/>
+                  </Form.Item>
+                </Col>
+              </Row>
+          </Form>
+        </Spin>
+      </div>
+    </Modal>
   );
 };
 export default ModalEdit;

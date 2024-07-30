@@ -36,7 +36,6 @@ const TicketSteps = ({infoTicketId}) => {
           }
       });
         if (response.status === 200) {
-          //how to get response.data in array
           setTicketSteps(response.data);
           // console.log("dd",response.data)
           

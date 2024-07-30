@@ -9,6 +9,7 @@ import api from "../../api";
 import UserDrawer from "./components/userDrawer";
 import ModalEdit from "./components/modalEdit";
 import CancelTicket from "./components/cancelTicket";
+import Compressor from "compressorjs";
 import { useDispatch } from "react-redux";
 import { logout } from "../../redux/actions/authAction";
 
@@ -100,16 +101,30 @@ const Dashboard = () => {
   
   const beforeUpload = (file) => {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg';
-    const isLt2M = file.size / 1024 / 1024 < 2;
+    const isLt10M = file.size / 1024 / 1024 < 10;
     // console.log("file", file);
   
     if (!isJpgOrPng) {
       message.error('You can only upload JPG/PNG file!');
-    } else if (!isLt2M) {
-      message.error('Image must be smaller than 2MB!');
+    } else if (!isLt10M) {
+      message.error('Image must be smaller than 10 MB!');
       file.status = 'error';
     }
-    return isJpgOrPng && isLt2M;
+    return isJpgOrPng && isLt10M;
+  };
+
+  const compressImage = (file) => {
+    return new Promise((resolve, reject) => {
+      new Compressor(file, {
+        quality: 0.6, // Adjust the quality as needed
+        success(result) {
+          resolve(result);
+        },
+        error(err) {
+          reject(err);
+        },
+      });
+    });
   };
   
   const customRequest = async ({ file, onSuccess, onError }) => {
@@ -127,10 +142,12 @@ const Dashboard = () => {
         setIsImageUploading(false);
         return;
       }
+
+      const compressedFile = await compressImage(file);
   
       // Mengunggah gambar jika valid
-      const response = await uploadImages([file]);
-      if (response) { // Pastikan respons valid
+      const response = await uploadImages([compressedFile]);
+      if (response) { 
         setImagesSub(prevImages => [...prevImages, { ...response, uid: file.uid }]);
         onSuccess();
         message.success('Image uploaded successfully');
@@ -154,7 +171,6 @@ const Dashboard = () => {
   
   const handleRemoveImage = async (file) => {
     if (file.status === 'error') {
-      // Directly remove the image from the state without making an API call
       const newImages = imagesSub.filter(image => image.uid !== file.uid);
       setImagesSub(newImages);
       message.success('Invalid image removed successfully');
@@ -176,10 +192,8 @@ const Dashboard = () => {
         }
     });
       if (response.status === 200) {
-        // newImage adalah state imagesSub yang di filter dengan menghapus image yang dihapus
         const newImages = imagesSub.filter(image => image.hashname !== index);
         setImagesSub(newImages);
-        // console.log("Updated imagesSub:", newImages);
         message.success('Image removed successfully');
       } else {
         message.error('Failed to remove image');
@@ -224,8 +238,6 @@ const Dashboard = () => {
   };
 
   const handleCargoChange = (value) => {
-    // setSelectedCargo(value);
-    // console.log("cargo",selectedCargo)
     if (value === 9) {
       // Menampilkan alert saat option.id adalah 9
       setShowAlert(true);
@@ -404,19 +416,15 @@ const Dashboard = () => {
         throw new Error('Bearer token not found.');
       }
   
-      // Ambil data pengguna saat ini dari API
       const userResponse = await api.post('/api/customer/me', {}, {
         headers: {
           Authorization: `Bearer ${bearerToken}`,
         },
       });
   
-      // Pastikan respon pengguna berhasil dan memiliki ID
       if (userResponse.status === 200 && userResponse.data && userResponse.data.id) {
-        // Simpan data pengguna
         const { id: customerId, name,name_origin:origin, odoo_contact_id: odooId, address } = userResponse.data;
   
-        // Buat nilai catatan yang mencakup informasi pengguna
         const userNote = origin === name
           ? `Customer Name: ${name}\nOdoo ID: ${odooId}\nAddress: ${address}`
           : `Customer Name: ${origin} (${name})\nOdoo ID: ${odooId}\nAddress: ${address}`;      
@@ -445,7 +453,6 @@ const Dashboard = () => {
         
         // console.log(newTicket)
   
-        // Kirim permintaan POST untuk menambahkan tiket
         const response = await api.post('/api/customer/ticket', newTicket, {
           headers: {
             Authorization: `Bearer ${bearerToken}`,
@@ -592,7 +599,6 @@ const Dashboard = () => {
 
   const handleChange = async (checked) => {
     setFilterCancelled(checked);
-    // setCurrent(1); // Reset to first page when filter changes
     await apiTable(checked);
   };
 
@@ -604,7 +610,6 @@ const Dashboard = () => {
   const onChange = (page, pageSize) => {
     setCurrent(page);
     setPageSize(pageSize);
-    // console.log(`Page: ${page}, PageSize: ${pageSize}`);
   };
   
 
@@ -706,7 +711,7 @@ const Dashboard = () => {
               htmlType="submit"
               loading={loadings || isImageUploading}
               disabled={isImageUploading || isSubmitDisabled}
-              onClick={handleAddData} // Submit form when button is clicked
+              onClick={handleAddData}
             >
               Submit
             </Button>,
@@ -815,7 +820,13 @@ const Dashboard = () => {
                       <Input  placeholder="Masukan Nomer Resi"/>
                     </Form.Item>
   
-                    <Form.Item label="Upload Image" name="photos" extra="Upload your device image. Images must be JPG or PNG format and smaller than 2MB.">
+                    <Form.Item label="Upload Image" name="photos" extra={
+                      <span>
+                        <ExclamationCircleOutlined /> The uploaded photos are of the device problem and the serial number <br />
+                         <br />
+                        Make sure the picture is clear and not blurry. The picture must be in JPG or PNG format and smaller than 10 MB.
+                      </span>
+                    }>
                     <Upload
                       customRequest={customRequest}
                       beforeUpload={beforeUpload}

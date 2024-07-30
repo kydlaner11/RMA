@@ -10,7 +10,7 @@ const Bottombar = () => {
         fontSize: "12px",
       }}
     >
-      
+      {/* © 2024 RMA - All Rights Reserved */}
     </Footer>
   );
 };

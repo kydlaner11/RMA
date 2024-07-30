@@ -20,7 +20,7 @@ const LogTicket = ({ infoTicketId }) => {
       const bearerToken = Cookies.get("access_token"); 
       if (!bearerToken) {
         throw new Error('Bearer token not found.');
-      }// Tutup modal konfirmasi
+      }
       try {
         const response = await Api.get(`/api/customer/log-ticket?ticket_id=${infoTicketId}`, {
           headers: {

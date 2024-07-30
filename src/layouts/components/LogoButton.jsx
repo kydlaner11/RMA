@@ -3,11 +3,9 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/images/rma-ori.webp";
 
-// const { useToken } = theme;
 
 const LogoButton = () => {
   const navigate = useNavigate();
-  // const token = useToken();
 
   return (
     <Button 

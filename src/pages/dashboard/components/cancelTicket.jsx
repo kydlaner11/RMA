@@ -8,7 +8,7 @@ const CancelTicket = ({ openModal, handleCancel, handleClose }) => {
     <Modal
       title="Cancel Ticket"
       open={openModal}
-      onCancel={() => handleClose(true)} // Tutup modal saat tombol Cancel ditekan
+      onCancel={() => handleClose(true)} 
       footer={[
         <Button key="cancel" onClick={() => handleClose(true)}>
           Cancel

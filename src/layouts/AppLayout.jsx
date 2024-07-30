@@ -24,7 +24,7 @@ const AppLayout = ({
     <Layout className="app">
       {alertApi.open && (
         <Alert
-          type={alertApi.type} // success, info, warning, error
+          type={alertApi.type}
           message={alertApi.message}
           banner
           closable

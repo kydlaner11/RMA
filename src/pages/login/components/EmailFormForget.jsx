@@ -19,9 +19,7 @@ const EmailFormForget = () => {
       const response = await checkEmail(email);
 
       if (response.exist === true) {
-        // Lakukan sesuatu jika email ada dalam database
       } else {
-        // Email tidak ditemukan dalam basis data
         notification.warning({
           message: 'Check your email',
           description: 'This email registered in our database. Please check your email.',
@@ -32,28 +30,22 @@ const EmailFormForget = () => {
     } catch (error) {
       console.error('Error validating email:', error);
       if (error.response) {
-        // Tangani respon kesalahan dari server
         const { status, data } = error.response;
         if (status === 400) {
-          // Tangani kesalahan jika terjadi kesalahan data (bad request)
           message.error(data.message || 'Your Email is not registered');
         } else if (status === 401) {
-          // Tangani kesalahan jika pengguna tidak terautentikasi
           message.error(data.message || 'Incorrect Email');
         } else if (status === 422) {
           setErrorAlert('Reset password request already exists for this email');
         }
-        
         else {
-          // Tangani kesalahan lainnya
           message.error('Something went wrong');
         }
       } else {
-        // Tangani kesalahan jika tidak ada respon dari server
         message.error('Network Error');
       }
     } finally {
-      setLoading(false); // Hentikan loading setelah permintaan selesai
+      setLoading(false);
     }
   };
 
@@ -113,13 +105,6 @@ const EmailFormForget = () => {
         >
           <Input placeholder="Enter your Email"/>
         </Form.Item>
-
-        {/* <div style={{ marginBottom: 24, textAlign: "right", marginTop: 5 }}>
-          <a href="/register/password" className="login-forgot">
-            Forgot Password?
-          </a>
-        </div> */}
-
         <Form.Item>
           <Button type="primary" htmlType="submit" style={{ width: "100%" }} loading={loading}>
             Check Email

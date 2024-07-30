@@ -42,18 +42,15 @@ const OTP = () => {
 
   const onFinish = async (otpValues) => {
     const payload = { email, code: otpValues.otp };
-    // console.log("Payload for verification:", payload);
     setLoading(true);
     try {
       const response = await Api.post('/api/register/validate', payload);
       const resp = response.data;
-      // console.log(resp);
       message.success('OTP verified successfully');
       dispatch(login(resp));
       navigate('/dashboard');
       setFailedAttempts(0);
     } catch (error) {
-      // console.log(error);
       const newFailedAttempts = failedAttempts + 1;
       setFailedAttempts(newFailedAttempts);
       if (newFailedAttempts >= 3) {
@@ -68,8 +65,6 @@ const OTP = () => {
   };
 
   const handleResend = async () => {
-    // const payload = { email };
-    // console.log("Resending OTP to:", email);
     setLoading(true);
     setNewResend(newResend -1);
     setResendAttempts(resendAttempts - 1);
@@ -104,7 +99,6 @@ const OTP = () => {
   };
 
   return (
-    //make responsive
     <Spin spinning={loading}>
       <div 
         style={{

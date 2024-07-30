@@ -9,23 +9,8 @@ import logo2 from "../../../assets/images/Voltech.png";
 import logo1 from "../../../assets/images/Spectrum.png";
 import logo from "../../../assets/images/rma.png";
 
-// const steps = [
-//   {
-//     selector: ".login-form",
-//     content: "Login using email and password if you have one",
-//   },
-//   {
-//     selector: ".login-forgot",
-//     content: "Click here if you forgot your password",
-//   },
-//   {
-//     selector: ".login-signup",
-//     content: "Click here if you need to register your account",
-//   },
-// ];
 
 const LoginForm = () => {
-  // const { setIsOpen, setSteps, setCurrentStep } = useTour();
   const [loading, setLoading] = useState(false); 
   const navigate = useNavigate();
 
@@ -34,7 +19,6 @@ const LoginForm = () => {
     try {
       const response = await Api.post('/api/logincust?attempts=1', values);
       const resp = response.data;
-      // console.log(resp)
       if (Object.keys(resp).length === 0) { 
         message.error('Please enter a valid Email');
       } else {
@@ -63,14 +47,6 @@ const LoginForm = () => {
     console.log("Failed:", errorInfo);
   };
 
-  // const handleTour = () => {
-  //   setIsOpen(true);
-  // };
-
-  // useEffect(() => {
-  //   setCurrentStep(0);
-    // setSteps(steps);
-  // }, []);
 
   return (
     <div style={{ width: "80%", margin: "0 auto", paddingTop: "40px" }}>

@@ -12,13 +12,10 @@ const PassForm = () => {
   const screens = useBreakpoint();
   const [form] = Form.useForm();
   const navigate = useNavigate();
-  // const { token } = useParams();
   const [loading, setLoading] = useState(false);
-
   const location = useLocation();
   const params = new URLSearchParams(location.search);
     const newToken = params.get('token');
-    // console.log('Token:', newToken);
 
   const handleRegister = async (values) => {
       try {
@@ -28,14 +25,12 @@ const PassForm = () => {
               password: values.password,
               password_confirmation: values.password_confirmation,
             });
-          // await api.post(`/api/register/password/${token}`, {values});
 
           setLoading(false);
           message.success('Password reset successfully');
           navigate('/login');
       } catch (error) {
           setLoading(false);
-          // console.log(error.response.data);
           message.error('Failed to reset password');
       }
   };
@@ -135,49 +130,12 @@ const PassForm = () => {
           >
             <Input.Password />
           </Form.Item>
-
-          {/* <div style={{ marginBottom: 24, textAlign: "right", marginTop: 5 }}>
-            <a href="/forgot_password" className="login-forgot">
-              Forgot Password?
-            </a>
-          </div> */}
-
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={loading} style={{ width: "100%" }}>
               Set Password
             </Button>
           </Form.Item>
         </Form>
-
-        {/* <Divider style={{ opacity: 0.7 }}>or</Divider>
-
-        <Button
-          type="default"
-          className="login-oauth"
-          style={{
-            width: "100%",
-            alignItems: "center",
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          <img
-            src={logoDNet}
-            alt="Logo d~net"
-            height="100%"
-            style={{ marginRight: "3px" }}
-          />
-          <span
-            style={{
-              fontSize: "11px",
-              fontWeight: 600,
-              opacity: 0.6,
-              marginTop: "3px",
-            }}
-          >
-            Continue with OAuth
-          </span>
-        </Button> */}
       </div>
       </Col>
     </Row>

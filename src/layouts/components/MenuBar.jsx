@@ -6,32 +6,12 @@ import { useLocation } from "react-router-dom";
 
 const { useBreakpoint } = Grid;
 
-// const items = [
-//   {
-//     label: 'Dashboard',
-//     key: 'mail',
-
-//   },
-//   {
-//     label: 'History',
-//     key: 'history',
-
-//   },
-// ]
 
 const MenuBar = () => {
   const screens = useBreakpoint();
   const location = useLocation();
   const divWidth = screens.xs ? 100 : 400;
   const { app } = useSelector((state) => state);
-
-
-  // const [current, setCurrent] = useState('mail');
-  // const onClick = (e) => {
-  //   console.log('click ', e);
-  //   setCurrent(e.key);
-  // };
-
 
   return (
     <div style={{ width:divWidth }}>

@@ -3,13 +3,11 @@ import { Form, Card,  Rate, Button, Typography,} from 'antd';
 import Api from '../../api';
 import Cookies from "js-cookie";  
 
-
-
-// const { TextArea } = Input;
 const { Title, Paragraph } = Typography;
 
 const RateTicket = ({infoTicketId, apiTable, setOpenDrawer, setIsRateButtonClicked}) => {
   const [rating, setRating] = useState([]);
+
 
     const getRate = async () => {
       try {
@@ -35,13 +33,11 @@ const RateTicket = ({infoTicketId, apiTable, setOpenDrawer, setIsRateButtonClick
     };
   
     const handleSubmit = async (values) => {
-      // console.log('Submitted values:', values);
       try {
       const bearerToken = Cookies.get("access_token"); 
       if (!bearerToken) {
       throw new Error('Bearer token not found.');
       }
-    // console.log("bearer",bearerToken)
       const response = await Api.post(`/api/customer/ticket-rate?ticket_id=${infoTicketId}&rate=${values.rate}`,null, {
         headers: {
           Authorization: `Bearer ${bearerToken}`,
@@ -68,8 +64,11 @@ const RateTicket = ({infoTicketId, apiTable, setOpenDrawer, setIsRateButtonClick
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
       <Card style={{ width: 570, textAlign:"center" }}>
-        <Title level={0} >Package has been delivered successfully</Title>
-        <Paragraph>Rate our service</Paragraph>
+        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column'  }}>
+        <Title level={0}  >Thank you for using our <br/> RMA service.</Title>
+        <div style={{ marginBottom: 20, maxWidth: 487 }}>
+        <Paragraph >Rate our service to help us improve the quality of our service, we kindly ask you to provide a rating regarding your experience. Your input is highly valuable to us</Paragraph>  
+        </div>
         <Form layout="vertical" onFinish={handleSubmit}>
           {rating !== null && (
             <>
@@ -92,6 +91,7 @@ const RateTicket = ({infoTicketId, apiTable, setOpenDrawer, setIsRateButtonClick
             </>
           )}
         </Form>
+        </div>
       </Card>
     </div>
   );

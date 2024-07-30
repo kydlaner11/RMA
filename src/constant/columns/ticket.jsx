@@ -17,7 +17,6 @@ const isOutOfWarranty = (warranty, created_at) => {
   const endDate = new Date(warranty);
   const creationDate = new Date(created_at);
 
-  // Jika tanggal pembuatan lebih besar dari tanggal berakhirnya garansi, maka sudah berakhir
   if (creationDate > endDate) {
     return true;
   } else {
@@ -269,15 +268,6 @@ export const ticketsColumn = ({ searchProps, handleInfoClick, handleOfferClick, 
             <Button icon={<SearchOutlined />} onClick={() => handleInfoClick(record.id)} >Info</Button>
           )}
           {record.status_ticket === "Offering" && (
-            //buatkan tooltip antd untuk button offering letter dan berikan tampilan tooltip yang menarik
-            // <Tooltip 
-            //   title="Offering Letter" 
-            //   color="#108ee9" 
-            //   placement="topLeft" 
-            //   overlayClassName="tooltip" 
-            // >
-            //   <Button icon={<ContainerOutlined />} danger  className="first_button"  onClick={() => handleOfferClick(record.id)} >We Need Your Response!</Button>
-            // </Tooltip>
               <Button icon={<ContainerOutlined />} danger  className="first_button"  onClick={() => handleOfferClick(record.id)} >We Need Your Response!</Button>
           )}
         </Space>
