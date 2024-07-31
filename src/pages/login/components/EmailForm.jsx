@@ -16,8 +16,7 @@ const EmailForm = () => {
     try {
       const response = await checkEmail(email);
 
-      if (response.exist === true) {
-      } else {
+      if (!response.exist) {
         notification.warning({
           message: 'Check your email',
           description: 'This email is registered. Please check your email.',

@@ -18,8 +18,7 @@ const EmailFormForget = () => {
     try {
       const response = await checkEmail(email);
 
-      if (response.exist === true) {
-      } else {
+      if (!response.exist) {
         notification.warning({
           message: 'Check your email',
           description: 'This email registered in our database. Please check your email.',
