@@ -173,6 +173,10 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
     return <Spin />;
   }
 
+  if (!dateCount) {
+    return null;
+  }
+
   return (
     <Drawer
       title={ticketData ? `Ticket Details: ${ticketData.no_tickets}` : 'RMA Ticket Details'}

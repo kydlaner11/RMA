@@ -29,6 +29,8 @@ const CountdownTimer = ({ endDate }) => {
   }
 
   useEffect(() => {
+    if (!endDate) return;
+
     const interval = setInterval(() => {
       setTimeLeft(calculateTimeLeft());
     }, 1000);
