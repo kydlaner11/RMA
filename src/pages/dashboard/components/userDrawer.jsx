@@ -6,23 +6,23 @@ import Api from '../../../api';
 import TicketSteps from '../../activity/TicketSteps';
 import RateTicket from '../../activity/RateTicket';
 import LogTicket from '../../activity/LogTicket';
-import { BASE_URL_BE } from '../../../constant/url';
+import { BASE_URL_BE, COUNTDOWN_DAYS } from '../../../constant/url';
 import Result from '../../activity/Result';
 import Document from '../../activity/Document';
+import CountdownTimer from './css/countdown';
 import './css/responsive.css';
 
 const { TabPane } = Tabs;
-// const { useToken } = theme;
 const { Paragraph } = Typography;
 
 const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSession, activeTabKey, setActiveTabKey, isRateButtonClicked, setIsRateButtonClicked, isOfferClicked, setIsOfferClicked}) => {
   const [loading, setLoading] = useState(false);
   const [ticketData, setTicketData] = useState(null);
   const [expiredTime, setExpiredTime] = useState(null);
+  const [dateCount, setDateCount] = useState(null);
   const [imageView, setImageView] = useState({ evidence_cust: []});
   const [odooRmaTicket, setOdooRmaTicket] = useState(null);
 
-  // const { token } = useToken();
 
   const isOutOfWarranty = (warranty, created_at) => {
     const endDate = new Date(warranty);
@@ -101,7 +101,10 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
       if (response.status === 200) {
         setTicketData(response.data);
         setOdooRmaTicket(response.data.odoo_rma_ticket_id)
-        // console.log('Ticket Data:', response.data);
+        console.log('Ticket Data:', response.data);
+        const createdDate = new Date(response.data.received_ticket?.created_at);
+        createdDate.setDate(createdDate.getDate() + COUNTDOWN_DAYS);
+        setDateCount(createdDate);
       } else {
         message.error(response.data.message || 'Failed to fetch ticket data');
       }
@@ -163,7 +166,7 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
     setOpenDrawer(false);
     setIsRateButtonClicked(false);
     setIsOfferClicked(false);
-    document.getElementById('customTooltip').style.display = 'block';
+    setDateCount(null);
   };
 
   if (loading) {
@@ -223,6 +226,9 @@ const UserDrawer = ({ openDrawer, setOpenDrawer, infoTicketId, apiTable, modalSe
                     </div>
                   </div>
                 </div>
+                {ticketData?.status_ticket !== "Waiting Approval" && ticketData?.status_ticket !== "Finished" && ticketData?.status_ticket !== "Cancelled" && (
+                  <CountdownTimer endDate={dateCount?.getTime()} />
+                )}
                 <Divider />
                 <div className="details-row">
                   <Paragraph><strong>No Ticket :</strong></Paragraph>

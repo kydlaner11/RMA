@@ -540,7 +540,6 @@ const Dashboard = () => {
     setInfoTicketId(id);
     // console.log("info",id)
     setOpenDrawer(true);
-    document.getElementById('customTooltip').style.display = 'none';
   };
   const handleOfferClick = (id) => {
     setInfoTicketId(id);
@@ -563,7 +562,6 @@ const Dashboard = () => {
     setInfoTicketId(id);
     setOpenDrawer(true);
     setIsRateButtonClicked(true);
-    document.getElementById('customTooltip').style.display = 'none';
   };
 
   const apiTable = async (cancelled) => {
@@ -822,9 +820,9 @@ const Dashboard = () => {
   
                     <Form.Item label="Upload Image" name="photos" extra={
                       <span>
-                        <ExclamationCircleOutlined /> The uploaded photos are of the device problem and the serial number <br />
+                        <ExclamationCircleOutlined /> The uploaded photos should show the device problem and the serial number. <br />
                          <br />
-                        Make sure the picture is clear and not blurry. The picture must be in JPG or PNG format and smaller than 10 MB.
+                         Please ensure the pictures are clear and not blurry. They must be in JPG or PNG format and smaller than 10 MB.
                       </span>
                     }>
                     <Upload

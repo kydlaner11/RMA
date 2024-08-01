@@ -12,6 +12,74 @@
   flex-wrap: wrap;
 }
 
+.countdown-container {
+  background-color: white; 
+  padding: 15px;
+  border-radius: 8px;
+  color: #000000; /* White text */
+  font-family: Arial, sans-serif;
+  font-size: 2em;
+  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.1);
+}
+.countdown-container-delay {
+  background-color: white; 
+  padding: 15px;
+  border-radius: 8px;
+  border-width: 1.5px;
+  border-style: solid;
+  border-color: #d73844;
+  color: #000000; /* White text */
+  font-family: Arial, sans-serif;
+  font-size: 2em;
+  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.1);
+}
+
+.label-time {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 0.5em;
+  color: #000000; /* Light gray text */
+}
+
+.time-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.countdown-item {
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  text-align: center;
+  margin: 0 15px;
+}
+
+.countdown-item span {
+  display: block;
+}
+
+.countdown-item .label {
+  font-size: 0.5em;
+  color: #000000; /* Light gray text */
+}
+
+.text-item {
+  font-size: 1.2em;
+  color: #000000; /* Black text */
+}
+
+.countdown-complete {
+  color: #d73844; /* Customize the color */
+  font-size: 2em; /* Adjust font size */
+  text-align: center; /* Center the text */
+}
+
+
 /* .details-row div,
 .details-row p {
   flex: 1;
