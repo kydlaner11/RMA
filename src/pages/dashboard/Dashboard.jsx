@@ -329,7 +329,7 @@ const Dashboard = () => {
       } else if (error.response && error.response.status === 404){
         errorMessage = (
           <span>
-              MAC Address or Serial Number not found. Please contact an administrator or 
+              Serial Number or MAC Address not found. Please contact an administrator or 
               <Button
                 type="link"
                 onClick={() => window.open('https://wa.me/628155048711/?text=Terimakasih%20telah%20menghubungin%20admin.%20Untuk%20mempermudah%20proses%20penanganan%20keluhan%20atau permintaan.%20Mohon%20lengkapi%20data%20berikut:%0A1.%20Company:%20%0A2.%20Nama:%20%0A3.%20Perangkat:%20%0A4.%20Serial%20Number:%20%0A5.%20Keluhan:%20', '_blank')}
@@ -639,20 +639,31 @@ const Dashboard = () => {
         <div style={{ padding: '0 32px'}}>
         <Spin spinning={loadings}>
           <Title level={5}>What you returning?</Title>
-            <Paragraph>Enter your MAC Address or Serial Number of your device. This information is essential for completing the return process </Paragraph>
+            <Paragraph>Enter your <strong> Serial Number </strong>or <strong>MAC Address </strong> (without any dashes, colons, or spaces). This information is essential for completing the return process.</Paragraph>
             <div style={{ padding: '6px 0'}}></div>
             {/* <Title level={5}>Input your MAC or Serial Number Here!</Title> */}
             <Form layout='vertical' form={form} >
                 
                   <Item
-                    // label="Input your device MAC Address"
+                    label={
+                      <span>
+                        <ExclamationCircleOutlined /> Example: &apos;00:1A:2A:34&apos; should be entered as &apos;001A2A34&apos;
+                      </span>
+                    }
                     // name="name"
-                    rules={[{ required: true, 
-                      message: 'Please enter your Mac Address!' 
-                    }]}
+                    rules={[
+                    { 
+                      required: true, 
+                      message: 'Please enter your Serial Number or MAC Address' 
+                    },
+                    {
+                      pattern: /^[^\-:'"]+$/,
+                      message: "Please search without any dashes, colons, or spaces."
+                    }
+                  ]}
                     >
                     <Search
-                      placeholder="Search MAC Address"
+                      placeholder="Search Serial Number or MAC Address"
                       allowClear
                       size="middle"
                       onSearch={handleSearch}
