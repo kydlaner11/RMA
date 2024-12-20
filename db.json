@@ -1,0 +1,58 @@
+{
+  "ticket": [
+    {
+      "company_id": "COMP12345",
+      "partner_id": "PART67890",
+      "product_name": "Smartphone X",
+      "lot_id": "LOT123456",
+      "mac_address": "00:1A:2B:3C:4D:5E",
+      "warranty": "2025-12-31",
+      "name": "John Doe",
+      "customer_2": "Jane Smith",
+      "product_id": "PROD54321",
+      "address": "123 Main Street, Springfield",
+      "phone": "+1234567890",
+      "problem": "Screen not working",
+      "note": "Customer reported issue after software update.",
+      "cargo_id": "CARGO98765",
+      "tracking_number": "TRACK123456789",
+      "customer_id": "CUST112233"
+    },
+    {
+      "company_id": "COMP54321",
+      "partner_id": "PART09876",
+      "product_name": "Laptop Pro",
+      "lot_id": "LOT654321",
+      "mac_address": "AA:BB:CC:DD:EE:FF",
+      "warranty": "2026-06-30",
+      "name": "Alice Johnson",
+      "customer_2": "Bob Brown",
+      "product_id": "PROD98765",
+      "address": "456 Elm Street, Metropolis",
+      "phone": "+9876543210",
+      "problem": "Battery not charging",
+      "note": "Issue occurred after 1 year of use.",
+      "cargo_id": "CARGO12345",
+      "tracking_number": "TRACK987654321",
+      "customer_id": "CUST445566"
+    },
+    {
+      "company_id": "COMP67890",
+      "partner_id": "PART12345",
+      "product_name": "Tablet Z",
+      "lot_id": "LOT789012",
+      "mac_address": "11:22:33:44:55:66",
+      "warranty": "2024-09-15",
+      "name": "Charlie Davis",
+      "customer_2": "Dana White",
+      "product_id": "PROD11223",
+      "address": "789 Pine Street, Gotham",
+      "phone": "+1122334455",
+      "problem": "Touchscreen unresponsive",
+      "note": "Problem started after accidental drop.",
+      "cargo_id": "CARGO56789",
+      "tracking_number": "TRACK112233445",
+      "customer_id": "CUST778899"
+    }
+  ]
+}

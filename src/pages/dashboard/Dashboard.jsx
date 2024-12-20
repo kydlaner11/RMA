@@ -564,7 +564,7 @@ const Dashboard = () => {
     setIsRateButtonClicked(true);
   };
 
-  const apiTable = async (cancelled) => {
+  const apiTable = async () => {
     setLoadings(true);
     try {
       const bearerToken = Cookies.get("access_token");
@@ -572,18 +572,19 @@ const Dashboard = () => {
         throw new Error('Bearer token not found.');
       }
 
-      const response = await api.get('/api/customer/view-ticket-customerid', {
-        headers: {
-          Authorization: `Bearer ${bearerToken}`,
-          "ngrok-skip-browser-warning": "69420"
-        },
-        params: {
-          filterCancelled: cancelled ? undefined : 'true',
-          page: current,
-          values: filterValues,
-        },
+      const response = await api.get('/ticket', {
+        // headers: {
+        //   Authorization: `Bearer ${bearerToken}`,
+        //   "ngrok-skip-browser-warning": "69420"
+        // },
+        // params: {
+        //   filterCancelled: cancelled ? undefined : 'true',
+        //   page: current,
+        //   values: filterValues,
+        // },
       });
-      setDataTable(response.data.data);
+      console.log(response)
+      setDataTable(response);
       setTotal(response.data.pagination.total);
       setCurrent(response.data.pagination.current);
       setPageSize(response.data.pagination.pageSize);

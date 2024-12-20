@@ -1,9 +1,10 @@
 // import { PlayCircleFilled } from "@ant-design/icons";
 // import { useTour } from "@reactour/tour";
-import { Button, Form, Input, message, Carousel, notification } from "antd";
+import { Button, Form, Input, message, Carousel } from "antd";
 import React, {  useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Api from "../../../api";
+import { useDispatch } from "react-redux";
+import { login } from "../../../redux/actions/authAction";
 import logo3 from "../../../assets/images/Teakwave.png";
 import logo2 from "../../../assets/images/Voltech.png";
 import logo1 from "../../../assets/images/Spectrum.png";
@@ -13,22 +14,13 @@ import logo from "../../../assets/images/rma.png";
 const LoginForm = () => {
   const [loading, setLoading] = useState(false); 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const onFinish = async (values) => {
+  const onFinish = (data) => {
     setLoading(true);
     try {
-      const response = await Api.post('/api/logincust?attempts=1', values);
-      const resp = response.data;
-      if (Object.keys(resp).length === 0) { 
-        message.error('Please enter a valid Email');
-      } else {
-        notification.success({
-          message: 'OTP Sent',
-          description: 'A verification code has been sent to your email.',
-        });
-        navigate('/verification', { state: { values } });
-        // message.success('Login successful');
-      }
+      dispatch(login(data));
+      navigate("/");
     } catch (error) {
       // console.log(error)
       if (error) {
